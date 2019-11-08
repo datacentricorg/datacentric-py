@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from bson import ObjectId
 
-from datacentric.platform.context import Context
-from datacentric.types.record import Data
+from datacentric.storage.context import Context
+from datacentric.record.data import Data
 
 
 class Record(Data, ABC):

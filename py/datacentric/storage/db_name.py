@@ -1,5 +1,6 @@
-from datacentric.platform.storage.instance_type import InstanceType
-from datacentric.types.record import TypedKey, RootRecord
+from datacentric.storage.instance_type import InstanceType
+from datacentric.record.typed_key import TypedKey
+from datacentric.record.root_record import RootRecord
 
 
 class DbNameData(RootRecord['DbNameKey']):

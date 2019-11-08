@@ -2,8 +2,8 @@ from abc import ABC
 from typing import TypeVar
 from bson import ObjectId
 
-from datacentric.platform.context import Context
-from datacentric.types.record import TypedRecord
+from datacentric.storage.context import Context
+from datacentric.record.typed_record import TypedRecord
 
 TKey = TypeVar('TKey')
 

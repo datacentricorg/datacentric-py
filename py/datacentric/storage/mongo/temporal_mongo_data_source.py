@@ -3,12 +3,16 @@ from typing import Dict, Optional, TypeVar, Set, Iterable
 from bson import ObjectId
 from pymongo.collection import Collection
 
-from datacentric.platform.storage.data_set_detail import DataSetDetail, DataSetDetailKey
-from datacentric.platform.storage.temporal_mongo_query import TemporalMongoQuery
-from datacentric.types.record import Record, TypedKey, DeletedRecord
-from datacentric.platform.storage import MongoDataSource, DataSet, DataSource, DataSetKey
-from datacentric.platform.reflection import ClassInfo
-from datacentric.platform.serialization.serializer import serialize, deserialize
+from datacentric.storage.data_set_detail import DataSetDetail, DataSetDetailKey
+from datacentric.storage.mongo.temporal_mongo_query import TemporalMongoQuery
+from datacentric.record.typed_key import TypedKey
+from datacentric.record.record import Record
+from datacentric.record.deleted_record import DeletedRecord
+from datacentric.storage.data_set import DataSet, DataSetKey
+from datacentric.storage.data_source import DataSource
+from datacentric.storage.mongo import MongoDataSource
+from datacentric.record.class_info import ClassInfo
+from datacentric.serialization.serializer import serialize, deserialize
 
 TRecord = TypeVar('TRecord', bound=Record)
 
@@ -46,10 +50,10 @@ class TemporalMongoDataSource(MongoDataSource):
         """Records with ObjectId that is greater than or equal to cutoff_time
         will be ignored by load methods and queries, and the latest available
         record where ObjectId is less than cutoff_time will be returned instead.
-        
+
         cutoff_time applies to both the records stored in the dataset itself,
         and the reports loaded through the imports list.
-        
+
         cutoff_time may be set in data source globally, or for a specific dataset
         in its details record. If cutoff_time is set for both, the earlier of the
         two values will be used.

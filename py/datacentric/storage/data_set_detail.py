@@ -1,6 +1,6 @@
 from bson import ObjectId
 
-from datacentric.types.record import TypedKey, TypedRecord
+from datacentric.record import TypedKey, TypedRecord
 
 
 class DataSetDetailKey(TypedKey['DataSetDetail']):

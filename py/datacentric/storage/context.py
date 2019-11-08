@@ -1,6 +1,5 @@
 from bson.objectid import ObjectId
-
-from datacentric.platform.logging.log import Log
+from datacentric.logging.log import Log
 
 
 class Context:

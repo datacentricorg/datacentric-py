@@ -3,8 +3,9 @@ import datetime as dt
 
 from bson import ObjectId
 
-from datacentric.types.record import TypedRecord, TypedKey
-from tests.data_sample import BaseSampleKey
+from datacentric.record.typed_record import TypedRecord
+from datacentric.record.typed_key import TypedKey
+from datacentric.test.storage.data_sample import BaseSampleKey
 
 
 class CompositeKeySampleKey(TypedKey['CompositeKeySample']):

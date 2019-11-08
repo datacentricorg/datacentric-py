@@ -1,7 +1,7 @@
 import unittest
 
-from datacentric.platform.storage import DataSetKey
-from datacentric.types.record import Record
+from datacentric.storage.data_set import DataSetKey
+from datacentric.record.record import Record
 
 
 class TestDataSet(unittest.TestCase):

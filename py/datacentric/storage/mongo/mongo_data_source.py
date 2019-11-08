@@ -4,9 +4,9 @@ from bson import ObjectId
 from pymongo import MongoClient
 from pymongo.database import Database
 
-from datacentric.platform.context import Context
-from datacentric.platform.storage import DataSource
-from datacentric.platform.storage.instance_type import InstanceType
+from datacentric.storage.context import Context
+from datacentric.storage.data_source import DataSource
+from datacentric.storage.instance_type import InstanceType
 
 
 class MongoDataSource(DataSource, ABC):

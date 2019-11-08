@@ -4,9 +4,9 @@ from enum import Enum
 from typing import List
 from bson import ObjectId
 
-from datacentric.types.time.local_minute import LocalMinute
-from datacentric.types.record import Data
-import datacentric.types.time.date_ext as date_ext
+from datacentric.date_time.local_minute import LocalMinute
+from datacentric.record.data import Data
+import datacentric.date_time.date_ext as date_ext
 
 
 class Key(Data, ABC):

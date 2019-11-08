@@ -1,8 +1,8 @@
 from bson import ObjectId
 from typing import List
 
-from datacentric.platform.context import Context
-from datacentric.types.record import TypedRecord, TypedKey
+from datacentric.storage.context import Context
+from datacentric.record import TypedRecord, TypedKey
 
 
 class DataSetKey(TypedKey['DataSet']):

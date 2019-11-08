@@ -1,9 +1,9 @@
 import unittest
 import datetime as dt
 
-from datacentric.types.time import LocalMinute
-from tests.data_sample import NullableElementsSample, SampleEnum
-from tests.temporal_test_context import TemporalTestContext
+from datacentric.date_time import LocalMinute
+from datacentric.test.storage.data_sample import NullableElementsSample, SampleEnum
+from datacentric.test.storage.mongo.temporal_test_context import TemporalTestContext
 
 
 class TestQuery(unittest.TestCase):

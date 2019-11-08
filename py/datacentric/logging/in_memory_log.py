@@ -1,9 +1,9 @@
 from io import StringIO
 from os import linesep
 
-from datacentric.platform.logging.log import Log
-from datacentric.platform.logging.log_entry import LogEntry
-from datacentric.platform.logging.log_entry_type import LogEntryType
+from datacentric.logging.log import Log
+from datacentric.logging.log_entry import LogEntry
+from datacentric.logging.log_entry_type import LogEntryType
 
 
 class InMemoryLog(Log):

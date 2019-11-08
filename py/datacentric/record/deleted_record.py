@@ -1,4 +1,4 @@
-from datacentric.types.record import Record
+from datacentric.record.record import Record
 
 
 class DeletedRecord(Record):

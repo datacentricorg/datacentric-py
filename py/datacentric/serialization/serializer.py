@@ -7,11 +7,13 @@ from enum import Enum
 from typing import Dict, Any, get_type_hints, TypeVar
 from typing_inspect import get_origin, get_args
 
-import datacentric.types.time.date_ext as date_ext
-import datacentric.extensions.str as str_ext
-from datacentric.platform.reflection.class_info import ClassInfo
-from datacentric.types.time import LocalMinute
-from datacentric.types.record import Record, Key, Data
+import datacentric.date_time.date_ext as date_ext
+import datacentric.types.str as str_ext
+from datacentric.record.class_info import ClassInfo
+from datacentric.date_time import LocalMinute
+from datacentric.record.key import Key
+from datacentric.record.record import Record
+from datacentric.record.data import Data
 
 TRecord = TypeVar('TRecord', bound=Record)
 
@@ -32,7 +34,7 @@ def _serialize_class(obj: TRecord):
     dict_ = dict()
     dict_['_t'] = obj.__class__.__name__
     mro = inspect.getmro(type(obj))
-    from datacentric.types.record import Record, Data
+    from datacentric.record import Record, Data
 
     if Record in mro:
         idx = mro.index(Record)

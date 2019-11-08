@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from datacentric.platform.logging.log_entry_type import LogEntryType
+from datacentric.logging.log_entry_type import LogEntryType
 
 
 class Log(ABC):

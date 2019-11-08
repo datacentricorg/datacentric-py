@@ -8,11 +8,11 @@ from pymongo.command_cursor import CommandCursor
 import datetime as dt
 import numpy as np
 
-import datacentric.extensions.str as str_ext
-from datacentric.types.time import date_ext
-from datacentric.types.time.local_minute import LocalMinute
-from datacentric.types.record import Record
-from datacentric.platform.serialization.serializer import deserialize
+import datacentric.types.str as str_ext
+from datacentric.date_time import date_ext
+from datacentric.date_time.local_minute import LocalMinute
+from datacentric.record.record import Record
+from datacentric.serialization.serializer import deserialize
 
 TRecord = TypeVar('TRecord', bound=Record)
 
@@ -25,7 +25,7 @@ class TemporalMongoQuery:
     """
     def __init__(self, record_type: type, data_source: 'TemporalMongoDataSource', collection: Collection,
                  load_from: ObjectId):
-        from datacentric.platform.storage import TemporalMongoDataSource
+        from datacentric.storage.mongo.temporal_mongo_data_source import TemporalMongoDataSource
         self._data_source: TemporalMongoDataSource = data_source
         self._type = record_type
         self._collection = collection

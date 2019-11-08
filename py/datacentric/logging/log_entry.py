@@ -1,4 +1,4 @@
-from datacentric.platform.logging.log_entry_type import LogEntryType
+from datacentric.logging.log_entry_type import LogEntryType
 
 
 class LogEntry:

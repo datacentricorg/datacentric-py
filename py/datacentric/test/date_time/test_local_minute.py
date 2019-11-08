@@ -1,6 +1,6 @@
 import unittest
 import datetime as dt
-from datacentric.types.time import LocalMinute
+from datacentric.date_time import LocalMinute
 
 
 class TestLocalMinute(unittest.TestCase):

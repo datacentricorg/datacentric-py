@@ -1,8 +1,9 @@
 from abc import ABC
 from typing import TypeVar, Generic, List
 
-from datacentric.platform.reflection import ClassInfo
-from datacentric.types.record import Record, Key
+from datacentric.record.class_info import ClassInfo
+from datacentric.record.key import Key
+from datacentric.record.record import Record
 
 TKey = TypeVar('TKey')
 

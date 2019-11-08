@@ -2,10 +2,11 @@ from abc import ABC, abstractmethod
 from bson.objectid import ObjectId
 from typing import List, Set, Dict, Iterable, Optional, TypeVar
 
-from datacentric.platform.storage.data_set_flags import DataSetFlags
-from datacentric.platform.storage.db_name import DbNameKey
-from datacentric.types.record import RootRecord, TypedKey, Record
-from datacentric.platform.storage import DataSet, DataSetKey
+from datacentric.storage.data_set_flags import DataSetFlags
+from datacentric.storage.db_name import DbNameKey
+from datacentric.record import RootRecord, TypedKey, Record
+from datacentric.storage.data_set import DataSet
+from datacentric.storage.data_set import DataSetKey
 
 TRecord = TypeVar('TRecord', bound=Record)
 
