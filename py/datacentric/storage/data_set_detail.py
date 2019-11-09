@@ -12,12 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from bson import ObjectId
+from typing import Optional, List
 from datacentric.record.typed_key import TypedKey
 from datacentric.record.typed_record import TypedRecord
 
 
 class DataSetDetailKey(TypedKey['DataSetDetail']):
-    """Key for DataSetDetail."""
+    """
+    Provides the ability to change data associated with the dataset
+    without changing the dataset record, which is immutable in a
+    temporal data source.
+
+    The reason dataset record is immutable is that any change to the
+    the dataset record in a temporal data source results in creation
+    of a record with new TemporalId, which is treated as a new dataset.
+
+    The DataSetDetail record uses TemporalId of the referenced dataset
+    as its primary key. It is located in the parent of the dataset
+    record to which it applies, rather than inside that record, so it
+    is not affected by its own settings.
+    """
 
     __slots__ = ('data_set_id')
 
@@ -50,8 +65,8 @@ class DataSetDetail(TypedRecord[DataSetDetailKey]):
 
     data_set_id: ObjectId
     read_only: bool
-    cutoff_time: ObjectId
-    imports_cutoff_time: ObjectId
+    cutoff_time: Optional[ObjectId]
+    imports_cutoff_time: Optional[ObjectId]
 
     def __init__(self):
         super().__init__()
