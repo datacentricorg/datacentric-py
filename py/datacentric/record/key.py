@@ -28,7 +28,7 @@ class Key(Data, ABC):
     consists of key tokens with semicolon delimiter.
     """
 
-    __slots__: List = []
+    __slots__ = ()
 
     def __init__(self):
         super().__init__()
@@ -48,8 +48,9 @@ class Key(Data, ABC):
         tokens = []
         element_array = self.__slots__
         if type(self.__slots__) is str:
-            element_array = [element_array]
+            element_array = (element_array)
 
+        element: str
         for element in element_array:
             tokens.append(self.get_key_token(self, element))
         return ';'.join(tokens)
@@ -127,7 +128,7 @@ class Key(Data, ABC):
         """
         slots = self.__slots__
         if type(slots) is str:
-            slots = [slots]
+            slots = (slots)
 
         # Singleton key case
         if len(slots) == 0:
@@ -148,6 +149,7 @@ class Key(Data, ABC):
         of the embedded key.
         """
         annotations = type(self).__annotations__
+        slot: str
         for slot in slots:
             member_type = annotations[slot]
             if member_type == type(float):

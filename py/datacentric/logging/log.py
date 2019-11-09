@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from interface import implements, Interface
+from abc import ABC, abstractmethod
 from typing import Optional
 from datacentric.logging.i_log import ILog, LogVerbosityEnum
 from datacentric.logging.log_entry_type import LogEntryType
