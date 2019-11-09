@@ -17,6 +17,7 @@ from datacentric.date_time.local_minute import LocalMinute
 
 # Convert to static methods of utility classes
 
+
 def date_to_iso_int(value: dt.date) -> int:
     return value.year * 10_000 + value.month * 100 + value.day
 

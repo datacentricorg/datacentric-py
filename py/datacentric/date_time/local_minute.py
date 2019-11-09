@@ -14,6 +14,7 @@
 
 from __future__ import annotations
 import datetime as dt
+import numpy as np
 
 # TODO - implementation is incomplete
 
@@ -28,10 +29,10 @@ class LocalMinute:
     and follows the NodaTime naming conventions.
     """
 
-    hour: int
-    minute: int
+    hour: np.int32
+    minute: np.int32
 
-    def __init__(self, hour: int, minute: int):
+    def __init__(self, hour: np.int32, minute: np.int32):
         """
         Creates local time to one minute precision from the specified
         hour and minute.
@@ -48,7 +49,7 @@ class LocalMinute:
         return dt.time(self.hour, self.minute)
 
     @property
-    def minute_of_day(self) -> int:
+    def minute_of_day(self) -> np.int32:
         return self.hour * 60 + self.minute
 
     def __eq__(self, other):
