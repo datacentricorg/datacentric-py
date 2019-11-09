@@ -33,7 +33,7 @@ class RootRecord(TypedRecord[TKey], ABC):
         """
 
         # Initialize base before executing the rest of the code in this method
-        super().__init__()
+        super().init(context)
 
         # For this base type of records stored in root dataset,
         # set data_set element to the value designated for the

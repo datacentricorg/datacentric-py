@@ -67,6 +67,8 @@ class MongoDataSource(DataSource, ABC):
 
         Connects to mongo server and picks database defined by db_name.
         """
+
+        # Initialize base before executing the rest of the code in this method
         super().init(context)
 
         # perform database name validation
@@ -133,4 +135,3 @@ class MongoDataSource(DataSource, ABC):
                 raise Exception(f'As an extra safety measure, database {self.__db_name} cannot be '
                                 f'dropped because this operation is not permitted for database '
                                 f'instance type {self.__instance_type.name}.')
-
