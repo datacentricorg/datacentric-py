@@ -1,3 +1,17 @@
+# Copyright (C) 2013-present The DataCentric Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from abc import ABC
 
 from bson import ObjectId
@@ -10,17 +24,16 @@ from datacentric.storage.instance_type import InstanceType
 
 
 class MongoDataSource(DataSource, ABC):
-    """Abstract base class for data source implementations based on MongoDB.
+    """
+    Abstract base class for data source implementations based on MongoDB.
+
     This class provides functionality shared by all MongoDB data source types.
     """
-    __slots__ = ['mongo_server', '__instance_type', '__client', '__db', '__db_name', '__prev_object_id']
 
-    # Class attributes
+    __slots__ = ('__instance_type', '__client', '__db', '__db_name', '__prev_object_id', 'mongo_server')
+
     __prohibited_symbols = '/\\. "$*<>:|?'
     __max_db_name_length = 64
-
-    # Instance attributes
-    mongo_server: str
 
     __instance_type: InstanceType
     __db: Database
@@ -28,18 +41,25 @@ class MongoDataSource(DataSource, ABC):
     __client: MongoClient
     __prev_object_id: ObjectId
 
+    mongo_server: str
+
     def __init__(self):
         super().__init__()
-
-        self.mongo_server = None
-        """Specifies Mongo server for this data source."""
-
-        # Private part
         self.__instance_type = None
         self.__client = None
         self.__db = None
         self.__db_name = None
         self.__prev_object_id = DataSource._empty_id
+
+        self.mongo_server = None
+        """
+        Specifies Mongo server for this data source.
+
+        Defaults to local server on the standard port if not specified.
+
+        Server URI specified here must refer to the entire server, not
+        an individual database.
+        """
 
     def init(self, context: Context) -> None:
         """Set context and perform validation of the record's data,
@@ -113,3 +133,4 @@ class MongoDataSource(DataSource, ABC):
                 raise Exception(f'As an extra safety measure, database {self.__db_name} cannot be '
                                 f'dropped because this operation is not permitted for database '
                                 f'instance type {self.__instance_type.name}.')
+

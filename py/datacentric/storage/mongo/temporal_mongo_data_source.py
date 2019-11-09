@@ -1,3 +1,17 @@
+# Copyright (C) 2013-present The DataCentric Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import datetime as dt
 from typing import Dict, Optional, TypeVar, Set, Iterable
 from bson import ObjectId
@@ -18,25 +32,28 @@ TRecord = TypeVar('TRecord', bound=Record)
 
 
 class TemporalMongoDataSource(MongoDataSource):
-    """Temporal data source with datasets based on MongoDB.
+    """
+    Temporal data source with datasets based on MongoDB.
 
     The term Temporal applied means the data source stores complete revision
     history including copies of all previous versions of each record.
 
     In addition to being temporal, this data source is also hierarchical; the
     records are looked up across a hierarchy of datasets, including the dataset
-    itself, its direct imports, imports of imports, etc., ordered by dataset's
-    ObjectId"""
-    __slots__ = ('cutoff_time', '__collection_dict', '__data_set_dict', '__data_set_parent_dict',
-                 '__data_set_detail_dict', '__import_dict')
+    itself, its direct Imports, Imports of Imports, etc., ordered by dataset's
+    TemporalId.
+    """
 
-    cutoff_time: Optional[ObjectId]
+    __slots__ = ('__collection_dict', '__data_set_dict', '__data_set_parent_dict',
+                 '__data_set_detail_dict', '__import_dict', 'cutoff_time')
 
     __collection_dict: Dict[type, Collection]
     __data_set_dict: Dict[str, ObjectId]
     __data_set_parent_dict: Dict[ObjectId, ObjectId]
     __data_set_detail_dict: Dict[ObjectId, DataSetDetail]
     __import_dict: Dict[ObjectId, Set[ObjectId]]
+
+    cutoff_time: Optional[ObjectId]
 
     def __init__(self):
         super().__init__()
@@ -47,15 +64,16 @@ class TemporalMongoDataSource(MongoDataSource):
         self.__import_dict = dict()
 
         self.cutoff_time = None
-        """Records with ObjectId that is greater than or equal to cutoff_time
+        """
+        Records with TemporalId that is greater than or equal to CutoffTime
         will be ignored by load methods and queries, and the latest available
-        record where ObjectId is less than cutoff_time will be returned instead.
+        record where TemporalId is less than CutoffTime will be returned instead.
 
-        cutoff_time applies to both the records stored in the dataset itself,
-        and the reports loaded through the imports list.
+        CutoffTime applies to both the records stored in the dataset itself,
+        and the reports loaded through the Imports list.
 
-        cutoff_time may be set in data source globally, or for a specific dataset
-        in its details record. If cutoff_time is set for both, the earlier of the
+        CutoffTime may be set in data source globally, or for a specific dataset
+        in its details record. If CutoffTime is set for both, the earlier of the
         two values will be used.
         """
 

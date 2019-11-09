@@ -1,11 +1,26 @@
-from bson import ObjectId
+# Copyright (C) 2013-present The DataCentric Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-from datacentric.record import TypedKey, TypedRecord
+from datacentric.record.typed_key import TypedKey
+from datacentric.record.typed_record import TypedRecord
 
 
 class DataSetDetailKey(TypedKey['DataSetDetail']):
     """Key for DataSetDetail."""
-    __slots__ = ['data_set_id']
+
+    __slots__ = ('data_set_id')
+
     data_set_id: ObjectId
 
     def __init__(self):
@@ -16,7 +31,8 @@ class DataSetDetailKey(TypedKey['DataSetDetail']):
 
 
 class DataSetDetail(TypedRecord[DataSetDetailKey]):
-    """Provides the ability to change data associated with the dataset
+    """
+    Provides the ability to change data associated with the dataset
     without changing the dataset record, which is immutable in a
     temporal data source.
 
@@ -29,7 +45,9 @@ class DataSetDetail(TypedRecord[DataSetDetailKey]):
     record to which it applies, rather than inside that record, so it
     is not affected by its own settings.
     """
-    __slots__ = ['data_set_id', 'read_only', 'cutoff_time', 'imports_cutoff_time']
+
+    __slots__ = ('data_set_id', 'read_only', 'cutoff_time', 'imports_cutoff_time')
+
     data_set_id: ObjectId
     read_only: bool
     cutoff_time: ObjectId
@@ -37,37 +55,45 @@ class DataSetDetail(TypedRecord[DataSetDetailKey]):
 
     def __init__(self):
         super().__init__()
+
         self.data_set_id = None
         """TemporalId of the referenced dataset."""
 
         self.read_only = None
-        """If specified, write operations to the referenced dataset
+        """
+        If specified, write operations to the referenced dataset
         will result in an error.
         """
 
         self.cutoff_time = None
-        """Records with ObjectId that is greater than or equal to cutoff_time
+        """
+        Records with TemporalId that is greater than or equal to CutoffTime
         will be ignored by load methods and queries, and the latest available
-        record where ObjectId is less than cutoff_time will be returned instead.
-        
-        cutoff_time applies to both the records stored in the dataset itself,
-        and the reports loaded through the imports list.
-        
-        cutoff_time may be set in data source globally, or for a specific dataset
-        in its details record. If cutoff_time is set for both, the earlier of the
+        record where TemporalId is less than CutoffTime will be returned instead.
+
+        CutoffTime applies to both the records stored in the dataset itself,
+        and the reports loaded through the Imports list.
+
+        CutoffTime may be set in data source globally, or for a specific dataset
+        in its details record. If CutoffTime is set for both, the earlier of the
         two values will be used.
         """
 
         self.imports_cutoff_time = None
-        """Imported records (records loaded through the imports list)
-        where ObjectId is greater than or equal to cutoff_time
+        """
+        Imported records (records loaded through the Imports list)
+        where TemporalId is greater than or equal to CutoffTime
         will be ignored by load methods and queries, and the latest
-        available record where ObjectId is less than cutoff_time will
+        available record where TemporalId is less than CutoffTime will
         be returned instead.
-        
-        This setting only affects records loaded through the imports
+
+        This setting only affects records loaded through the Imports
         list. It does not affect records stored in the dataset itself.
-        
-        If imports_cutoff_time is set for both data source and dataset,
+
+        Use this feature to freeze Imports as of a given CreatedTime
+        (part of TemporalId), isolating the dataset from changes to the
+        data in imported datasets that occur after that time.
+
+        If ImportsCutoffTime is set for both data source and dataset,
         the earlier of the two values will be used.
         """

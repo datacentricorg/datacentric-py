@@ -1,18 +1,65 @@
+# Copyright (C) 2013-present The DataCentric Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from abc import ABC, abstractmethod
-from typing import Optional
 
 from datacentric.logging.log_entry_type import LogEntryType
+from datacentric.logging.log_verbosity_enum import LogVerbosityEnum
+from datacentric.record.typed_key import TypedKey
+from datacentric.record.typed_record import TypedRecord
+from Typing import Optional
 
 
-class Log(ABC):
-    verbosity: LogEntryType
-    """Log verbosity is the highest log entry type displayed.
-    Verbosity can be modified at runtime to provide different levels of
-    verbosity for different code segments.
-    """
+class LogKey(TypedKey['Log']):
+    """Key for Log."""
+
+    __slots__ = ('log_name')
+
+    log_name: Optional[str]
 
     def __init__(self):
-        self.verbosity = LogEntryType.Empty
+        super().__init__()
+
+        self.log_name = None
+        """Unique log name."""
+
+
+class Log(TypedRecord[LogKey], ABC):
+    """
+    Log record implements ILog interface for recording log
+    entries in a data source. Each log entry is a separate
+    record.
+
+    The log record serves as the key for querying log entries.
+    To obtain the entire log, run a query for the Log element
+    of the LogEntry record, then sort the entry records by
+    their TemporalId.
+    """
+
+    __slots__ = ('log_name', 'verbosity')
+
+    log_name: Optional[str]
+    verbosity: LogVerbosityEnum
+
+    def __init__(self):
+        super().__init__()
+
+        self.log_name = None
+        """Unique log name."""
+
+        self.verbosity = None
+        """Minimal verbosity for which log entry will be displayed."""
 
     @abstractmethod
     def append(self, entry_type: LogEntryType, entry_sub_type: Optional[str], message: str,

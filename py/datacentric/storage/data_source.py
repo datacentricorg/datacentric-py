@@ -1,35 +1,38 @@
-from abc import ABC, abstractmethod
-from bson.objectid import ObjectId
-from typing import List, Set, Dict, Iterable, Optional, TypeVar
+# Copyright (C) 2013-present The DataCentric Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-from datacentric.storage.data_set_flags import DataSetFlags
-from datacentric.storage.db_name import DbNameKey
-from datacentric.record import RootRecord, TypedKey, Record
-from datacentric.storage.data_set import DataSet
-from datacentric.storage.data_set import DataSetKey
-
-TRecord = TypeVar('TRecord', bound=Record)
+from datacentric.record.typed_key import TypedKey
+from datacentric.record.typed_record import TypedRecord
 
 
 class DataSourceKey(TypedKey['DataSource']):
-    """Key class for DataSource.
-    Record associated with this key is stored in root dataset.
-    """
-    __slots__ = ['data_source_name']
+    """Key for DataSource."""
 
-    data_source_name: str
-    cache: str = 'Cache'
-    master: str = 'Master'
+    __slots__ = ('data_source_name')
 
-    def __init__(self, value: str = None):
+    data_source_name: Optional[str]
+
+    def __init__(self):
         super().__init__()
+
         self.data_source_name = None
-        if value is not None:
-            self.data_source_name = value
+        """Unique data source name."""
 
 
-class DataSource(RootRecord[DataSourceKey], ABC):
-    """Data source is a logical concept similar to database
+class DataSource(TypedRecord[DataSourceKey], ABC):
+    """
+    Data source is a logical concept similar to database
     that can be implemented for a document DB, relational DB,
     key-value store, or filesystem.
 
@@ -42,15 +45,12 @@ class DataSource(RootRecord[DataSourceKey], ABC):
     This record is stored in root dataset.
     """
 
-    __slots__ = ('data_source_name', 'db_name', 'non_temporal', 'readonly')
+    __slots__ = ('data_source_name', 'db_name', 'non_temporal', 'read_only')
 
-    _empty_id = ObjectId('000000000000000000000000')
-    common_id: str = 'Common'
-
-    data_source_name: str
+    data_source_name: Optional[str]
     db_name: DbNameKey
     non_temporal: bool
-    readonly: bool
+    read_only: bool
 
     def __init__(self):
         super().__init__()
@@ -59,10 +59,20 @@ class DataSource(RootRecord[DataSourceKey], ABC):
         """Unique data source name."""
 
         self.db_name = None
-        """Database name."""
+        """
+        This class enforces strict naming conventions
+        for database naming. While format of the resulting database
+        name is specific to data store type, it always consists
+        of three tokens: InstanceType, InstanceName, and EnvName.
+        The meaning of InstanceName and EnvName tokens depends on
+        the value of InstanceType enumeration.
+        """
 
         self.non_temporal = None
-        """For the data stored in data sources where non_temporal == false,
+        """
+        Flag indicating that the data source is non-temporal.
+
+        For the data stored in data sources where NonTemporal == false,
         the data source keeps permanent history of changes to each
         record (except where dataset or record are marked as NonTemporal),
         and provides the ability to access the record as of the specified
@@ -77,8 +87,12 @@ class DataSource(RootRecord[DataSourceKey], ABC):
         datasets in such data source are non-temporal.
         """
 
-        self.readonly = None
-        """Use this flag to mark data source as readonly."""
+        self.read_only = None
+        """
+        Use this flag to mark data source as readonly.
+
+        Data source may also be readonly because CutoffTime is set.
+        """
 
     @abstractmethod
     def create_ordered_object_id(self) -> ObjectId:
