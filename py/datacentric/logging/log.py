@@ -12,13 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from abc import ABC, abstractmethod
-
+from interface import implements, Interface
+from typing import Optional
+from datacentric.logging.i_log import ILog, LogVerbosityEnum
 from datacentric.logging.log_entry_type import LogEntryType
-from datacentric.logging.log_verbosity_enum import LogVerbosityEnum
 from datacentric.record.typed_key import TypedKey
 from datacentric.record.typed_record import TypedRecord
-from Typing import Optional
 
 
 class LogKey(TypedKey['Log']):
