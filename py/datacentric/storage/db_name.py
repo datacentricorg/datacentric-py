@@ -12,12 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Optional
+from abc import ABC
 from datacentric.record.typed_key import TypedKey
-from datacentric.record.typed_record import TypedRecord
+from datacentric.record.root_record import RootRecord
+from datacentric.storage.instance_type import InstanceType
 
 
 class DbNameKey(TypedKey['DbName']):
-    """Key for DbName."""
+    """
+    This class enforces strict naming conventions
+    for database naming. While format of the resulting database
+    name is specific to data store type, it always consists
+    of three tokens: InstanceType, InstanceName, and EnvName.
+    The meaning of InstanceName and EnvName tokens depends on
+    the value of InstanceType enumeration.
+
+    This record is stored in root dataset.
+    """
 
     __slots__ = ('instance_type', 'instance_name', 'env_name')
 
@@ -59,7 +71,7 @@ class DbNameKey(TypedKey['DbName']):
         """
 
 
-class DbName(TypedRecord[DbNameKey], ABC):
+class DbName(RootRecord[DbNameKey], ABC):
     """
     This class enforces strict naming conventions
     for database naming. While format of the resulting database
@@ -73,7 +85,7 @@ class DbName(TypedRecord[DbNameKey], ABC):
 
     __slots__ = ('instance_type', 'instance_name', 'env_name')
 
-    instance_type: InstanceType
+    instance_type: Optional[InstanceType]
     instance_name: Optional[str]
     env_name: Optional[str]
 
