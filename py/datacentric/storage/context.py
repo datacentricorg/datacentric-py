@@ -17,6 +17,10 @@ from typing import Optional
 from bson.objectid import ObjectId
 from datacentric.logging.log import Log
 
+# To prevent linter error on type hint in quotes
+if False:
+    from datacentric.storage.data_source import DataSource
+
 
 class Context:
     """

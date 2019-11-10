@@ -18,6 +18,11 @@ from datacentric.record.typed_key import TypedKey
 from datacentric.record.typed_record import TypedRecord
 from datacentric.logging.log_verbosity import LogVerbosity
 
+# To prevent linter error on type hint in quotes
+if False:
+    from datacentric.storage.context import Context
+    from datacentric.storage.log import LogKey
+
 
 class LogEntryKey(TypedKey['LogEntry']):
     """
