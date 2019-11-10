@@ -13,20 +13,43 @@
 # limitations under the License.
 
 from typing import Optional
+from bson import ObjectId
 from datacentric.record.typed_key import TypedKey
 from datacentric.record.typed_record import TypedRecord
-from datacentric.logging.log import LogKey
 from datacentric.logging.log_verbosity_enum import LogVerbosityEnum
-from datacentric.logging.log_entry_type import LogEntryType
 
 
 class LogEntryKey(TypedKey['LogEntry']):
-    """Key for LogEntry."""
+    """
+    Contains a single entry (message) in a log.
 
-    __slots__ = ('id')
+    The Log record serves as the key for querying LogEntry records.
+    To obtain the entire log, run a query for the Log element of
+    the LogEntry record, then sort the entry records by their TemporalId.
+
+    Derive from this class to provide specialized LogEntry subtypes
+    that include additional data.
+    """
+
+    __slots__ = ('id_')
+
+    id_: ObjectId
 
     def __init__(self):
         super().__init__()
+
+        self.id_ = None
+        """
+        Defining element Id here includes the record's TemporalId
+        in its key. Because TemporalId of the record is specific
+        to its version, this is equivalent to using an auto-
+        incrementing column as part of the record's primary key
+        in a relational database.
+
+        For the record's history to be captured correctly, all
+        update operations must assign a new TemporalId with the
+        timestamp that matches update time.
+        """
 
 
 class LogEntry(TypedRecord[LogEntryKey]):
@@ -43,7 +66,7 @@ class LogEntry(TypedRecord[LogEntryKey]):
 
     __slots__ = ('log', 'verbosity', 'title', 'description')
 
-    log: LogKey
+    log: 'LogKey'
     verbosity: LogVerbosityEnum
     title: Optional[str]
     description: Optional[str]
@@ -77,5 +100,30 @@ class LogEntry(TypedRecord[LogEntryKey]):
         Line breaks, whitespace and other formatting in the description
         will be preserved when the log entry is displayed.
         """
+
+    def init(self, context: 'Context') -> None:
+        """
+        Set Context property and perform validation of the record's data,
+        then initialize any fields or properties that depend on that data.
+
+        This method may be called multiple times for the same instance,
+        possibly with a different context parameter for each subsequent call.
+
+        IMPORTANT - Every override of this method must call base.Init()
+        first, and only then execute the rest of the override method's code.
+        """
+
+        # Initialize base before executing the rest of the code in this method
+        super().init(context)
+
+        # TODO - add validation code
+
     def __str__(self):
+        """
+        Returns verbosity followed by semicolon and then title
+        with line breaks replaced by spaces, for example:
+
+        Info: Sample Info Message
+        """
+        # TODO - provide correct format
         return self._entry_text

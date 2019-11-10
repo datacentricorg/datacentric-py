@@ -15,14 +15,23 @@
 from interface import implements, Interface
 from abc import ABC, abstractmethod
 from typing import Optional
-from datacentric.logging.i_log import ILog, LogVerbosityEnum
-from datacentric.logging.log_entry_type import LogEntryType
+from datacentric.logging.log_entry import LogEntry
+from datacentric.logging.log_verbosity_enum import LogVerbosityEnum
 from datacentric.record.typed_key import TypedKey
 from datacentric.record.typed_record import TypedRecord
 
 
 class LogKey(TypedKey['Log']):
-    """Key for Log."""
+    """
+    Provides a unified API for writing log output to:
+
+    * Console
+    * String
+    * File
+    * Database
+    * Logging frameworks such as log4net and other logging frameworks
+    * Cloud logging services such as AWS CloudWatch
+    """
 
     __slots__ = ('log_name')
 
@@ -37,20 +46,20 @@ class LogKey(TypedKey['Log']):
 
 class Log(TypedRecord[LogKey], ABC):
     """
-    Log record implements ILog interface for recording log
-    entries in a data source. Each log entry is a separate
-    record.
+    Provides a unified API for writing log output to:
 
-    The log record serves as the key for querying log entries.
-    To obtain the entire log, run a query for the Log element
-    of the LogEntry record, then sort the entry records by
-    their TemporalId.
+    * Console
+    * String
+    * File
+    * Database
+    * Logging frameworks such as log4net and other logging frameworks
+    * Cloud logging services such as AWS CloudWatch
     """
 
     __slots__ = ('log_name', 'verbosity')
 
     log_name: Optional[str]
-    verbosity: LogVerbosityEnum
+    verbosity: Optional[LogVerbosityEnum]
 
     def __init__(self):
         super().__init__()
@@ -61,39 +70,84 @@ class Log(TypedRecord[LogKey], ABC):
         self.verbosity = None
         """Minimal verbosity for which log entry will be displayed."""
 
-    @abstractmethod
-    def append(self, entry_type: LogEntryType, entry_sub_type: Optional[str], message: str,
-               *message_params: object) -> None:
-        """Append new entry to the log if entry type is the same or lower than log verbosity.
-        Entry subtype is an optional tag in dot delimited format (specify null if no subtype).
+    def init(self, context: 'Context') -> None:
         """
-        pass
+        Set Context property and perform validation of the record's data,
+        then initialize any fields or properties that depend on that data.
+
+        This method may be called multiple times for the same instance,
+        possibly with a different context parameter for each subsequent call.
+
+        IMPORTANT - Every override of this method must call base.Init()
+        first, and only then execute the rest of the override method's code.
+        """
+
+        # Initialize base before executing the rest of the code in this method
+        super().init(context)
+
+        # If verbosity is None, set to Error
+        # if verbosity is None TODO - fix
+        #    verbosity = LogVerbosity.Error
 
     @abstractmethod
     def flush(self) -> None:
-        """Flush log contents to permanent storage."""
+        """Flush data to permanent storage."""
         pass
 
     @abstractmethod
-    def close(self) -> None:
-        """Close log and release handle to permanent storage."""
+    def publish_entry(self, log_entry: LogEntry) -> None:
+        """
+        Publish the specified entry to the log if log verbosity
+        is the same or high as entry verbosity.
+
+        When log entry data is passed to this method, only the following
+        elements are required:
+
+        * Verbosity
+        * Title (should not have line breaks; if found will be replaced by spaces)
+        * Description (line breaks and formatting will be preserved)
+
+        The remaining fields of LogEntry will be populated if the log
+        entry is published to a data source. They are not necessary if the
+        log entry is published to a text log.
+
+        In a text log, the first line of each log entry is Verbosity
+        followed by semicolon separator and then Title of the log entry.
+        Remaining lines are Description of the log entry recorded with
+        4 space indent but otherwise preserving its formatting.
+
+        Example:
+
+        Info: Sample Title
+            Sample Description Line 1
+            Sample Description Line 2
+        """
         pass
 
-    def exception(self, message: str, *message_params: object) -> Exception:
-        """Record an error message and return exception with the same message.
-        The caller is expected to raise the exception: raise Log.exception(message, messageParams)."""
-        self.append(LogEntryType.Error, None, message, *message_params)
-        e = Exception(message.format(message_params))
-        return e
+    def publish(self, verbosity: LogVerbosityEnum, title: str, description: str = None) -> None:
+        """
+        Publish a new entry to the log if log verbosity
+        is the same or high as entry verbosity.
 
-    def error(self, message: str, *message_params: object) -> None:
-        """Record an error message and throw exception return by Log.exception(...)."""
-        raise self.exception(message, *message_params)
+        In a text log, the first line of each log entry is Verbosity
+        followed by semicolon separator and then Title of the log entry.
+        Remaining lines are Description of the log entry recorded with
+        4 space indent but otherwise preserving its formatting.
 
-    def warning(self, message: str, *message_params: object):
-        """Record a warning."""
-        self.append(LogEntryType.Warning, None, message, *message_params)
+        Example:
 
-    def status(self, message: str, *message_params: object):
-        """Record a status message."""
-        self.append(LogEntryType.Status, None, message, *message_params)
+        Info: Sample Title
+            Sample Description Line 1
+            Sample Description Line 2
+        """
+
+        # Populate only those fields of of the log entry that are passed to this method.
+        # The remaining fields will be populated if the log entry is published to a data
+        # source. They are not necessary if the log entry is published to a text log.
+        log_entry = LogEntry()
+        log_entry.verbosity = verbosity
+        log_entry.title = title
+        log_entry.description = description
+
+        # Publish the log entry to the log
+        self.publish_entry(log_entry)
