@@ -17,7 +17,7 @@ from abc import ABC
 from enum import Enum
 from typing import List
 from bson import ObjectId
-from datacentric.record.data import Data
+from datacentric.storage.data import Data
 from datacentric.date_time.local_minute import LocalMinute
 import datacentric.date_time.date_ext as date_ext
 

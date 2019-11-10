@@ -3,8 +3,8 @@ import datetime as dt
 
 from bson import ObjectId
 
-from datacentric.record.typed_record import TypedRecord
-from datacentric.record.typed_key import TypedKey
+from datacentric.storage.typed_record import TypedRecord
+from datacentric.storage.typed_key import TypedKey
 from datacentric.test.storage.data_sample import BaseSampleKey
 
 

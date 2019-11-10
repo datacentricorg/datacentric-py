@@ -11,7 +11,7 @@ import numpy as np
 import datacentric.types.str as str_ext
 from datacentric.date_time import date_ext
 from datacentric.date_time.local_minute import LocalMinute
-from datacentric.record.record import Record
+from datacentric.storage.record import Record
 from datacentric.serialization.serializer import deserialize
 
 TRecord = TypeVar('TRecord', bound=Record)

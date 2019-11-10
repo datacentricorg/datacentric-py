@@ -14,7 +14,7 @@
 
 from abc import ABC, abstractmethod
 from bson import ObjectId
-from datacentric.record.data import Data
+from datacentric.storage.data import Data
 
 # To prevent linter error on type hint in quotes
 if False:

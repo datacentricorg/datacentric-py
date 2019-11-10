@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from datacentric.record.typed_key import TypedKey
-from datacentric.record.typed_record import TypedRecord
+from datacentric.storage.typed_key import TypedKey
+from datacentric.storage.typed_record import TypedRecord
 
 
 class DataSourceKey(TypedKey['DataSource']):

@@ -9,11 +9,11 @@ from typing_inspect import get_origin, get_args
 
 import datacentric.date_time.date_ext as date_ext
 import datacentric.types.str as str_ext
-from datacentric.record.class_info import ClassInfo
+from datacentric.storage.class_info import ClassInfo
 from datacentric.date_time import LocalMinute
-from datacentric.record.key import Key
-from datacentric.record.record import Record
-from datacentric.record.data import Data
+from datacentric.storage.key import Key
+from datacentric.storage.record import Record
+from datacentric.storage.data import Data
 
 TRecord = TypeVar('TRecord', bound=Record)
 
@@ -34,8 +34,8 @@ def _serialize_class(obj: TRecord):
     dict_ = dict()
     dict_['_t'] = obj.__class__.__name__
     mro = inspect.getmro(type(obj))
-    from datacentric.record.data import Data
-    from datacentric.record.Record import Record
+    from datacentric.storage.data import Data
+    from datacentric.storage.Record import Record
 
     if Record in mro:
         idx = mro.index(Record)

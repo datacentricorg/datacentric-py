@@ -12,9 +12,9 @@ class ClassInfo:
     def get_type(name: str) -> type:
         """Returns data derived type given its name."""
         if not ClassInfo.__is_initialized:
-            from datacentric.record.data import Data
-            from datacentric.record.typed_key import TypedKey
-            from datacentric.record.typed_record import TypedRecord
+            from datacentric.storage.data import Data
+            from datacentric.storage.typed_key import TypedKey
+            from datacentric.storage.typed_record import TypedRecord
             children = ClassInfo.__get_runtime_imported_data(Data, [])
             for child in children:
                 if child not in ClassInfo.__data_types_map:
@@ -32,9 +32,9 @@ class ClassInfo:
         if not typing_inspect.is_generic_type(type_):
             raise Exception(f'Cannot get associated key from not generic type {type_.__name__}')
 
-        from datacentric.record.typed_key import TypedKey
-        from datacentric.record.typed_record import TypedRecord
-        from datacentric.record.root_record import RootRecord
+        from datacentric.storage.typed_key import TypedKey
+        from datacentric.storage.typed_record import TypedRecord
+        from datacentric.storage.root_record import RootRecord
         from typing import ForwardRef
 
         generic_base = typing_inspect.get_generic_bases(type_)[0]
@@ -60,9 +60,9 @@ class ClassInfo:
         if not typing_inspect.is_generic_type(type_):
             raise Exception(f'Cannot get associated key from not generic type {type_.__name__}')
 
-        from datacentric.record.typed_key import TypedKey
-        from datacentric.record.typed_record import TypedRecord
-        from datacentric.record.root_record import RootRecord
+        from datacentric.storage.typed_key import TypedKey
+        from datacentric.storage.typed_record import TypedRecord
+        from datacentric.storage.root_record import RootRecord
         from typing import ForwardRef
 
         generic_base = typing_inspect.get_generic_bases(type_)[0]
@@ -87,10 +87,10 @@ class ClassInfo:
         """Returns type of the class at the root of the inheritance chain, one
         before Data, TypedKey[TRecord], TypedRecord[TKey] or RootRecord[TKey].
         """
-        from datacentric.record.data import Data
-        from datacentric.record.typed_key import TypedKey
-        from datacentric.record.typed_record import TypedRecord
-        from datacentric.record.root_record import RootRecord
+        from datacentric.storage.data import Data
+        from datacentric.storage.typed_key import TypedKey
+        from datacentric.storage.typed_record import TypedRecord
+        from datacentric.storage.root_record import RootRecord
         root_types = [TypedKey, TypedRecord, RootRecord, Data]
 
         if type_.mro()[0] in root_types:

@@ -14,8 +14,8 @@
 
 from typing import Optional
 from bson import ObjectId
-from datacentric.record.typed_key import TypedKey
-from datacentric.record.typed_record import TypedRecord
+from datacentric.storage.typed_key import TypedKey
+from datacentric.storage.typed_record import TypedRecord
 from datacentric.logging.log_verbosity import LogVerbosity
 
 # To prevent linter error on type hint in quotes

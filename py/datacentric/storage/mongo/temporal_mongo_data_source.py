@@ -19,13 +19,13 @@ from pymongo.collection import Collection
 
 from datacentric.storage.data_set_detail import DataSetDetail, DataSetDetailKey
 from datacentric.storage.mongo.temporal_mongo_query import TemporalMongoQuery
-from datacentric.record.typed_key import TypedKey
-from datacentric.record.record import Record
-from datacentric.record.deleted_record import DeletedRecord
+from datacentric.storage.typed_key import TypedKey
+from datacentric.storage.record import Record
+from datacentric.storage.deleted_record import DeletedRecord
 from datacentric.storage.data_set import DataSet, DataSetKey
 from datacentric.storage.data_source import DataSource
-from datacentric.storage.mongo import MongoDataSource
-from datacentric.record.class_info import ClassInfo
+from datacentric.storage.mongo.mongo_data_source  import MongoDataSource
+from datacentric.storage.class_info import ClassInfo
 from datacentric.serialization.serializer import serialize, deserialize
 
 TRecord = TypeVar('TRecord', bound=Record)

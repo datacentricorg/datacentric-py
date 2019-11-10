@@ -4,7 +4,7 @@ from enum import Enum
 from typing import List
 
 from datacentric.date_time import LocalMinute
-from datacentric.record import TypedRecord, TypedKey, Data
+from datacentric.storage import TypedRecord, TypedKey, Data
 
 
 class ElementSample(Data):

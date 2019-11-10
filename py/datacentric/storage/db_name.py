@@ -14,8 +14,8 @@
 
 from typing import Optional
 from abc import ABC
-from datacentric.record.typed_key import TypedKey
-from datacentric.record.root_record import RootRecord
+from datacentric.storage.typed_key import TypedKey
+from datacentric.storage.root_record import RootRecord
 from datacentric.storage.instance_type import InstanceType
 
 

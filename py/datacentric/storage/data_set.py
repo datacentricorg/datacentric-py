@@ -14,8 +14,8 @@
 
 from bson import ObjectId
 from typing import Optional, List
-from datacentric.record.typed_key import TypedKey
-from datacentric.record.typed_record import TypedRecord
+from datacentric.storage.typed_key import TypedKey
+from datacentric.storage.typed_record import TypedRecord
 from datacentric.storage.context import Context
 
 

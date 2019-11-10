@@ -1,9 +1,9 @@
 import unittest
 
-from datacentric.record.class_info import ClassInfo
-from datacentric.record.typed_record import TypedRecord
-from datacentric.record.typed_key import TypedKey
-from datacentric.record.data import Data
+from datacentric.storage.class_info import ClassInfo
+from datacentric.storage.typed_record import TypedRecord
+from datacentric.storage.typed_key import TypedKey
+from datacentric.storage.data import Data
 
 
 class BaseKey(TypedKey['BaseRecord']):

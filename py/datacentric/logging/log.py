@@ -17,8 +17,8 @@ from abc import ABC, abstractmethod
 from typing import Optional
 from datacentric.logging.log_entry import LogEntry
 from datacentric.logging.log_verbosity import LogVerbosity
-from datacentric.record.typed_key import TypedKey
-from datacentric.record.typed_record import TypedRecord
+from datacentric.storage.typed_key import TypedKey
+from datacentric.storage.typed_record import TypedRecord
 
 # To prevent linter error on type hint in quotes
 if False:
