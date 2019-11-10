@@ -15,7 +15,7 @@
 from enum import Enum
 
 
-class LogVerbosityEnum(Enum):
+class LogVerbosity(Enum):
     """
     A log entry is not published to log output if entry verbosity
     exceeds log verbosity.

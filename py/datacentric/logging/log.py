@@ -16,7 +16,7 @@ from interface import implements, Interface
 from abc import ABC, abstractmethod
 from typing import Optional
 from datacentric.logging.log_entry import LogEntry
-from datacentric.logging.log_verbosity_enum import LogVerbosityEnum
+from datacentric.logging.log_verbosity import LogVerbosity
 from datacentric.record.typed_key import TypedKey
 from datacentric.record.typed_record import TypedRecord
 
@@ -59,7 +59,7 @@ class Log(TypedRecord[LogKey], ABC):
     __slots__ = ('log_name', 'verbosity')
 
     log_name: Optional[str]
-    verbosity: Optional[LogVerbosityEnum]
+    verbosity: Optional[LogVerbosity]
 
     def __init__(self):
         super().__init__()
@@ -124,7 +124,7 @@ class Log(TypedRecord[LogKey], ABC):
         """
         pass
 
-    def publish(self, verbosity: LogVerbosityEnum, title: str, description: str = None) -> None:
+    def publish(self, verbosity: LogVerbosity, title: str, description: str = None) -> None:
         """
         Publish a new entry to the log if log verbosity
         is the same or high as entry verbosity.

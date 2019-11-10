@@ -16,7 +16,7 @@ from typing import Optional
 from bson import ObjectId
 from datacentric.record.typed_key import TypedKey
 from datacentric.record.typed_record import TypedRecord
-from datacentric.logging.log_verbosity_enum import LogVerbosityEnum
+from datacentric.logging.log_verbosity import LogVerbosity
 
 
 class LogEntryKey(TypedKey['LogEntry']):
@@ -67,7 +67,7 @@ class LogEntry(TypedRecord[LogEntryKey]):
     __slots__ = ('log', 'verbosity', 'title', 'description')
 
     log: 'LogKey'
-    verbosity: LogVerbosityEnum
+    verbosity: LogVerbosity
     title: Optional[str]
     description: Optional[str]
 
