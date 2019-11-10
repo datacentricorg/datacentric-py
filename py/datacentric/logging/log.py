@@ -151,3 +151,112 @@ class Log(TypedRecord[LogKey], ABC):
 
         # Publish the log entry to the log
         self.publish_entry(log_entry)
+
+    def error(self, title: str, description: str = None) -> None:
+        """
+        Publish an error message to the log for any log verbosity.
+
+        This method does not throw an exception; it is invoked
+        to indicate an error when exception is not necessary,
+        and it may also be invoked when the exception is caught.
+
+        In a text log, the first line of each log entry is Verbosity
+        followed by semicolon separator and then Title of the log entry.
+        Remaining lines are Description of the log entry recorded with
+        4 space indent but otherwise preserving its formatting.
+
+        Example:
+
+        Error: Sample Title
+            Sample Description Line 1
+            Sample Description Line 2
+        """
+        self.publish(LogVerbosity.Error, title, description)
+
+    def warning(self, title: str, description: str = None) -> None:
+        """
+        Publish a warning message to the log if log verbosity
+        is at least Warning.
+
+        Warning messages should be used sparingly to avoid
+        flooding log output with insignificant warnings.
+        A warning message should never be generated inside
+        a loop.
+
+        In a text log, the first line of each log entry is Verbosity
+        followed by semicolon separator and then Title of the log entry.
+        Remaining lines are Description of the log entry recorded with
+        4 space indent but otherwise preserving its formatting.
+
+        Example:
+
+        Warning: Sample Title
+            Sample Description Line 1
+            Sample Description Line 2
+        """
+        self.publish(LogVerbosity.Warning, title, description)
+
+    def info(self, title: str, description: str = None) -> None:
+        """
+        Publish an info message to the log if log verbosity
+        is at least Info.
+
+        Info messages should be used sparingly to avoid
+        flooding log output with superfluous data. An info
+        message should never be generated inside a loop.
+
+        In a text log, the first line of each log entry is Verbosity
+        followed by semicolon separator and then Title of the log entry.
+        Remaining lines are Description of the log entry recorded with
+        4 space indent but otherwise preserving its formatting.
+
+        Example:
+
+        Info: Sample Title
+            Sample Description Line 1
+            Sample Description Line 2
+        """
+        self.publish(LogVerbosity.Info, title, description)
+
+    def verify(self, title: str, description: str = None) -> None:
+        """
+        Publish a verification message to the log if log verbosity
+        is at least Verify.
+
+        In a text log, the first line of each log entry is Verbosity
+        followed by semicolon separator and then Title of the log entry.
+        Remaining lines are Description of the log entry recorded with
+        4 space indent but otherwise preserving its formatting.
+
+        Example:
+
+        Verify: Sample Title
+            Sample Description Line 1
+            Sample Description Line 2
+        """
+        self.publish(LogVerbosity.Verify, title, description)
+
+    def assert_(self, condition: bool, title: str, description: str = None) -> None:
+        """
+        If condition is false, record an error message for any
+        verbosity. If condition is true, record a verification
+        message to the log if log verbosity is at least Verify.
+
+        In a text log, the first line of each log entry is Verbosity
+        followed by semicolon separator and then Title of the log entry.
+        Remaining lines are Description of the log entry recorded with
+        4 space indent but otherwise preserving its formatting.
+
+        Example:
+
+        Verify: Sample Title
+            Sample Description Line 1
+            Sample Description Line 2
+        """
+
+        # Records a log entry for any verbosity if condition is false,
+        # but requires at least Verify verbosity if condition is true
+        if condition:
+            self.error(title, description)
+        else:
+            self.verify(title, description)
