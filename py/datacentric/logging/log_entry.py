@@ -66,8 +66,8 @@ class LogEntry(TypedRecord[LogEntryKey]):
 
     __slots__ = ('log', 'verbosity', 'title', 'description')
 
-    log: 'LogKey'
-    verbosity: LogVerbosity
+    log: Optional['LogKey']
+    verbosity: Optional[LogVerbosity]
     title: Optional[str]
     description: Optional[str]
 
