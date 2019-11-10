@@ -14,16 +14,15 @@
 
 from abc import ABC, abstractmethod
 from bson import ObjectId
-from datacentric.storage.i_context import IContext
 from datacentric.record.data import Data
 
 
 class Record(Data, ABC):
     """Base class of records stored in data source."""
 
-    __slots__ = ('context', 'id_', 'data_set', '_key')
+    __slots__ = ('__context', 'id_', 'data_set', '_key')
 
-    context: IContext
+    __context: 'Context'
     id_: ObjectId
     data_set: ObjectId
     _key: str
@@ -69,7 +68,20 @@ class Record(Data, ABC):
         can have any atomic type except float.
         """
 
-    def init(self, context: IContext) -> None:
+    @property
+    def context(self) -> 'Context':
+        """
+        Execution context provides access to key resources including:
+
+        * Logging and error reporting
+        * Cloud calculation service
+        * Data sources
+        * Filesystem
+        * Progress reporting
+        """
+        return self.__context
+
+    def init(self, context: 'Context') -> None:
         """
         Set Context property and perform validation of the record's data,
         then initialize any fields or properties that depend on that data.
@@ -80,10 +92,10 @@ class Record(Data, ABC):
         IMPORTANT - Every override of this method must call base.Init()
         first, and only then execute the rest of the override method's code.
         """
-        if context is None:
+        if self.__context is None:
             raise Exception(
-                f'Null context is passed to the Init(...) method for {type(self).__name__}."')
-        self.context = context
+                f"Null context is passed to the Init(...) method for {type(self).__name__}.")
+        self.__context = context
 
     @property
     @abstractmethod
