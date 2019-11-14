@@ -96,7 +96,7 @@ class Record(Data, ABC):
         IMPORTANT - Every override of this method must call base.Init()
         first, and only then execute the rest of the override method's code.
         """
-        if self.__context is None:
+        if context is None:
             raise Exception(
                 f"Null context is passed to the Init(...) method for {type(self).__name__}.")
         self.__context = context
