@@ -35,7 +35,7 @@ def _serialize_class(obj: TRecord):
     dict_['_t'] = obj.__class__.__name__
     mro = inspect.getmro(type(obj))
     from datacentric.storage.data import Data
-    from datacentric.storage.Record import Record
+    from datacentric.storage.record import Record
 
     if Record in mro:
         idx = mro.index(Record)
