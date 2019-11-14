@@ -3,7 +3,6 @@ from os import linesep
 
 from datacentric.logging.log import Log
 from datacentric.logging.log_entry import LogEntry
-from datacentric.logging.log_entry_type import LogEntryType
 
 
 class InMemoryLog(Log):
@@ -24,6 +23,7 @@ class InMemoryLog(Log):
 
     def append(self, entry_type: LogEntryType, entry_sub_type: str, message: str, *message_params: object) -> None:
         if self.verbosity == LogEntryType.Empty or entry_type <= self.verbosity:
-            log_entry = LogEntry(entry_type, entry_sub_type, message, *message_params)
-            self.__str_io.write(str(log_entry))
+            # TODO: Fix
+            # log_entry = LogEntry(entry_type, entry_sub_type, message, *message_params)
+            # self.__str_io.write(str(log_entry))
             self.__str_io.write(linesep)

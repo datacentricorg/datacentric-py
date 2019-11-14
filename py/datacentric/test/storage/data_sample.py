@@ -3,8 +3,10 @@ import numpy as np
 from enum import Enum
 from typing import List
 
-from datacentric.date_time import LocalMinute
-from datacentric.storage import TypedRecord, TypedKey, Data
+from datacentric.date_time.local_minute import LocalMinute
+from datacentric.storage.typed_record import TypedRecord
+from datacentric.storage.typed_key import TypedKey
+from datacentric.storage.data import Data
 
 
 class ElementSample(Data):

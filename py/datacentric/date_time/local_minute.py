@@ -29,10 +29,10 @@ class LocalMinute:
     and follows the NodaTime naming conventions.
     """
 
-    hour: np.int32
-    minute: np.int32
+    hour: int
+    minute: int
 
-    def __init__(self, hour: np.int32, minute: np.int32):
+    def __init__(self, hour: int, minute: int):
         """
         Creates local time to one minute precision from the specified
         hour and minute.

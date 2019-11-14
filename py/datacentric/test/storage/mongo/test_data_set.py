@@ -7,7 +7,8 @@ from datacentric.storage.record import Record
 class TestDataSet(unittest.TestCase):
     def test_key_instantiation(self):
         null_key = DataSetKey()
-        key = DataSetKey('key_id')
+        key = DataSetKey()
+        key.data_set_name = 'key_id'
         self.assertTrue(null_key.data_set_name is None)
         self.assertTrue(key.data_set_name == 'key_id')
 

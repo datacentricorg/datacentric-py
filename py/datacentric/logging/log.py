@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from interface import implements, Interface
 from abc import ABC, abstractmethod
 from typing import Optional
 from datacentric.logging.log_entry import LogEntry
