@@ -12,18 +12,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Optional
 from abc import ABC, abstractmethod
+from typing import Optional, TypeVar, Iterable, List
+from bson import ObjectId
 
-from datacentric.storage.env_type import EnvType
+from datacentric.storage.data_set_flags import DataSetFlags
 from datacentric.storage.typed_key import TypedKey
+from datacentric.storage.record import Record
 from datacentric.storage.typed_record import TypedRecord
+from datacentric.storage.data_set import DataSet
+from datacentric.storage.env_type import EnvType
+
+TRecord = TypeVar('TRecord', bound=Record)
 
 
 class DataSourceKey(TypedKey['DataSource']):
-    """Key for DataSource."""
+    """
+    Data source is a logical concept similar to database
+    that can be implemented for a document DB, relational DB,
+    key-value store, or filesystem.
 
-    __slots__ = ('data_source_name')
+    Data source API provides the ability to:
+
+    (a) store and query datasets;
+    (b) store records in a specific dataset; and
+    (c) query record across a group of datasets.
+
+    This record is stored in root dataset.
+    """
+
+    __slots__ = ('data_source_name',)
 
     data_source_name: Optional[str]
 
@@ -49,10 +67,15 @@ class DataSource(TypedRecord[DataSourceKey], ABC):
     This record is stored in root dataset.
     """
 
-    __slots__ = ('data_source_name', 'db_name', 'non_temporal', 'read_only')
+    __slots__ = ('data_source_name', 'env_type', 'env_group', 'env_name', 'non_temporal', 'read_only')
+
+    _empty_id = ObjectId('000000000000000000000000')
+    common_id: str = 'Common'
 
     data_source_name: Optional[str]
     env_type: EnvType
+    env_group: Optional[str]
+    env_name: Optional[str]
     non_temporal: bool
     read_only: bool
 
@@ -62,14 +85,34 @@ class DataSource(TypedRecord[DataSourceKey], ABC):
         self.data_source_name = None
         """Unique data source name."""
 
-        self.db_name = None
+        self.env_type = None
         """
-        This class enforces strict naming conventions
-        for database naming. While format of the resulting database
-        name is specific to data store type, it always consists
-        of three tokens: InstanceType, InstanceName, and EnvName.
-        The meaning of InstanceName and EnvName tokens depends on
-        the value of InstanceType enumeration.
+        Environment type enumeration.
+
+        Some API functions are restricted based on the environment type.
+        """
+
+        self.env_group = None
+        """
+        The meaning of environment group depends on the environment type.
+
+        * For PROD, UAT, and DEV environment types, environment group
+        identifies the endpoint.
+
+        * For USER environment type, environment group is user alias.
+
+        * For TEST environment type, environment group is the name of
+        the unit test class (test fixture).
+        """
+
+        self.env_name = None
+        """
+        The meaning of environment name depends on the environment type.
+
+        * For PROD, UAT, DEV, and USER environment types, it is the
+        name of the user environment selected in the client.
+
+        * For TEST environment type, it is the test method name.
         """
 
         self.non_temporal = None
