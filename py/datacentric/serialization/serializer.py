@@ -4,7 +4,7 @@ import inspect
 import itertools
 from bson import ObjectId
 from enum import Enum
-from typing import Dict, Any, get_type_hints, TypeVar
+from typing import Dict, Any, get_type_hints, TypeVar, Union
 from typing_inspect import get_origin, get_args
 
 import datacentric.date_time.date_ext as date_ext
@@ -141,6 +141,13 @@ def _deserialize_class(dict_: Dict[str, Any]) -> TRecord:
         slot = str_ext.to_snake_case(dict_key)
         hints = get_type_hints(type_info)
         member_type = hints[slot]
+
+        # Resolve Optional[Type] case
+        if get_origin(member_type) is not None and get_origin(member_type) is Union:
+            union_args = get_args(member_type)
+            if union_args[1] is type(None):
+                member_type = union_args[0]
+
         if get_origin(member_type) is not None and get_origin(member_type) is list:
             deserialized_value = _deserialize_list(member_type, dict_value)
         elif issubclass(member_type, Key):
