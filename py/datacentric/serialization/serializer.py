@@ -10,7 +10,7 @@ from typing_inspect import get_origin, get_args
 import datacentric.date_time.date_ext as date_ext
 import datacentric.types.str as str_ext
 from datacentric.storage.class_info import ClassInfo
-from datacentric.date_time import LocalMinute
+from datacentric.date_time.local_minute import LocalMinute
 from datacentric.storage.key import Key
 from datacentric.storage.record import Record
 from datacentric.storage.data import Data

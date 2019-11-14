@@ -16,7 +16,7 @@ from typing import Optional
 from abc import ABC
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.root_record import RootRecord
-from datacentric.storage.instance_type import InstanceType
+from datacentric.storage.instance_type import EnvType
 
 
 class DbNameKey(TypedKey['DbName']):
@@ -33,7 +33,7 @@ class DbNameKey(TypedKey['DbName']):
 
     __slots__ = ('instance_type', 'instance_name', 'env_name')
 
-    instance_type: InstanceType
+    instance_type: EnvType
     instance_name: Optional[str]
     env_name: Optional[str]
 
@@ -85,7 +85,7 @@ class DbName(RootRecord[DbNameKey], ABC):
 
     __slots__ = ('instance_type', 'instance_name', 'env_name')
 
-    instance_type: Optional[InstanceType]
+    instance_type: Optional[EnvType]
     instance_name: Optional[str]
     env_name: Optional[str]
 

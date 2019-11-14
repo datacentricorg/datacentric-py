@@ -20,7 +20,7 @@ from pymongo.database import Database
 
 from datacentric.storage.context import Context
 from datacentric.storage.data_source import DataSource
-from datacentric.storage.instance_type import InstanceType
+from datacentric.storage.instance_type import EnvType
 
 
 class MongoDataSource(DataSource, ABC):
@@ -35,7 +35,7 @@ class MongoDataSource(DataSource, ABC):
     __prohibited_symbols = '/\\. "$*<>:|?'
     __max_db_name_length = 64
 
-    __instance_type: InstanceType
+    __instance_type: EnvType
     __db: Database
     __db_name: str
     __client: MongoClient
@@ -74,7 +74,7 @@ class MongoDataSource(DataSource, ABC):
         # perform database name validation
         if self.db_name is None:
             raise Exception('DB key is null or empty.')
-        if self.db_name.instance_type == InstanceType.Empty:
+        if self.db_name.instance_type == EnvType.Empty:
             raise Exception('DB instance type is not specified.')
         if not self.db_name.instance_name:
             raise Exception('DB instance name is not specified.')
@@ -129,7 +129,7 @@ class MongoDataSource(DataSource, ABC):
             raise Exception(f'Attempting to drop (delete) database for the data source {self.data_source_name} '
                             f'where ReadOnly flag is set.')
         if self.__client is not None and self.__db is not None:
-            if self.__instance_type in [InstanceType.DEV, InstanceType.USER, InstanceType.TEST]:
+            if self.__instance_type in [EnvType.Dev, EnvType.User, EnvType.Test]:
                 self.__client.drop_database(self.__db)
             else:
                 raise Exception(f'As an extra safety measure, database {self.__db_name} cannot be '

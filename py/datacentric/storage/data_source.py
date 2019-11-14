@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Optional
+from abc import ABC, abstractmethod
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
 
@@ -48,7 +50,7 @@ class DataSource(TypedRecord[DataSourceKey], ABC):
     __slots__ = ('data_source_name', 'db_name', 'non_temporal', 'read_only')
 
     data_source_name: Optional[str]
-    db_name: DbNameKey
+    env_type: EnvType
     non_temporal: bool
     read_only: bool
 

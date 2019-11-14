@@ -15,7 +15,7 @@
 from enum import Enum
 
 
-class InstanceType(Enum):
+class EnvType(Enum):
     """
     Specifies instance type.
 
@@ -25,7 +25,7 @@ class InstanceType(Enum):
     Empty = 0,
     """Empty"""
 
-    PROD = 1,
+    Prod = 1,
     """
     Production instance type.
 
@@ -35,7 +35,7 @@ class InstanceType(Enum):
     through the API call.
     """
 
-    UAT = 2,
+    Uat = 2,
     """
     Shared user acceptance testing instance type.
 
@@ -45,7 +45,7 @@ class InstanceType(Enum):
     call.
     """
 
-    DEV = 3,
+    Dev = 3,
     """
     Shared development instance type.
 
@@ -53,7 +53,7 @@ class InstanceType(Enum):
     restrictions.
     """
 
-    USER = 4,
+    User = 4,
     """
     Personal instance type of a specific user.
 
@@ -61,11 +61,23 @@ class InstanceType(Enum):
     free from most restrictions.
     """
 
-    TEST = 5,
+    Test = 5,
     """
     Instance type is used for unit testing.
 
     Databases for the test instance type are routinely
     cleared (deleted). They should not be used for any
     purpose other than unit tests.
+    """
+
+    Custom = 6,
+    """Environment type is used to specify a custom database
+    name that does not use the standard semicolon delimited
+    format of other environment types.
+    
+    For this environment type, EnvGroup must be null and
+    EnvName is database name.
+    
+    Database for this environment type cannot be deleted
+    (dropped) through an API call.
     """
