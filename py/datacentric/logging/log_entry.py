@@ -21,7 +21,7 @@ from datacentric.logging.log_verbosity import LogVerbosity
 # To prevent linter error on type hint in quotes
 if False:
     from datacentric.storage.context import Context
-    from datacentric.storage.log import LogKey
+    from datacentric.logging.log import LogKey
 
 
 class LogEntryKey(TypedKey['LogEntry']):
@@ -131,4 +131,4 @@ class LogEntry(TypedRecord[LogEntryKey]):
         Info: Sample Info Message
         """
         # TODO - provide correct format
-        return self._entry_text
+        return self.title

@@ -20,7 +20,6 @@ class ConsoleLog(TextLog):
 
     __slots__ = ()
 
-
     def __init__(self):
         super().__init__()
 
