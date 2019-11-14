@@ -37,7 +37,11 @@ class TypedRecord(Generic[TKey], Record, ABC):
         key_type = ClassInfo.get_key_from_record(type(self))
 
         key_slots = key_type.__slots__
+        if type(key_slots) is str:
+            key_slots = [key_slots]
         data_slots = self.__slots__
+        if type(data_slots) is str:
+            data_slots = [data_slots]
 
         if len(key_slots) > len(data_slots):
             raise Exception(

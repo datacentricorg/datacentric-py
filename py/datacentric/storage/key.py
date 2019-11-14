@@ -48,7 +48,7 @@ class Key(Data, ABC):
         tokens = []
         element_array = self.__slots__
         if type(self.__slots__) is str:
-            element_array = (element_array)
+            element_array = (element_array,)
 
         element: str
         for element in element_array:
