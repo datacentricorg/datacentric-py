@@ -15,11 +15,7 @@
 from abc import ABC, abstractmethod
 from bson import ObjectId
 from datacentric.storage.data import Data
-
-# To prevent linter error on type hint in quotes
-if False:
-    from datacentric.storage.context import Context
-
+from datacentric.storage.context import Context
 
 class Record(Data, ABC):
     """Base class of records stored in data source."""

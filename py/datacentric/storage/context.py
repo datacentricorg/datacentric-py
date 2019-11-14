@@ -12,13 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# from interface import implements, Interface
-from typing import Optional
 from bson.objectid import ObjectId
-from datacentric.logging.log import Log
 
 # To prevent linter error on type hint in quotes
 if False:
+    from datacentric.logging.log import Log
     from datacentric.storage.data_source import DataSource
 
 
@@ -35,7 +33,7 @@ class Context:
 
     data_source: 'DataSource'
     data_set: ObjectId
-    log: Log
+    log: 'Log'
 
     def __init__(self):
         self.data_source = None

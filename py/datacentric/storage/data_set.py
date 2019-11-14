@@ -16,7 +16,6 @@ from bson import ObjectId
 from typing import Optional, List
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
-from datacentric.storage.context import Context
 
 
 class DataSetKey(TypedKey['DataSet']):
@@ -42,7 +41,7 @@ class DataSetKey(TypedKey['DataSet']):
     lookup sequence. The root dataset cannot have Imports.
     """
 
-    __slots__ = ('data_set_name')
+    __slots__ = ('data_set_name',)
 
     data_set_name: Optional[str]
 
