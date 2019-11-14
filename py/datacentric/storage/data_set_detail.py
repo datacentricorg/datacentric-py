@@ -34,7 +34,7 @@ class DataSetDetailKey(TypedKey['DataSetDetail']):
     is not affected by its own settings.
     """
 
-    __slots__ = ('data_set_id')
+    __slots__ = ('data_set_id',)
 
     data_set_id: ObjectId
 

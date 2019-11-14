@@ -73,7 +73,7 @@ class DataSource(TypedRecord[DataSourceKey], ABC):
     common_id: str = 'Common'
 
     data_source_name: Optional[str]
-    env_type: EnvType
+    env_type: Optional[EnvType]
     env_group: Optional[str]
     env_name: Optional[str]
     non_temporal: bool
@@ -101,8 +101,8 @@ class DataSource(TypedRecord[DataSourceKey], ABC):
 
         * For USER environment type, environment group is user alias.
 
-        * For TEST environment type, environment group is the name of
-        the unit test class (test fixture).
+        * For TEST environment type, environment group is TestCaseName,
+        the unique identifier of test case record.
         """
 
         self.env_name = None

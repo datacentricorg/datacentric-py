@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from bson import ObjectId
-from typing import Optional, List
+from typing import List, Optional
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
 
@@ -118,5 +118,3 @@ class DataSet(TypedRecord[DataSetKey]):
         The parent dataset is not included in the list of Imports by
         default and must be included in the list of Imports explicitly.
         """
-
-# TODO - Implement init(...)

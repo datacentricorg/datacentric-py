@@ -17,9 +17,9 @@ from enum import Enum
 
 class EnvType(Enum):
     """
-    Specifies instance type.
+    Specifies environment type.
 
-    Some API functions are restricted based on the instance type.
+    Some API functions are restricted based on the environment type.
     """
 
     Empty = 0,
@@ -27,57 +27,82 @@ class EnvType(Enum):
 
     Prod = 1,
     """
-    Production instance type.
+    Production environment.
 
-    This instance type is used for live production data
-    and has the most restrictions. For example, it
-    does not allow a database to be deleted (dropped)
-    through the API call.
+    This environment type is used for live production data.
+
+    For this environment type, database name is semicolon
+    delimited string with the following format:
+
+    PROD;EnvGroup;EnvName
+
+    Database for this environment type cannot be deleted
+    (dropped) through an API call.
     """
 
     Uat = 2,
     """
-    Shared user acceptance testing instance type.
+    Shared UAT (user acceptance testing) environment.
 
-    This instance type is used has some of the restrictions
-    of the PROD instance type, including the restriction
-    on deleting (dropping) the database through an API
-    call.
+    For this environment type, database name is semicolon
+    delimited string with the following format:
+
+    UAT;EnvGroup;EnvName
+
+    Database for this environment type cannot be deleted
+    (dropped) through an API call.
     """
 
     Dev = 3,
     """
-    Shared development instance type.
+    Shared environment used for development.
 
-    This instance type is shared but is free from most
-    restrictions.
+    For this environment type, database name is semicolon
+    delimited string with the following format:
+
+    DEV;EnvGroup;EnvName
+
+    Database for this environment type CAN be deleted
+    (dropped) through an API call.
     """
 
     User = 4,
     """
-    Personal instance type of a specific user.
+    Personal environment of a specific user.
 
-    This instance type is not shared between users and is
-    free from most restrictions.
+    For this environment type, database name is semicolon
+    delimited string with the following format:
+
+    USER;EnvGroup;EnvName
+
+    Database for this environment type CAN be deleted
+    (dropped) through an API call.
     """
 
     Test = 5,
     """
-    Instance type is used for unit testing.
+    Environment used for unit testing.
 
-    Databases for the test instance type are routinely
-    cleared (deleted). They should not be used for any
-    purpose other than unit tests.
+    For this environment type, database name is semicolon
+    delimited string with the following format:
+
+    TEST;EnvGroup;EnvName
+
+    IMPORTANT - Database for the test environment type is
+    AUTOMATICALLY deleted (dropped) at the start and the end
+    of each unit test execution. They should not be used for
+    any purpose other than unit tests.
     """
 
     Custom = 6,
-    """Environment type is used to specify a custom database
+    """
+    Environment type is used to specify a custom database
     name that does not use the standard semicolon delimited
     format of other environment types.
-    
+
     For this environment type, EnvGroup must be null and
     EnvName is database name.
-    
+
     Database for this environment type cannot be deleted
     (dropped) through an API call.
     """
