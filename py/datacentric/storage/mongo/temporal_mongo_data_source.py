@@ -24,7 +24,7 @@ from datacentric.storage.record import Record
 from datacentric.storage.deleted_record import DeletedRecord
 from datacentric.storage.data_set import DataSet, DataSetKey
 from datacentric.storage.data_source import DataSource
-from datacentric.storage.mongo.mongo_data_source  import MongoDataSource
+from datacentric.storage.mongo.mongo_data_source import MongoDataSource
 from datacentric.storage.class_info import ClassInfo
 from datacentric.serialization.serializer import serialize, deserialize
 
@@ -439,7 +439,7 @@ class TemporalMongoDataSource(MongoDataSource):
                         result.add(import_id)
 
     def _check_not_readonly(self, data_set_id: ObjectId):
-        if self.readonly:
+        if self.read_only:
             raise Exception(f'Attempting write operation for data source {self.data_source_name} '
                             f'where ReadOnly flag is set.')
         data_set_detail = self.get_data_set_detail_or_none(data_set_id)
