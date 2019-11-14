@@ -30,12 +30,12 @@ class MongoDataSource(DataSource, ABC):
     This class provides functionality shared by all MongoDB data source types.
     """
 
-    __slots__ = ('__instance_type', '__client', '__db', '__db_name', '__prev_object_id', 'mongo_server')
+    __slots__ = ('__env_type', '__client', '__db', '__db_name', '__prev_object_id', 'mongo_server')
 
     __prohibited_symbols = '/\\. "$*<>:|?'
     __max_db_name_length = 64
 
-    __instance_type: EnvType
+    __env_type: EnvType
     __db: Database
     __db_name: str
     __client: MongoClient
@@ -45,7 +45,7 @@ class MongoDataSource(DataSource, ABC):
 
     def __init__(self):
         super().__init__()
-        self.__instance_type = None
+        self.__env_type = None
         self.__client = None
         self.__db = None
         self.__db_name = None
@@ -72,17 +72,27 @@ class MongoDataSource(DataSource, ABC):
         super().init(context)
 
         # perform database name validation
-        if self.db_name is None:
-            raise Exception('DB key is null or empty.')
-        if self.db_name.instance_type == EnvType.Empty:
+        if self.env_type == EnvType.Empty:
             raise Exception('DB instance type is not specified.')
-        if not self.db_name.instance_name:
+        if not self.env_group:
             raise Exception('DB instance name is not specified.')
-        if not self.db_name.env_name:
+        if not self.env_name:
             raise Exception('DB environment name is not specified.')
 
-        self.__db_name = self.db_name.value
-        self.__instance_type = self.db_name.instance_type
+        self.__env_type = self.env_type
+
+        if self.__env_type in [EnvType.Prod, EnvType.Uat, EnvType.Dev, EnvType.Test]:
+            self.__db_name = ';'.join([self.__env_type.name.upper(), self.env_group, self.env_name])
+        elif self.__env_type == EnvType.Custom:
+            if self.env_group is not None or self.env_group == '':
+                raise Exception(f'env_group={self.env_group} is specified, but '
+                                f'should be empty for Custom environment type.')
+            self.__db_name = self.env_name
+        elif self.__env_type == EnvType.Empty:
+            raise Exception(f'EnvType is empty for DataSourceName={self.data_source_name}.')
+        else:
+            raise Exception(f'Unknown env_type={self.__env_type}.')
+
         if any(x in self.__db_name for x in MongoDataSource.__prohibited_symbols):
             raise Exception(f'MongoDB database name {self.__db_name} contains a space or another '
                             f'prohibited character from the following list: /\\.\"$*<>:|?')
@@ -125,13 +135,13 @@ class MongoDataSource(DataSource, ABC):
         ATTENTION - THIS METHOD WILL DELETE ALL DATA WITHOUT
         THE POSSIBILITY OF RECOVERY. USE WITH CAUTION.
         """
-        if self.readonly is not None and self.readonly:
+        if self.read_only is not None and self.read_only:
             raise Exception(f'Attempting to drop (delete) database for the data source {self.data_source_name} '
                             f'where ReadOnly flag is set.')
         if self.__client is not None and self.__db is not None:
-            if self.__instance_type in [EnvType.Dev, EnvType.User, EnvType.Test]:
+            if self.__env_type in [EnvType.Dev, EnvType.User, EnvType.Test]:
                 self.__client.drop_database(self.__db)
             else:
                 raise Exception(f'As an extra safety measure, database {self.__db_name} cannot be '
                                 f'dropped because this operation is not permitted for database '
-                                f'instance type {self.__instance_type.name}.')
+                                f'instance type {self.__env_type.name.upper()}.')
