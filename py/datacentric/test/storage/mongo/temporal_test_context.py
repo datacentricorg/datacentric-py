@@ -1,5 +1,4 @@
 from datacentric.storage.context import Context
-from datacentric.logging.in_memory_log import InMemoryLog
 from datacentric.storage.mongo.temporal_mongo_data_source import TemporalMongoDataSource
 from datacentric.storage.db_name import DbNameKey
 from datacentric.storage.instance_type import InstanceType
@@ -22,7 +21,6 @@ class TemporalTestContext:
 
         context.data_source = source
         context.data_set = context.data_source.create_common()
-        context.log = InMemoryLog()
 
         return context
 
