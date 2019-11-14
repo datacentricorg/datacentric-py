@@ -1,7 +1,7 @@
 from datacentric.storage.context import Context
 from datacentric.storage.mongo.temporal_mongo_data_source import TemporalMongoDataSource
 from datacentric.storage.db_name import DbNameKey
-from datacentric.storage.instance_type import EnvType
+from datacentric.storage.env_type import EnvType
 
 
 class TemporalTestContext:

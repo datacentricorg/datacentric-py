@@ -20,7 +20,7 @@ from pymongo.database import Database
 
 from datacentric.storage.context import Context
 from datacentric.storage.data_source import DataSource
-from datacentric.storage.instance_type import EnvType
+from datacentric.storage.env_type import EnvType
 
 
 class MongoDataSource(DataSource, ABC):

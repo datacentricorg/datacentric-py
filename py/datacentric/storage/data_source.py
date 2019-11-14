@@ -14,6 +14,8 @@
 
 from typing import Optional
 from abc import ABC, abstractmethod
+
+from datacentric.storage.env_type import EnvType
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
 
