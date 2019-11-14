@@ -36,7 +36,7 @@ class LogEntryKey(TypedKey['LogEntry']):
     that include additional data.
     """
 
-    __slots__ = ('id_')
+    __slots__ = ('id',)
 
     id_: ObjectId
 

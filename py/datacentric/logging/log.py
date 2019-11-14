@@ -36,7 +36,7 @@ class LogKey(TypedKey['Log']):
     * Cloud logging services such as AWS CloudWatch
     """
 
-    __slots__ = ('log_name')
+    __slots__ = ('log_name',)
 
     log_name: Optional[str]
 
