@@ -11,5 +11,5 @@ from datacentric.storage.data_source import DataSource, DataSourceKey
 from datacentric.storage.mongo.mongo_data_source import MongoDataSource
 from datacentric.storage.mongo.temporal_mongo_data_source import TemporalMongoDataSource
 
-from datacentric.testing.test_case import TestCaseKey, TestCase
+from datacentric.testing.unit_test import UnitTestKey, UnitTest
 from datacentric.date_time.zone import ZoneKey, Zone

@@ -19,7 +19,7 @@ from datacentric.storage.typed_record import TypedRecord
 from datacentric.testing.test_complexity import TestComplexity
 
 
-class TestCaseKey(TypedKey['TestCase']):
+class UnitTestKey(TypedKey['UnitTest']):
     """
     Base class for executing the tests using:
 
@@ -31,14 +31,14 @@ class TestCaseKey(TypedKey['TestCase']):
     access to the xUnit test runner is not available.
     """
 
-    __slots__ = ('test_case_name',)
+    __slots__ = ('unit_test_name',)
 
-    test_case_name: Optional[str]
+    unit_test_name: Optional[str]
 
     def __init__(self):
         super().__init__()
 
-        self.test_case_name = None
+        self.unit_test_name = None
         """
         Unique test name.
 
@@ -47,7 +47,7 @@ class TestCaseKey(TypedKey['TestCase']):
         """
 
 
-class TestCase(TypedRecord[TestCaseKey], ABC):
+class UnitTest(TypedRecord[UnitTestKey], ABC):
     """
     Base class for executing the tests using:
 
@@ -59,15 +59,15 @@ class TestCase(TypedRecord[TestCaseKey], ABC):
     access to the xUnit test runner is not available.
     """
 
-    __slots__ = ('test_case_name', 'complexity')
+    __slots__ = ('unit_test_name', 'complexity')
 
-    test_case_name: Optional[str]
+    unit_test_name: Optional[str]
     complexity: Optional[TestComplexity]
 
     def __init__(self):
         super().__init__()
 
-        self.test_case_name = None
+        self.unit_test_name = None
         """
         Unique test name.
 
