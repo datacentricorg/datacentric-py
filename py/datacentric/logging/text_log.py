@@ -14,6 +14,7 @@
 
 from abc import ABC
 from typing import List
+from datacentric.types.string_util import StringUtil
 from datacentric.logging.log import Log
 from datacentric.io.text_writer import TextWriter
 from datacentric.logging.log_entry import LogEntry
@@ -75,7 +76,7 @@ class TextLog(Log, ABC):
         if log_entry.verbosity <= self.verbosity:
 
             # Title should not have line breaks if found will be replaced by spaces
-            title_with_no_line_breaks: str = log_entry.title.replace('\n', ' ')
+            title_with_no_line_breaks: str = log_entry.title.replace(StringUtil.eol, ' ')
             formatted_title: str = f'{log_entry.verbosity.name}: {title_with_no_line_breaks}'
             self._text_writer.write_line(formatted_title)
 
@@ -83,7 +84,7 @@ class TextLog(Log, ABC):
             if log_entry.description:
 
                 # Split the description into lines
-                description_lines: List[str] = log_entry.description.split('\n')
+                description_lines: List[str] = log_entry.description.split(StringUtil.eol)
 
                 # Write lines with indent and remove the trailing blank line if any
                 description_line_count: int = len(description_lines)

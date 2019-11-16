@@ -24,6 +24,9 @@ class StringUtil():
     __first_cap_re: Pattern = re.compile('(.)([A-Z][a-z]+)')
     __all_cap_re: Pattern = re.compile('([a-z0-9])([A-Z])')
 
+    eol: str = '\n'
+    """Literal string for newline."""
+
     @staticmethod
     def to_pascal_case(name: str) -> str:
         """
