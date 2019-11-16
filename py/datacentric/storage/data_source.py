@@ -281,7 +281,10 @@ class DataSource(TypedRecord[DataSourceKey], ABC):
 
         Error message if the record is not found or is a DeletedRecord.
         """
-        raise NotImplemented
+        result = self.load_or_null_by_key(key_, load_from)
+        if result is None:
+            raise Exception(f'Record with key {key_} is not found in dataset with TemporalId={load_from}.')
+        return result
 
     def save_one(self, record_type: type, record: TRecord, save_to: ObjectId):
         """Save one record to the specified dataset. After the method exits,
