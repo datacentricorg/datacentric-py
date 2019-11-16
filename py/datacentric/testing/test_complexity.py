@@ -15,7 +15,7 @@
 from enum import IntEnum
 
 
-class TestComplexity(IntEnum):
+class UnitTestComplexity(IntEnum):
     """
     Test complexity level.
 

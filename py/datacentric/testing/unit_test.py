@@ -16,7 +16,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
-from datacentric.testing.test_complexity import TestComplexity
+from datacentric.testing.test_complexity import UnitTestComplexity
 
 
 class UnitTestKey(TypedKey['UnitTest']):
@@ -51,7 +51,7 @@ class UnitTest(TypedRecord[UnitTestKey]):
     """
     Base class for executing the tests using:
 
-    * A standard xUnit test runner; or
+    * A standard Python unittest runner; or
     * A handler via CLI or the front end
 
     This makes it possible to test not only inside the development
@@ -62,14 +62,14 @@ class UnitTest(TypedRecord[UnitTestKey]):
     __slots__ = ('unit_test_name', 'complexity')
 
     unit_test_name: Optional[str]
-    complexity: Optional[TestComplexity]
+    complexity: Optional[UnitTestComplexity]
 
     def __init__(self):
         super().__init__()
 
         self.unit_test_name = None
         """
-        Unique test name.
+        Unique unit test name.
 
         The name is set to the fully qualified test class name
         in the constructor of this class.
