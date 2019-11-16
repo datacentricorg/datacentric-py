@@ -13,7 +13,9 @@
 # limitations under the License.
 
 from typing import Optional
+from datacentric.io.file_writer import FileWriter
 from datacentric.logging.text_log import TextLog
+from datacentric.storage.context import Context
 
 
 class FileLog(TextLog):
@@ -28,3 +30,21 @@ class FileLog(TextLog):
 
         self.log_file_path = None
         """Log file path relative to output folder root."""
+
+    def init(self, context: Context) -> None:
+        """
+        Set Context property and perform validation of the record's data,
+        then initialize any fields or properties that depend on that data.
+
+        This method may be called multiple times for the same instance,
+        possibly with a different context parameter for each subsequent call.
+
+        IMPORTANT - Every override of this method must call base.Init()
+        first, and only then execute the rest of the override method's code.
+        """
+
+        # Initialize base
+        super().init(context)
+
+        # Assign text writer for the log file
+        self._text_writer = FileWriter(self.log_file_path)

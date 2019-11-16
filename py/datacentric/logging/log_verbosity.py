@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from enum import Enum
+from enum import IntEnum
 
 
-class LogVerbosity(Enum):
+class LogVerbosity(IntEnum):
     """
     A log entry is not published to log output if entry verbosity
     exceeds log verbosity.

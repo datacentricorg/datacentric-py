@@ -21,8 +21,8 @@ from datacentric.io.file_writer import FileWriter
 class TestFileWriter(unittest.TestCase, UnitTest):
     def test_smoke(self):
         """Smoke test"""
-        file_name: str = __file__.replace(".py","_output.txt")
-        file_writer: TextWriter = FileWriter(file_name)
+        file_path: str = __file__.replace(".py","_output.txt")
+        file_writer: TextWriter = FileWriter(file_path)
         file_writer.write('A')
         file_writer.write_line('BC')
         file_writer.write_eol()

@@ -1,0 +1,13 @@
+Error: Title for error
+        Description for error
+Warning: Title for warning
+        Description for warning
+Info: Title for info
+        Description for info
+Error: Title for true assert
+        Description for true assert
+Verify: Title for false assert
+        Description for false assert
+Info: Multi-line title Second line of title
+        Multi-line description
+        Second line of description

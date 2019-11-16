@@ -89,8 +89,8 @@ class Log(TypedRecord[LogKey], ABC):
         super().init(context)
 
         # If verbosity is None, set to Error
-        # if verbosity is None TODO - fix
-        #    verbosity = LogVerbosity.Error
+        if self.verbosity is None:
+            self.verbosity = LogVerbosity.Error
 
     @abstractmethod
     def flush(self) -> None:
