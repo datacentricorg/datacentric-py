@@ -37,6 +37,13 @@ class TextWriter(ABC):
         pass
 
     @abstractmethod
+    def write_eol(self) -> None:
+        """
+        Write EOL to the output stream.
+        """
+        pass
+
+    @abstractmethod
     def flush(self) -> None:
         """
         Flush buffer to the output stream.

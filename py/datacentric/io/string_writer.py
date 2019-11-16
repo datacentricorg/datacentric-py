@@ -41,13 +41,19 @@ class StringWriter(TextWriter):
         """
         Write __str__ of the argument to the output stream.
         """
-        print(value, file=self.__str_io)
+        print(value, end = '', file=self.__str_io)
 
     def write_line(self, value: object) -> None:
         """
         Write __str__ of the argument to the output stream, followed by EOL.
         """
         self.write(value)
+        self.write_eol()
+
+    def write_eol(self) -> None:
+        """
+        Write EOL to the output stream.
+        """
         print(file=self.__str_io)
 
     def flush(self) -> None:

@@ -23,13 +23,19 @@ class ConsoleWriter(TextWriter):
         """
         Write __str__ of the argument to the output stream.
         """
-        print(value)
+        print(value, end = '')
 
     def write_line(self, value: object) -> None:
         """
         Write __str__ of the argument to the output stream, followed by EOL.
         """
         self.write(value)
+        self.write_eol()
+
+    def write_eol(self) -> None:
+        """
+        Write EOL to the output stream.
+        """
         print()
 
     def flush(self) -> None:
