@@ -25,7 +25,7 @@ class TestFileLog(unittest.TestCase, UnitTest):
         """Smoke test"""
 
         # File name for log output
-        file_path: str = __file__.replace(".py","_output.txt")
+        file_path: str = __file__.replace(".py", "test_smoke.approved.txt")
 
         # Initialize FileLog object with Verify verbosity
         # to ensure all messages are displayed, because default
