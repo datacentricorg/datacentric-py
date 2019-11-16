@@ -71,7 +71,7 @@ class Record(Data, ABC):
         """
 
     @property
-    def context(self) -> 'Context':
+    def context(self) -> Optional['Context']:
         """
         Execution context provides access to key resources including:
 
@@ -83,7 +83,7 @@ class Record(Data, ABC):
         """
         return self.__context
 
-    def init(self, context: 'Context') -> None:
+    def init(self, context: Optional['Context']) -> None:
         """
         Set Context property and perform validation of the record's data,
         then initialize any fields or properties that depend on that data.

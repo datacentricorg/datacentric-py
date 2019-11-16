@@ -30,8 +30,17 @@ class UnitTestContext(Context):
     def __init__(self):
 
         # Inspect stack to get filename and method name of the source
-        # code location where UnitTestContext constructor is called
-        caller_frame = sys._getframe(1)
+        # code location where UnitTestContext constructor is called.
+        # If called from create_method_context, take the method that
+        # called create_method_context instead.
+        stackFrameIndex: int = 1
+        caller_frame = None
+        while True:
+            caller_frame = sys._getframe(stackFrameIndex)
+            if caller_frame.f_code.co_name != 'create_method_context':
+                break
+            stackFrameIndex = stackFrameIndex+1
+
         test_file_path: str = caller_frame.f_code.co_filename
         method_name: str = caller_frame.f_code.co_name
 
