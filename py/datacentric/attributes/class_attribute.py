@@ -13,20 +13,17 @@
 # limitations under the License.
 
 from abc import ABC
-from typing import List
-from datacentric.attributes.class_attribute import ClassAttribute
 
-class Data(ABC):
-    """ Abstract base class for data structures"""
 
-    __slots__ = ()
-
-    class_attributes: List[ClassAttribute] = []
+class ClassAttribute(ABC):
     """
+    Abstract base class for custom class attributes.
+
     Class attributes are assigned to the class via static element
     class_attributes which by default is empty. The user can then
     iterate over or search in this list to find the desired attribute.
-    """
 
-    def __init__(self):
-        pass
+    Declaration of the static element attributes in Data:
+
+    class_attributes: List[ClassAttribute]
+    """
