@@ -8,7 +8,7 @@ from typing import Dict, Any, get_type_hints, TypeVar, Union
 from typing_inspect import get_origin, get_args
 
 import datacentric.date_time.date_ext as date_ext
-import datacentric.types.str as str_ext
+from datacentric.types.string_util import StringUtil
 from datacentric.storage.class_info import ClassInfo
 from datacentric.date_time.local_minute import LocalMinute
 from datacentric.storage.key import Key
@@ -66,7 +66,7 @@ def _serialize_class(obj: TRecord):
         else:
             serialized_value = _serialize_primitive(value)
 
-        dict_[str_ext.to_pascal_case(slot)] = serialized_value
+        dict_[StringUtil.to_pascal_case(slot)] = serialized_value
     return dict_
 
 
@@ -138,7 +138,7 @@ def _deserialize_class(dict_: Dict[str, Any]) -> TRecord:
     new_obj = type_info()
 
     for dict_key, dict_value in dict_.items():
-        slot = str_ext.to_snake_case(dict_key)
+        slot = StringUtil.to_snake_case(dict_key)
         hints = get_type_hints(type_info)
         member_type = hints[slot]
 

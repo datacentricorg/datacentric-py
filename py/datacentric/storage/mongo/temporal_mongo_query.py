@@ -8,7 +8,7 @@ from pymongo.command_cursor import CommandCursor
 import datetime as dt
 import numpy as np
 
-import datacentric.types.str as str_ext
+from datacentric.types.string_util import StringUtil
 from datacentric.date_time import date_ext
 from datacentric.date_time.local_minute import LocalMinute
 from datacentric.storage.record import Record
@@ -45,7 +45,7 @@ class TemporalMongoQuery:
         if not self.__has_sort():
             renamed_keys = dict()
             for k, v in predicate.items():
-                new_key = str_ext.to_pascal_case(k)
+                new_key = StringUtil.to_pascal_case(k)
                 renamed_keys[new_key] = v
 
             TemporalMongoQuery.__fix_predicate_query(renamed_keys)
@@ -125,13 +125,13 @@ class TemporalMongoQuery:
             query._pipeline = self._pipeline.copy()
             sorts = next(stage['$sort'] for stage in query._pipeline
                          if '$sort' in stage)
-            sorts[str_ext.to_pascal_case(attr)] = 1
+            sorts[StringUtil.to_pascal_case(attr)] = 1
             return query
         # append sort stage
         else:
             query = TemporalMongoQuery(self._type, self._data_source, self._collection, self._load_from)
             query._pipeline = self._pipeline.copy()
-            query._pipeline.append({'$sort': {str_ext.to_pascal_case(attr): 1}})
+            query._pipeline.append({'$sort': {StringUtil.to_pascal_case(attr): 1}})
             return query
 
     def sort_by_descending(self, attr) -> TemporalMongoQuery:
@@ -142,13 +142,13 @@ class TemporalMongoQuery:
             query._pipeline = self._pipeline.copy()
             sorts = next(stage['$sort'] for stage in query._pipeline
                          if '$sort' in stage)
-            sorts[str_ext.to_pascal_case(attr)] = -1
+            sorts[StringUtil.to_pascal_case(attr)] = -1
             return query
         # append sort stage
         else:
             query = TemporalMongoQuery(self._type, self._data_source, self._collection, self._load_from)
             query._pipeline = self._pipeline.copy()
-            query._pipeline.append({'$sort': {str_ext.to_pascal_case(attr): -1}})
+            query._pipeline.append({'$sort': {StringUtil.to_pascal_case(attr): -1}})
             return query
 
     def as_iterable(self) -> Iterable[TRecord]:
