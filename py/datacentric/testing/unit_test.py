@@ -47,7 +47,7 @@ class UnitTestKey(TypedKey['UnitTest']):
         """
 
 
-class UnitTest(TypedRecord[UnitTestKey], ABC):
+class UnitTest(TypedRecord[UnitTestKey]):
     """
     Base class for executing the tests using:
 
@@ -83,7 +83,6 @@ class UnitTest(TypedRecord[UnitTestKey], ABC):
         the expect of longer test running times.
         """
 
-    @abstractmethod
     def run_all(self):
         """
         Run all methods in this class that have [Fact] or [Theory] attribute.
@@ -91,4 +90,4 @@ class UnitTest(TypedRecord[UnitTestKey], ABC):
         This method will run each of the test methods using its own instance
         of the test class in parallel.
         """
-        pass
+        raise NotImplementedError()

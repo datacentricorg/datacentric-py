@@ -1,14 +1,16 @@
 import unittest
 import datetime as dt
+import sys
+from datacentric.testing.unit_test import UnitTest
 from datacentric.date_time.local_minute import LocalMinute
 
-
-class TestLocalMinute(unittest.TestCase):
+class TestLocalMinute(unittest.TestCase, UnitTest):
     def test_properties(self):
         t = LocalMinute(12, 10)
         self.assertEqual(t.hour, 12)
         self.assertEqual(t.minute, 10)
         self.assertEqual(t.minute_of_day, 730)
+        print(f'File in: {__file__} and method is {sys._getframe(0).f_code.co_name}') # TODO - sample, needs to be removed
 
     def test_methods(self):
         t1 = LocalMinute(12, 10)
