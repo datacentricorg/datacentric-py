@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Optional
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
