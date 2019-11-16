@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Optional
 from bson.objectid import ObjectId
 
 # To prevent linter error on type hint in quotes
@@ -31,9 +32,9 @@ class Context:
     * Filesystem access (if available)
     """
 
-    data_source: 'DataSource'
+    data_source: Optional['DataSource']
     data_set: ObjectId
-    log: 'Log'
+    log: Optional['Log']
 
     def __init__(self):
         self.data_source = None

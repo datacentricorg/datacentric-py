@@ -37,8 +37,8 @@ def save_derived_record(context, data_set_id, record_id, record_index) -> Object
     rec.double_element = 200.
     rec.list_of_string = ['A', 'B', 'C']
 
-    rec.list_of_double = np.array([1.0, 2.0, 3.0])
-    rec.list_of_nullable_double = np.array([10.0, None, 30.0])
+    rec.list_of_double = [1.0, 2.0, 3.0]
+    rec.list_of_nullable_double = [10.0, None, 30.0]
 
     # Data element
     rec.data_element = ElementSample()

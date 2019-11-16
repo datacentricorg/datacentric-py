@@ -1,9 +1,11 @@
 import datetime as dt
-import numpy as np
 from enum import Enum
-from typing import List
+from typing import List, Optional
 
+from datacentric.date_time.local_date import LocalDate
+from datacentric.date_time.local_time import LocalTime
 from datacentric.date_time.local_minute import LocalMinute
+from datacentric.date_time.local_date_time import LocalDateTime
 from datacentric.storage.typed_record import TypedRecord
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.data import Data
@@ -11,8 +13,8 @@ from datacentric.storage.data import Data
 
 class ElementSample(Data):
     __slots__ = ['double_element3', 'string_element3']
-    double_element3: float
-    string_element3: str
+    double_element3: Optional[float]
+    string_element3: Optional[str]
 
     def __init__(self):
         super().__init__()
@@ -36,15 +38,15 @@ class BaseSample(TypedRecord['BaseSampleKey']):
                  'local_date_time_element',
                  'enum_value',
                  'version']
-    record_id: str
-    record_index: int
-    double_element: float
-    local_date_element: dt.date
-    local_time_element: dt.time
-    local_minute_element: LocalMinute
-    local_date_time_element: dt.datetime
-    enum_value: SampleEnum
-    version: int
+    record_id: Optional[str]
+    record_index: Optional[int]
+    double_element: Optional[float]
+    local_date_element: Optional[dt.date]
+    local_time_element: Optional[dt.time]
+    local_minute_element: Optional[LocalMinute]
+    local_date_time_element: Optional[dt.datetime]
+    enum_value: Optional[SampleEnum]
+    version: Optional[int]
 
     def __init__(self):
         super().__init__()
@@ -62,8 +64,8 @@ class BaseSample(TypedRecord['BaseSampleKey']):
 class BaseSampleKey(TypedKey[BaseSample]):
     __slots__ = ['record_id', 'record_index']
 
-    record_id: str
-    record_index: int
+    record_id: Optional[str]
+    record_index: Optional[int]
 
     def __init__(self):
         super().__init__()
@@ -74,15 +76,15 @@ class BaseSampleKey(TypedKey[BaseSample]):
 class DerivedSample(BaseSample):
     __slots__ = ['double_element2', 'string_element2', 'list_of_string', 'list_of_double', 'list_of_nullable_double',
                  'data_element', 'data_element_list', 'key_element', 'key_element_list']
-    double_element2: float
-    string_element2: str
-    list_of_string: List[str]
-    list_of_double: np.ndarray
-    list_of_nullable_double: np.ndarray
-    data_element: ElementSample
-    data_element_list: List[ElementSample]
-    key_element: BaseSampleKey
-    key_element_list: List[BaseSampleKey]
+    double_element2: Optional[float]
+    string_element2: Optional[str]
+    list_of_string: Optional[List[Optional[str]]]
+    list_of_double: Optional[List[float]]
+    list_of_nullable_double: Optional[List[Optional[float]]]
+    data_element: Optional[ElementSample]
+    data_element_list:  Optional[List[Optional[ElementSample]]]
+    key_element: Optional[BaseSampleKey]
+    key_element_list:  Optional[List[Optional[BaseSampleKey]]]
 
     def __init__(self):
         super().__init__()
@@ -100,14 +102,14 @@ class DerivedSample(BaseSample):
 class NullableElementsSampleKey(TypedKey['NullableElementsSample']):
     __slots__ = ['string_token', 'bool_token', 'int_token', 'local_date_token', 'local_time_token',
                  'local_minute_token', 'local_date_time_token', 'enum_token']
-    string_token: str
-    bool_token: bool
-    int_token: int
-    local_date_token: dt.date
-    local_time_token: dt.time
-    local_minute_token: LocalMinute
-    local_date_time_token: dt.datetime
-    enum_token: SampleEnum
+    string_token: Optional[str]
+    bool_token: Optional[bool]
+    int_token: Optional[int]
+    local_date_token: Optional[LocalDate]
+    local_time_token: Optional[LocalTime]
+    local_minute_token: Optional[LocalMinute]
+    local_date_time_token: Optional[LocalDateTime]
+    enum_token: Optional[SampleEnum]
 
     def __init__(self):
         super().__init__()
@@ -124,15 +126,15 @@ class NullableElementsSampleKey(TypedKey['NullableElementsSample']):
 class NullableElementsSample(TypedRecord[NullableElementsSampleKey]):
     __slots__ = ['string_token', 'bool_token', 'int_token', 'local_date_token', 'local_time_token',
                  'local_minute_token', 'local_date_time_token', 'enum_token', 'record_index']
-    string_token: str
-    bool_token: bool
-    int_token: int
-    local_date_token: dt.date
-    local_time_token: dt.time
-    local_minute_token: LocalMinute
-    local_date_time_token: dt.datetime
-    enum_token: SampleEnum
-    record_index: int
+    string_token: Optional[str]
+    bool_token: Optional[bool]
+    int_token: Optional[int]
+    local_date_token: Optional[LocalDate]
+    local_time_token: Optional[LocalTime]
+    local_minute_token: Optional[LocalMinute]
+    local_date_time_token: Optional[LocalDateTime]
+    enum_token: Optional[SampleEnum]
+    record_index: Optional[int]
 
     def __init__(self):
         super().__init__()

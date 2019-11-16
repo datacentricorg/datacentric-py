@@ -1,8 +1,7 @@
 import unittest
 import datetime as dt
-
+from typing import Optional
 from bson import ObjectId
-
 from datacentric.storage.typed_record import TypedRecord
 from datacentric.storage.typed_key import TypedKey
 from datacentric.test.storage.data_sample import BaseSampleKey
@@ -11,9 +10,9 @@ from datacentric.test.storage.data_sample import BaseSampleKey
 class CompositeKeySampleKey(TypedKey['CompositeKeySample']):
     __slots__ = ['key_element1', 'key_element2', 'key_element3']
 
-    key_element1: str
-    key_element2: BaseSampleKey
-    key_element3: str
+    key_element1: Optional[str]
+    key_element2: Optional[BaseSampleKey]
+    key_element3: Optional[str]
 
     def __init__(self):
         super().__init__()
@@ -25,9 +24,9 @@ class CompositeKeySampleKey(TypedKey['CompositeKeySample']):
 class CompositeKeySample(TypedRecord[CompositeKeySampleKey]):
     __slots__ = ['key_element1', 'key_element2', 'key_element3']
 
-    key_element1: str
-    key_element2: BaseSampleKey
-    key_element3: str
+    key_element1: Optional[str]
+    key_element2: Optional[BaseSampleKey]
+    key_element3: Optional[str]
 
     def __init__(self):
         super().__init__()
@@ -44,8 +43,10 @@ class SingletonSampleKey(TypedKey['SingletonSample']):
 
 
 class SingletonSample(TypedRecord[SingletonSampleKey]):
+
     __slots__ = ['string_element']
-    string_element: str
+
+    string_element: Optional[str]
 
     def __init__(self):
         super().__init__()

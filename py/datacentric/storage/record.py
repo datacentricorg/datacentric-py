@@ -13,19 +13,21 @@
 # limitations under the License.
 
 from abc import ABC, abstractmethod
+from typing import Optional
 from bson import ObjectId
 from datacentric.storage.data import Data
 from datacentric.storage.context import Context
+
 
 class Record(Data, ABC):
     """Base class of records stored in data source."""
 
     __slots__ = ('__context', 'id_', 'data_set', '_key')
 
-    __context: 'Context'
+    __context: Optional['Context']
     id_: ObjectId
     data_set: ObjectId
-    _key: str
+    _key: Optional[str]
 
     def __init__(self):
         super().__init__()

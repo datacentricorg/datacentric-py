@@ -128,7 +128,7 @@ class Key(Data, ABC):
         """
         slots = self.__slots__
         if type(slots) is str:
-            slots = (slots)
+            slots = (slots,)
 
         # Singleton key case
         if len(slots) == 0:

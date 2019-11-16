@@ -23,5 +23,5 @@
     "python.linting.pycodestyleArgs": ["--ignore=E501"],
     "terminal.integrated.env.windows": {
         "PYTHONPATH" : "${workspaceRoot};${env:PYTHONPATH}"
-    },
+    }
 }

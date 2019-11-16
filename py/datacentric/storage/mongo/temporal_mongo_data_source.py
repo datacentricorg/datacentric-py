@@ -108,7 +108,8 @@ class TemporalMongoDataSource(MongoDataSource):
                 is_requested_instance = isinstance(result, record_type)
                 if not is_requested_instance:
                     raise Exception(f'Stored type {type(result).__name__} for ObjectId={id_} and '
-                                    f'Key={result.key} is not an instance of the requested type {record_type.__name__}.')
+                                    f'Key={result.key} is not an instance of the requested type '
+                                    f'{record_type.__name__}.')
                 result.init(self.context)
                 return result
 
