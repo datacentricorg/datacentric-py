@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from typing import Optional
+import inspect
 from bson.objectid import ObjectId
 
 # To prevent linter error on type hint in quotes
@@ -47,6 +48,8 @@ class Context:
         self.data_set = None
         """Default dataset of the context."""
 
+    # --- PROPERTIES
+
     @property
     def log(self) -> 'Log':
         """Logging interface."""
@@ -63,3 +66,32 @@ class Context:
         """Logging interface."""
         self.__log = value
         self.__log.init(self)
+
+    # --- METHODS
+
+    def configure(self, module) -> None:
+        """
+        Invokes static method configure(context) method with self as argument
+        for every class that is loaded by the argument and marked with
+        ConfigurableAttribue class attribute.
+
+        The method configure(context) may be used to configure:
+
+        * Reference data, and
+        * In case of test mocks, test data
+
+        The order in which configure(context) method is invoked when
+        multiple classes marked by ConfigurableAttribue are present
+        is undefined. The implementation of configure(context) should
+        not rely on any existing data, and should not invoke other
+        Configure(context) method of other classes.
+
+        The attribute ConfigurableAttribue is not inherited. To invoke
+        Configure(context) method for multiple classes within the same
+        inheritance chain, specify ConfigurableAttribue for each
+        class that provides configure(context) method.
+        """
+
+        for name, obj in inspect.getmembers(module, lambda x: inspect.isclass(x)):
+            print(name)
+            print(inspect.getmembers(obj))

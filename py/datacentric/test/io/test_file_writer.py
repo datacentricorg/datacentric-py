@@ -18,7 +18,17 @@ from datacentric.testing.unit_test import UnitTest
 from datacentric.io.text_writer import TextWriter
 from datacentric.io.file_writer import FileWriter
 
+
 class TestFileWriter(unittest.TestCase, UnitTest):
+    """Tests for FileWriter."""
+
+    def setUp(self):
+        """
+        Must call UnitTest constructor from setUp() method
+        to avoid AttributeError in properties of the base class.
+        """
+        UnitTest.__init__(self)
+
     def test_smoke(self):
         """Smoke test"""
         file_path: str = __file__.replace(".py",".test_smoke.approved.txt")
@@ -28,6 +38,7 @@ class TestFileWriter(unittest.TestCase, UnitTest):
         file_writer.write_eol()
         file_writer.write_line('DEF')
         file_writer.flush()
+
 
 if __name__ == "__main__":
     unittest.main()
