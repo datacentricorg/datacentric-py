@@ -59,7 +59,7 @@ def _serialize_class(obj: TRecord):
             serialized_value = value.value
         elif issubclass(value_type, Data):
             serialized_value = _serialize_class(value)
-        elif issubclass(value_type, Enum):
+        elif issubclass(value_type, IntEnum):
             serialized_value = value.name
         elif value_type is list:
             serialized_value = _serialize_list(value)
@@ -78,7 +78,7 @@ def _serialize_list(list_):
             result.append(value.value)
         elif issubclass(value_type, Data):
             result.append(_serialize_class(value))
-        elif issubclass(value_type, Enum):
+        elif issubclass(value_type, IntEnum):
             result.append(value.name)
         elif value_type is list:
             raise Exception(f'List of lists are prohibited.')
@@ -155,7 +155,7 @@ def _deserialize_class(dict_: Dict[str, Any]) -> TRecord:
             deserialized_value.populate_from_string(dict_value)
         elif issubclass(member_type, Data):
             deserialized_value = _deserialize_class(dict_value)
-        elif issubclass(member_type, Enum):
+        elif issubclass(member_type, IntEnum):
             deserialized_value = member_type[dict_value]
         else:
             deserialized_value = _deserialize_primitive(member_type, dict_value)
@@ -175,7 +175,7 @@ def _deserialize_list(type_: type, list_):
         return result
     elif issubclass(expected_item_type, Data):
         return [_deserialize_class(x) for x in list_]
-    elif issubclass(expected_item_type, Enum):
+    elif issubclass(expected_item_type, IntEnum):
         return [expected_item_type[x] for x in list_]
     elif expected_item_type is list:
         raise Exception(f'List of lists are prohibited.')
