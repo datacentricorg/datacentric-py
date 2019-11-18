@@ -13,6 +13,8 @@
 # limitations under the License.
 
 import unittest
+from datacentric.storage.context import Context
+from datacentric.storage.unit_test_context import UnitTestContext
 from datacentric.testing.unit_test import UnitTest
 from datacentric.types.string_util import StringUtil
 from datacentric.io.text_writer import TextWriter
@@ -21,16 +23,15 @@ from datacentric.io.file_writer import FileWriter
 class TestStringUtil(unittest.TestCase, UnitTest):
     def test_smoke(self):
         """Smoke test"""
-        file_path: str = __file__.replace(".py",".approved.txt")
-        file_writer: TextWriter = FileWriter(file_path)
+        context: Context = UnitTestContext()
 
         # Does not remove space TODO - check that Humanizer does in C#
-        file_writer.write_line(StringUtil.to_pascal_case('abc def'))
-        file_writer.write_line(StringUtil.to_pascal_case('abc_def'))
+        context.log.verify(StringUtil.to_pascal_case('abc def'))
+        context.log.verify(StringUtil.to_pascal_case('abc_def'))
 
         # Does not remove space TODO - check that Humanizer does in C#
-        file_writer.write_line(StringUtil.to_snake_case('Abc Def'))
-        file_writer.write_line(StringUtil.to_snake_case('AbcDef'))
+        context.log.verify(StringUtil.to_snake_case('Abc Def'))
+        context.log.verify(StringUtil.to_snake_case('AbcDef'))
 
 if __name__ == "__main__":
     unittest.main()

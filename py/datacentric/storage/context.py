@@ -32,14 +32,34 @@ class Context:
     * Filesystem access (if available)
     """
 
+    __log: Optional['Log']
     data_source: Optional['DataSource']
-    data_set: ObjectId
-    log: Optional['Log']
+    data_set: Optional[ObjectId]
 
     def __init__(self):
+
+        self.__log = None
+        """Logging interface."""
+
         self.data_source = None
         """Default data source of the context."""
+
         self.data_set = None
         """Default dataset of the context."""
-        self.log = None
+
+    @property
+    def log(self) -> 'Log':
         """Logging interface."""
+
+        # Define log
+        from datacentric.logging.log import Log
+
+        if not self.__log:
+            raise Exception('fLog property is not set in {GetType().Name}.')
+        return self.__log
+
+    @log.setter
+    def log(self, value: 'Log'):
+        """Logging interface."""
+        self.__log = value
+        self.__log.init(self)
