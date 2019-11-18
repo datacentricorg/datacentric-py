@@ -3,7 +3,7 @@ import numpy as np
 import inspect
 import itertools
 from bson import ObjectId
-from enum import Enum
+from enum import IntEnum
 from typing import Dict, Any, get_type_hints, TypeVar, Union
 from typing_inspect import get_origin, get_args
 

@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from enum import Enum
+from enum import IntEnum
 
 
-class TestComplexity(Enum):
+class TestComplexity(IntEnum):
     """
     Test complexity level.
 

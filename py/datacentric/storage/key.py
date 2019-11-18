@@ -14,7 +14,7 @@
 
 import datetime as dt
 from abc import ABC
-from enum import Enum
+from enum import IntEnum
 from typing import List
 from bson import ObjectId
 from datacentric.storage.data import Data

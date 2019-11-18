@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from enum import Enum
+from enum import IntEnum
 from typing import Iterable, Dict, Any, List, TypeVar
 from bson import ObjectId
 from pymongo.collection import Collection

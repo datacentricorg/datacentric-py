@@ -1,5 +1,5 @@
 import datetime as dt
-from enum import Enum
+from enum import IntEnum
 from typing import List, Optional
 
 from datacentric.date_time.local_date import LocalDate
@@ -22,7 +22,7 @@ class ElementSample(Data):
         self.string_element3 = None
 
 
-class SampleEnum(Enum):
+class SampleEnum(IntEnum):
     Empty = 0
     EnumValue1 = 1
     EnumValue2 = 2
