@@ -17,10 +17,11 @@ from datacentric.storage.context import Context
 from datacentric.storage.unit_test_context import UnitTestContext
 from datacentric.testing.unit_test import UnitTest
 from datacentric.types.string_util import StringUtil
-from datacentric.io.text_writer import TextWriter
-from datacentric.io.file_writer import FileWriter
+
 
 class TestStringUtil(unittest.TestCase, UnitTest):
+    """Unit tests for StringUtil."""
+
     def test_smoke(self):
         """Smoke test"""
         context: Context = UnitTestContext()

@@ -16,7 +16,7 @@ from abc import ABC, abstractmethod
 from typing import Optional
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
-from datacentric.testing.test_complexity import UnitTestComplexity
+from datacentric.testing.unit_test_complexity import UnitTestComplexity
 
 
 class UnitTestKey(TypedKey['UnitTest']):
@@ -56,7 +56,7 @@ class UnitTest(TypedRecord[UnitTestKey]):
 
     This makes it possible to test not only inside the development
     environment but also on a deployed version of the application where
-    access to the xUnit test runner is not available.
+    access to the unittest runner is not available.
     """
 
     __slots__ = ('unit_test_name', 'complexity')
@@ -67,7 +67,7 @@ class UnitTest(TypedRecord[UnitTestKey]):
     def __init__(self):
         super().__init__()
 
-        self.unit_test_name = None
+        self.unit_test_name = f'{self.__class__.__module__}.{self.__class__.__qualname__}'
         """
         Unique unit test name.
 
