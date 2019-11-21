@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import datetime as dt
+import attr
 from typing import Dict, Optional, TypeVar, Set, Iterable
 from bson import ObjectId
 from pymongo.collection import Collection
@@ -31,6 +31,7 @@ from datacentric.serialization.serializer import serialize, deserialize
 TRecord = TypeVar('TRecord', bound=Record)
 
 
+@attr.s(slots=True, auto_attribs=True)
 class TemporalMongoDataSource(MongoDataSource):
     """
     Temporal data source with datasets based on MongoDB.
@@ -44,38 +45,25 @@ class TemporalMongoDataSource(MongoDataSource):
     TemporalId.
     """
 
-    __slots__ = ('__collection_dict', '__data_set_dict', '__data_set_parent_dict',
-                 '__data_set_detail_dict', '__import_dict', 'cutoff_time')
+    cutoff_time: ObjectId = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """
+    Records with TemporalId that is greater than or equal to CutoffTime
+    will be ignored by load methods and queries, and the latest available
+    record where TemporalId is less than CutoffTime will be returned instead.
 
-    __collection_dict: Dict[type, Collection]
-    __data_set_dict: Dict[str, ObjectId]
-    __data_set_parent_dict: Dict[ObjectId, ObjectId]
-    __data_set_detail_dict: Dict[ObjectId, DataSetDetail]
-    __import_dict: Dict[ObjectId, Set[ObjectId]]
+    CutoffTime applies to both the records stored in the dataset itself,
+    and the reports loaded through the Imports list.
 
-    cutoff_time: Optional[ObjectId]
+    CutoffTime may be set in data source globally, or for a specific dataset
+    in its details record. If CutoffTime is set for both, the earlier of the
+    two values will be used.
+    """
 
-    def __init__(self):
-        super().__init__()
-        self.__collection_dict = dict()
-        self.__data_set_dict = dict()
-        self.__data_set_parent_dict = dict()
-        self.__data_set_detail_dict = dict()
-        self.__import_dict = dict()
-
-        self.cutoff_time = None
-        """
-        Records with TemporalId that is greater than or equal to CutoffTime
-        will be ignored by load methods and queries, and the latest available
-        record where TemporalId is less than CutoffTime will be returned instead.
-
-        CutoffTime applies to both the records stored in the dataset itself,
-        and the reports loaded through the Imports list.
-
-        CutoffTime may be set in data source globally, or for a specific dataset
-        in its details record. If CutoffTime is set for both, the earlier of the
-        two values will be used.
-        """
+    __collection_dict: Dict[type, Collection] = attr.ib(factory=dict, init=False)
+    __data_set_dict: Dict[str, ObjectId] = attr.ib(factory=dict, init=False)
+    __data_set_parent_dict: Dict[ObjectId, ObjectId] = attr.ib(factory=dict, init=False)
+    __data_set_detail_dict: Dict[ObjectId, DataSetDetail] = attr.ib(factory=dict, init=False)
+    __import_dict: Dict[ObjectId, Set[ObjectId]] = attr.ib(factory=dict, init=False)
 
     def load_or_null(self, record_type: type, id_: ObjectId) -> Optional[TRecord]:
         """Load record by its ObjectId.
