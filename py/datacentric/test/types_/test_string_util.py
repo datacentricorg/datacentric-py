@@ -40,5 +40,6 @@ class TestStringUtil(unittest.TestCase, UnitTest):
         context.log.verify(StringUtil.to_snake_case('Abc Def'))
         context.log.verify(StringUtil.to_snake_case('AbcDef'))
 
+
 if __name__ == "__main__":
     unittest.main()

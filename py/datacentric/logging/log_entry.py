@@ -12,18 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Optional
+import attr
 from bson import ObjectId
+from datacentric.storage.context import Context
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
 from datacentric.logging.log_verbosity import LogVerbosity
 
-# To prevent linter error on type hint in quotes
 if False:
-    from datacentric.storage.context import Context
     from datacentric.logging.log import LogKey
 
 
+@attr.s(slots=True, auto_attribs=True)
 class LogEntryKey(TypedKey['LogEntry']):
     """
     Contains a single entry (message) in a log.
@@ -36,27 +36,20 @@ class LogEntryKey(TypedKey['LogEntry']):
     that include additional data.
     """
 
-    __slots__ = ('id',)
-
-    id_: ObjectId
-
-    def __init__(self):
-        super().__init__()
-
-        self.id_ = None
-        """
-        Defining element Id here includes the record's TemporalId
-        in its key. Because TemporalId of the record is specific
-        to its version, this is equivalent to using an auto-
-        incrementing column as part of the record's primary key
-        in a relational database.
-
-        For the record's history to be captured correctly, all
-        update operations must assign a new TemporalId with the
-        timestamp that matches update time.
-        """
+    id_: ObjectId = attr.ib(default=None, kw_only=True)
+    """Defining element Id here includes the record's TemporalId
+    in its key. Because TemporalId of the record is specific
+    to its version, this is equivalent to using an auto-
+    incrementing column as part of the record's primary key
+    in a relational database.
+    
+    For the record's history to be captured correctly, all
+    update operations must assign a new TemporalId with the
+    timestamp that matches update time.
+    """
 
 
+@attr.s(slots=True, auto_attribs=True)
 class LogEntry(TypedRecord[LogEntryKey]):
     """
     Contains a single entry (message) in a log.
@@ -69,44 +62,46 @@ class LogEntry(TypedRecord[LogEntryKey]):
     that include additional data.
     """
 
-    __slots__ = ('log', 'verbosity', 'title', 'description')
+    id_: ObjectId = attr.ib(default=None, kw_only=True)
+    """Defining element Id here includes the record's TemporalId
+    in its key. Because TemporalId of the record is specific
+    to its version, this is equivalent to using an auto-
+    incrementing column as part of the record's primary key
+    in a relational database.
 
-    log: Optional['LogKey']
-    verbosity: Optional[LogVerbosity]
-    title: Optional[str]
-    description: Optional[str]
+    For the record's history to be captured correctly, all
+    update operations must assign a new TemporalId with the
+    timestamp that matches update time.
+    """
 
-    def __init__(self):
-        super().__init__()
+    log: 'LogKey' = attr.ib(default=None, kw_only=True)
+    """
+    Log for which the entry is recorded.
 
-        self.log = None
-        """
-        Log for which the entry is recorded.
+    To obtain the entire log, run a query for the Log element of
+    the entry record, then sort the entry records by their TemporalId.
+    """
 
-        To obtain the entire log, run a query for the Log element of
-        the entry record, then sort the entry records by their TemporalId.
-        """
+    verbosity: LogVerbosity = attr.ib(default=None, kw_only=True)
+    """Minimal verbosity for which log entry will be displayed."""
 
-        self.verbosity = None
-        """Minimal verbosity for which log entry will be displayed."""
+    title: str = attr.ib(default=None, kw_only=True)
+    """
+    Short, single-line title of the log entry.
 
-        self.title = None
-        """
-        Short, single-line title of the log entry.
+    Line breaks in title will be replaced by spaces when the
+    log entry is displayed.
+    """
 
-        Line breaks in title will be replaced by spaces when the
-        log entry is displayed.
-        """
+    description: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """
+    Optional single-line or multi-line description of the log entry.
 
-        self.description = None
-        """
-        Optional single-line or multi-line description of the log entry.
+    Line breaks, whitespace and other formatting in the description
+    will be preserved when the log entry is displayed.
+    """
 
-        Line breaks, whitespace and other formatting in the description
-        will be preserved when the log entry is displayed.
-        """
-
-    def init(self, context: 'Context') -> None:
+    def init(self, context: Context) -> None:
         """
         Set Context property and perform validation of the record's data,
         then initialize any fields or properties that depend on that data.

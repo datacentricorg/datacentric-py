@@ -12,24 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Optional
+import attr
 from datacentric.io.file_writer import FileWriter
 from datacentric.logging.text_log import TextLog
 from datacentric.storage.context import Context
 
 
+@attr.s(slots=True, auto_attribs=True)
 class FileLog(TextLog):
     """Writes log output to the specified text file as it arrives."""
 
-    __slots__ = ('log_file_path',)
-
-    log_file_path: Optional[str]
-
-    def __init__(self):
-        super().__init__()
-
-        self.log_file_path = None
-        """Log file path relative to output folder root."""
+    log_file_path: str = attr.ib(default=None, kw_only=True)
+    """Log file path relative to output folder root."""
 
     def init(self, context: Context) -> None:
         """

@@ -12,18 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import attr
 from abc import ABC, abstractmethod
-from typing import Optional
-from datacentric.logging.log_entry import LogEntry
-from datacentric.logging.log_verbosity import LogVerbosity
+from datacentric.storage.context import Context
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
-
-# To prevent linter error on type hint in quotes
-if False:
-    from datacentric.storage.context import Context
+from datacentric.logging.log_verbosity import LogVerbosity
+from datacentric.logging.log_entry import LogEntry
 
 
+@attr.s(slots=True, auto_attribs=True)
 class LogKey(TypedKey['Log']):
     """
     Provides a unified API for writing log output to:
@@ -36,17 +34,11 @@ class LogKey(TypedKey['Log']):
     * Cloud logging services such as AWS CloudWatch
     """
 
-    __slots__ = ('log_name',)
-
-    log_name: Optional[str]
-
-    def __init__(self):
-        super().__init__()
-
-        self.log_name = None
-        """Unique log name."""
+    log_name: str = attr.ib(default=None, kw_only=True)
+    """Unique log name."""
 
 
+@attr.s(slots=True, auto_attribs=True)
 class Log(TypedRecord[LogKey], ABC):
     """
     Provides a unified API for writing log output to:
@@ -59,21 +51,13 @@ class Log(TypedRecord[LogKey], ABC):
     * Cloud logging services such as AWS CloudWatch
     """
 
-    __slots__ = ('log_name', 'verbosity')
+    log_name: str = attr.ib(default=None, kw_only=True)
+    """Unique log name."""
 
-    log_name: Optional[str]
-    verbosity: Optional[LogVerbosity]
+    verbosity: LogVerbosity = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Minimal verbosity for which log entry will be displayed."""
 
-    def __init__(self):
-        super().__init__()
-
-        self.log_name = None
-        """Unique log name."""
-
-        self.verbosity = None
-        """Minimal verbosity for which log entry will be displayed."""
-
-    def init(self, context: 'Context') -> None:
+    def init(self, context: Context) -> None:
         """
         Set Context property and perform validation of the record's data,
         then initialize any fields or properties that depend on that data.

@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import attr
 from abc import ABC
 from typing import List
 from datacentric.types.string_util import StringUtil
@@ -20,24 +21,19 @@ from datacentric.io.text_writer import TextWriter
 from datacentric.logging.log_entry import LogEntry
 
 
+@attr.s(slots=True, auto_attribs=True)
 class TextLog(Log, ABC):
     """Abstract base class of Log implementations that convert entries to text."""
 
-    __slots__ = ('_text_writer',)
+    _text_writer: TextWriter = attr.ib(default=None, kw_only=True)
+    """
+    Text writer to which log output is directed.
+
+    The value of this protected field must be set in derived classes
+    before the log is used.
+    """
 
     __indent_string: str = '  ' * 4
-    _text_writer: TextWriter
-
-    def __init__(self):
-        super().__init__()
-
-        _text_writer: None
-        """
-        Text writer to which log output is directed.
-        
-        The value of this protected field must be set in derived classes
-        before the log is used.
-        """
 
     def flush(self) -> None:
         """Flush data to permanent storage."""
@@ -91,11 +87,10 @@ class TextLog(Log, ABC):
                 i: int = 0
                 description_line: str
                 for description_line in description_lines:
-                    i = i+1
+                    i = i + 1
 
                     if not description_line:
                         if i < description_line_count - 1:
-
                             # Write empty line unless the empty token is last, in which
                             # case it represents the trailing EOL and including it would
                             # create in a trailing empty line not present in the original
