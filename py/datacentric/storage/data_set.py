@@ -12,12 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import attr
 from bson import ObjectId
-from typing import List, Optional
+from typing import List
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
 
 
+@attr.s(slots=True, auto_attribs=True)
 class DataSetKey(TypedKey['DataSet']):
     """
     Dataset is a concept similar to a folder, applied to data in any
@@ -41,17 +43,11 @@ class DataSetKey(TypedKey['DataSet']):
     lookup sequence. The root dataset cannot have Imports.
     """
 
-    __slots__ = ('data_set_name',)
-
-    data_set_name: Optional[str]
-
-    def __init__(self):
-        super().__init__()
-
-        self.data_set_name = None
-        """Unique dataset name."""
+    data_set_name: str = attr.ib(default=None, kw_only=True)
+    """Unique dataset name."""
 
 
+@attr.s(slots=True, auto_attribs=True)
 class DataSet(TypedRecord[DataSetKey]):
     """
     Dataset is a concept similar to a folder, applied to data in any
@@ -75,46 +71,37 @@ class DataSet(TypedRecord[DataSetKey]):
     lookup sequence. The root dataset cannot have Imports.
     """
 
-    __slots__ = ('data_set_name', 'non_temporal', 'imports')
+    data_set_name: str = attr.ib(default=None, kw_only=True)
+    """Unique dataset name."""
 
-    data_set_name: Optional[str]
-    non_temporal: bool
-    imports: List[ObjectId]
+    non_temporal: bool = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """
+    Flag indicating that the dataset is non-temporal even if the
+    data source supports temporal data.
 
-    def __init__(self):
-        super().__init__()
+    For the data stored in datasets where NonTemporal == false, a
+    temporal data source keeps permanent history of changes to each
+    record within the dataset, and provides the ability to access
+    the record as of the specified TemporalId, where TemporalId serves
+    as a timeline (records created later have greater TemporalId than
+    records created earlier).
 
-        self.data_set_name = None
-        """Unique dataset name."""
+    For the data stored in datasets where NonTemporal == true, the
+    data source keeps only the latest version of the record. All
+    child datasets of a non-temporal dataset must also be non-temporal.
 
-        self.non_temporal = None
-        """
-        Flag indicating that the dataset is non-temporal even if the
-        data source supports temporal data.
+    In a non-temporal data source, this flag is ignored as all
+    datasets in such data source are non-temporal.
+    """
 
-        For the data stored in datasets where NonTemporal == false, a
-        temporal data source keeps permanent history of changes to each
-        record within the dataset, and provides the ability to access
-        the record as of the specified TemporalId, where TemporalId serves
-        as a timeline (records created later have greater TemporalId than
-        records created earlier).
+    imports: List[ObjectId] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """
+    List of datasets where records are looked up if they are
+    not found in the current dataset.
 
-        For the data stored in datasets where NonTemporal == true, the
-        data source keeps only the latest version of the record. All
-        child datasets of a non-temporal dataset must also be non-temporal.
+    The specific lookup rules are specific to the data source
+    type and described in detail in the data source documentation.
 
-        In a non-temporal data source, this flag is ignored as all
-        datasets in such data source are non-temporal.
-        """
-
-        self.imports = None
-        """
-        List of datasets where records are looked up if they are
-        not found in the current dataset.
-
-        The specific lookup rules are specific to the data source
-        type and described in detail in the data source documentation.
-
-        The parent dataset is not included in the list of Imports by
-        default and must be included in the list of Imports explicitly.
-        """
+    The parent dataset is not included in the list of Imports by
+    default and must be included in the list of Imports explicitly.
+    """

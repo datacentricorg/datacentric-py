@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import attr
 from datacentric.logging.log import Log
 
 
+@attr.s(slots=True, auto_attribs=True)
 class DataLog(Log):
     """
     Implementation of Log that writes LogEntry records into
@@ -26,7 +28,4 @@ class DataLog(Log):
     their TemporalId.
     """
 
-    __slots__ = ()
-
-    def __init__(self):
-        super().__init__()
+    pass

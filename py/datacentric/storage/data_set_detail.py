@@ -12,12 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import attr
 from bson import ObjectId
-from typing import Optional, List
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
 
 
+@attr.s(slots=True, auto_attribs=True)
 class DataSetDetailKey(TypedKey['DataSetDetail']):
     """
     Provides the ability to change data associated with the dataset
@@ -34,17 +35,11 @@ class DataSetDetailKey(TypedKey['DataSetDetail']):
     is not affected by its own settings.
     """
 
-    __slots__ = ('data_set_id',)
-
-    data_set_id: ObjectId
-
-    def __init__(self):
-        super().__init__()
-
-        self.data_set_id = None
-        """TemporalId of the referenced dataset."""
+    data_set_id: ObjectId = attr.ib(default=None, kw_only=True)
+    """TemporalId of the referenced dataset."""
 
 
+@attr.s(slots=True, auto_attribs=True)
 class DataSetDetail(TypedRecord[DataSetDetailKey]):
     """
     Provides the ability to change data associated with the dataset
@@ -61,54 +56,44 @@ class DataSetDetail(TypedRecord[DataSetDetailKey]):
     is not affected by its own settings.
     """
 
-    __slots__ = ('data_set_id', 'read_only', 'cutoff_time', 'imports_cutoff_time')
+    data_set_id: ObjectId = attr.ib(default=None, kw_only=True)
+    """TemporalId of the referenced dataset."""
 
-    data_set_id: ObjectId
-    read_only: bool
-    cutoff_time: Optional[ObjectId]
-    imports_cutoff_time: Optional[ObjectId]
+    read_only: bool = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """
+    If specified, write operations to the referenced dataset
+    will result in an error.
+    """
 
-    def __init__(self):
-        super().__init__()
+    cutoff_time: ObjectId = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """
+    Records with TemporalId that is greater than or equal to CutoffTime
+    will be ignored by load methods and queries, and the latest available
+    record where TemporalId is less than CutoffTime will be returned instead.
 
-        self.data_set_id = None
-        """TemporalId of the referenced dataset."""
+    CutoffTime applies to both the records stored in the dataset itself,
+    and the reports loaded through the Imports list.
 
-        self.read_only = None
-        """
-        If specified, write operations to the referenced dataset
-        will result in an error.
-        """
+    CutoffTime may be set in data source globally, or for a specific dataset
+    in its details record. If CutoffTime is set for both, the earlier of the
+    two values will be used.
+    """
 
-        self.cutoff_time = None
-        """
-        Records with TemporalId that is greater than or equal to CutoffTime
-        will be ignored by load methods and queries, and the latest available
-        record where TemporalId is less than CutoffTime will be returned instead.
+    imports_cutoff_time: ObjectId = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """
+    Imported records (records loaded through the Imports list)
+    where TemporalId is greater than or equal to CutoffTime
+    will be ignored by load methods and queries, and the latest
+    available record where TemporalId is less than CutoffTime will
+    be returned instead.
 
-        CutoffTime applies to both the records stored in the dataset itself,
-        and the reports loaded through the Imports list.
+    This setting only affects records loaded through the Imports
+    list. It does not affect records stored in the dataset itself.
 
-        CutoffTime may be set in data source globally, or for a specific dataset
-        in its details record. If CutoffTime is set for both, the earlier of the
-        two values will be used.
-        """
+    Use this feature to freeze Imports as of a given CreatedTime
+    (part of TemporalId), isolating the dataset from changes to the
+    data in imported datasets that occur after that time.
 
-        self.imports_cutoff_time = None
-        """
-        Imported records (records loaded through the Imports list)
-        where TemporalId is greater than or equal to CutoffTime
-        will be ignored by load methods and queries, and the latest
-        available record where TemporalId is less than CutoffTime will
-        be returned instead.
-
-        This setting only affects records loaded through the Imports
-        list. It does not affect records stored in the dataset itself.
-
-        Use this feature to freeze Imports as of a given CreatedTime
-        (part of TemporalId), isolating the dataset from changes to the
-        data in imported datasets that occur after that time.
-
-        If ImportsCutoffTime is set for both data source and dataset,
-        the earlier of the two values will be used.
-        """
+    If ImportsCutoffTime is set for both data source and dataset,
+    the earlier of the two values will be used.
+    """

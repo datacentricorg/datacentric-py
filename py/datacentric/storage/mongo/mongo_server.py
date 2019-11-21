@@ -12,11 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Optional
+import attr
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
 
 
+@attr.s(slots=True, auto_attribs=True)
 class MongoServerKey(TypedKey['MongoServer']):
     """
     Provides Mongo server URI.
@@ -25,22 +26,16 @@ class MongoServerKey(TypedKey['MongoServer']):
     an individual database.
     """
 
-    __slots__ = ('mongo_server_uri',)
+    mongo_server_uri: str = attr.ib(default=None, kw_only=True)
+    """
+    Mongo server URI.
 
-    mongo_server_uri: Optional[str]
-
-    def __init__(self):
-        super().__init__()
-
-        self.mongo_server_uri = None
-        """
-        Mongo server URI.
-
-        Server URI specified here must refer to the entire server, not
-        an individual database.
-        """
+    Server URI specified here must refer to the entire server, not
+    an individual database.
+    """
 
 
+@attr.s(slots=True, auto_attribs=True)
 class MongoServer(TypedRecord[MongoServerKey]):
     """
     Provides Mongo server URI.
@@ -49,17 +44,10 @@ class MongoServer(TypedRecord[MongoServerKey]):
     an individual database.
     """
 
-    __slots__ = ('mongo_server_uri',)
+    mongo_server_uri: str = attr.ib(default=None, kw_only=True)
+    """
+    Mongo server URI.
 
-    mongo_server_uri: Optional[str]
-
-    def __init__(self):
-        super().__init__()
-
-        self.mongo_server_uri = None
-        """
-        Mongo server URI.
-
-        Server URI specified here must refer to the entire server, not
-        an individual database.
-        """
+    Server URI specified here must refer to the entire server, not
+    an individual database.
+    """

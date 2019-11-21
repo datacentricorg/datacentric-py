@@ -12,14 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import attr
 from datacentric.logging.text_log import TextLog
 
 
+@attr.s(slots=True, auto_attribs=True)
 class ConsoleLog(TextLog):
     """Writes log output to system console."""
 
-    __slots__ = ()
-
-    def __init__(self):
-        super().__init__()
-
+    pass

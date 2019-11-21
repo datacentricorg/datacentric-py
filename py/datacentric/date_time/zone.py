@@ -12,11 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Optional
+import attr
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
 
 
+@attr.s(slots=True, auto_attribs=True)
 class ZoneKey(TypedKey['Zone']):
     """
     This class provides timezone conversion between UTC
@@ -39,35 +40,29 @@ class ZoneKey(TypedKey['Zone']):
     country and the other the city, for example America/New_York.
     """
 
-    __slots__ = ('zone_name',)
+    zone_name: str = attr.ib(default=None, kw_only=True)
+    """
+    Unique timezone name.
 
-    zone_name: Optional[str]
+    Only the following timezone names are permitted:
 
-    def __init__(self):
-        super().__init__()
+    * UTC; and
+    * IANA city timezones such as America/New_York
 
-        self.zone_name = None
-        """
-        Unique timezone name.
+    Other 3-letter regional timezones such as EST or EDT are
+    not permitted because they do not handle the transition
+    between winter and summer time automatically for those
+    regions where winter time is defined.
 
-        Only the following timezone names are permitted:
-
-        * UTC; and
-        * IANA city timezones such as America/New_York
-
-        Other 3-letter regional timezones such as EST or EDT are
-        not permitted because they do not handle the transition
-        between winter and summer time automatically for those
-        regions where winter time is defined.
-
-        Because ZoneName is used to look up timezone conventions,
-        it must match either the string UTC or the code in IANA
-        timezone database precisely. The IANA city timezone code
-        has two slash-delimited tokens, the first referencing the
-        country and the other the city, for example America/New_York.
-        """
+    Because ZoneName is used to look up timezone conventions,
+    it must match either the string UTC or the code in IANA
+    timezone database precisely. The IANA city timezone code
+    has two slash-delimited tokens, the first referencing the
+    country and the other the city, for example America/New_York.
+    """
 
 
+@attr.s(slots=True, auto_attribs=True)
 class Zone(TypedRecord[ZoneKey]):
     """
     This class provides timezone conversion between UTC
@@ -90,30 +85,23 @@ class Zone(TypedRecord[ZoneKey]):
     country and the other the city, for example America/New_York.
     """
 
-    __slots__ = ('zone_name',)
+    zone_name: str = attr.ib(default=None, kw_only=True)
+    """
+    Unique timezone name.
 
-    zone_name: Optional[str]
+    Only the following timezone names are permitted:
 
-    def __init__(self):
-        super().__init__()
+    * UTC; and
+    * IANA city timezones such as America/New_York
 
-        self.zone_name = None
-        """
-        Unique timezone name.
+    Other 3-letter regional timezones such as EST or EDT are
+    not permitted because they do not handle the transition
+    between winter and summer time automatically for those
+    regions where winter time is defined.
 
-        Only the following timezone names are permitted:
-
-        * UTC; and
-        * IANA city timezones such as America/New_York
-
-        Other 3-letter regional timezones such as EST or EDT are
-        not permitted because they do not handle the transition
-        between winter and summer time automatically for those
-        regions where winter time is defined.
-
-        Because ZoneName is used to look up timezone conventions,
-        it must match either the string UTC or the code in IANA
-        timezone database precisely. The IANA city timezone code
-        has two slash-delimited tokens, the first referencing the
-        country and the other the city, for example America/New_York.
-        """
+    Because ZoneName is used to look up timezone conventions,
+    it must match either the string UTC or the code in IANA
+    timezone database precisely. The IANA city timezone code
+    has two slash-delimited tokens, the first referencing the
+    country and the other the city, for example America/New_York.
+    """
