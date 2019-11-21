@@ -16,7 +16,7 @@ import re
 from typing import Pattern
 
 
-class StringUtil():
+class StringUtil:
     """
     Static helper class for str.
     """

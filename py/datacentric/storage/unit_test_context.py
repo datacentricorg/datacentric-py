@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Optional
 import sys
 from datacentric.storage.context import Context
 from datacentric.logging.log_verbosity import LogVerbosity
 from datacentric.logging.file_log import FileLog
+
 
 class UnitTestContext(Context):
     """
@@ -28,18 +28,17 @@ class UnitTestContext(Context):
     """
 
     def __init__(self):
-
+        super().__init__()
         # Inspect stack to get filename and method name of the source
         # code location where UnitTestContext constructor is called.
         # If called from create_method_context, take the method that
         # called create_method_context instead.
-        stackFrameIndex: int = 1
-        caller_frame = None
+        stack_frame_index: int = 1
         while True:
-            caller_frame = sys._getframe(stackFrameIndex)
+            caller_frame = sys._getframe(stack_frame_index)
             if caller_frame.f_code.co_name != 'create_method_context':
                 break
-            stackFrameIndex = stackFrameIndex+1
+            stack_frame_index = stack_frame_index+1
 
         test_file_path: str = caller_frame.f_code.co_filename
         method_name: str = caller_frame.f_code.co_name
@@ -63,4 +62,4 @@ class UnitTestContext(Context):
         # DO NOT move this to FileLog initialization
         # as it will get reset when log.init(...)
         # is called by Context.log setter.
-        self.log.verbosity = LogVerbosity.Verify;
+        self.log.verbosity = LogVerbosity.Verify

@@ -112,7 +112,7 @@ class TemporalMongoQuery:
             return value
         elif value_type == np.ndarray:
             return value.tolist()
-        elif issubclass(value_type, Enum):
+        elif issubclass(value_type, IntEnum):
             return value.name
         else:
             return value
