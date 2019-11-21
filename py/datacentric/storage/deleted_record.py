@@ -12,22 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import attr
 from datacentric.storage.record import Record
 
 
+@attr.s(slots=True)
 class DeletedRecord(Record):
     """
     When returned by the data source, this record has the same
     effect as if no record was found. It is used to indicate
     a deleted record when audit log must be preserved.
     """
-
-    __slots__ = ()
-
-    def __init__(self):
-        super().__init__()
-
-        self._key = None
 
     @property
     def key(self) -> str:

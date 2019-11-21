@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import attr
 from abc import ABC
 from typing import TypeVar, Generic
 from datacentric.storage.class_info import ClassInfo
@@ -20,15 +21,13 @@ from datacentric.storage.key import Key
 TRecord = TypeVar('TRecord')
 
 
+@attr.s(slots=True)
 class TypedKey(Generic[TRecord], Key, ABC):
     """Base class of a foreign key.
     Generic parameter TRecord make it possible to bound key type to its record.
     Any elements of defined in the class derived from this one
     become key tokens.
     """
-
-    def __init__(self):
-        super().__init__()
 
     def populate_from(self, record: TRecord) -> None:
         """Populate key attributes by taking them from the matching

@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import attr
 from abc import ABC, abstractmethod
 from typing import Optional
 from bson import ObjectId
@@ -19,56 +20,46 @@ from datacentric.storage.data import Data
 from datacentric.storage.context import Context
 
 
+@attr.s(slots=True, auto_attribs=True)
 class Record(Data, ABC):
     """Base class of records stored in data source."""
 
-    __slots__ = ('__context', 'id_', 'data_set', '_key')
+    __context: 'Context' = attr.ib(default=None, init=False)
+    """
+    Execution context provides access to key resources including:
 
-    __context: Optional['Context']
-    id_: ObjectId
-    data_set: ObjectId
-    _key: Optional[str]
+    * Logging and error reporting
+    * Cloud calculation service
+    * Data sources
+    * Filesystem
+    * Progress reporting
+    """
+    id_: ObjectId = attr.ib(default=None, kw_only=True)
+    """
+    TemporalId of the record is specific to its version.
 
-    def __init__(self):
-        super().__init__()
+    For the record's history to be captured correctly, all
+    update operations must assign a new TemporalId with the
+    timestamp that matches update time.
+    """
 
-        self.__context = None
-        """
-        Execution context provides access to key resources including:
+    data_set: ObjectId = attr.ib(default=None, kw_only=True)
+    """
+    TemporalId of the dataset where the record is stored.
 
-        * Logging and error reporting
-        * Cloud calculation service
-        * Data sources
-        * Filesystem
-        * Progress reporting
-        """
+    For records stored in root dataset, the value of
+    DataSet element should be TemporalId.Empty.
+    """
 
-        self.id_ = None
-        """
-        TemporalId of the record is specific to its version.
+    _key: str = attr.ib(default=None, init=False)
+    """
+    String key consists of semicolon delimited primary key elements:
 
-        For the record's history to be captured correctly, all
-        update operations must assign a new TemporalId with the
-        timestamp that matches update time.
-        """
+    KeyElement1;KeyElement2
 
-        self.data_set = None
-        """
-        TemporalId of the dataset where the record is stored.
-
-        For records stored in root dataset, the value of
-        DataSet element should be TemporalId.Empty.
-        """
-
-        self._key = None
-        """
-        String key consists of semicolon delimited primary key elements:
-
-        KeyElement1;KeyElement2
-
-        To avoid serialization format uncertainty, key elements
-        can have any atomic type except float.
-        """
+    To avoid serialization format uncertainty, key elements
+    can have any atomic type except float.
+    """
 
     @property
     def context(self) -> Optional['Context']:

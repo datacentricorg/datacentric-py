@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import attr
 from abc import ABC
 from typing import TypeVar, Generic, List
 from datacentric.storage.class_info import ClassInfo
@@ -21,13 +22,9 @@ from datacentric.storage.record import Record
 TKey = TypeVar('TKey')
 
 
+@attr.s(slots=True)
 class TypedRecord(Generic[TKey], Record, ABC):
     """Base class of records stored in data source."""
-
-    __slots__ = ()
-
-    def __init__(self):
-        Record.__init__(self)
 
     @property
     def key(self) -> str:

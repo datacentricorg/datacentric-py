@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import attr
 import datetime as dt
 from abc import ABC
 from enum import IntEnum
@@ -22,16 +23,12 @@ from datacentric.date_time.local_minute import LocalMinute
 import datacentric.date_time.date_ext as date_ext
 
 
+@attr.s(slots=True)
 class Key(Data, ABC):
     """Base class of a foreign key. Any slots defined in
     type specific become key tokens. Property value and str(self)
     consists of key tokens with semicolon delimiter.
     """
-
-    __slots__ = ()
-
-    def __init__(self):
-        super().__init__()
 
     def __str__(self):
         return self.value
@@ -93,7 +90,7 @@ class Key(Data, ABC):
             return str(attr_value)
         elif issubclass(attr_type, Key):
             return str(attr_value)
-        elif issubclass(attr_type, Enum):
+        elif issubclass(attr_type, IntEnum):
             return attr_value.name
         else:
             raise ValueError(f'Key element {slot} of type {type(obj).__name__} has type {attr_type.__name__} '
@@ -182,7 +179,7 @@ class Key(Data, ABC):
                 value = date_ext.iso_int_to_date_time(int(token))
             elif member_type == ObjectId:
                 value = ObjectId(token)
-            elif issubclass(member_type, Enum):
+            elif issubclass(member_type, IntEnum):
                 value = member_type[token]
             else:
                 raise Exception(f'Unexpected type {member_type.__name__} in key tokens.')

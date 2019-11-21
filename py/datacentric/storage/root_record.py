@@ -1,3 +1,4 @@
+import attr
 from abc import ABC
 from typing import TypeVar
 from bson import ObjectId
@@ -8,17 +9,13 @@ from datacentric.storage.typed_record import TypedRecord
 TKey = TypeVar('TKey')
 
 
+@attr.s(slots=True)
 class RootRecord(TypedRecord[TKey], ABC):
     """
     Base class of records stored in root dataset of the data store.
 
     init(...) method of this class sets data_set to temporal_id.empty.
     """
-
-    __slots__ = ()
-
-    def __init__(self):
-        super().__init__()
 
     def init(self, context: Context) -> None:
         """
