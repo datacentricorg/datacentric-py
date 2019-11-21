@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from enum import IntFlag
+from enum import IntEnum
 
 
-class DataSetFlags(IntFlag):
+class DataSetFlags(IntEnum):
     """Binary flags for the dataset create options."""
 
     Default = 0,

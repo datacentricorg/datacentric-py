@@ -17,7 +17,7 @@ from enum import IntEnum
 
 class UnitTestComplexity(IntEnum):
     """
-    Test complexity level.
+    Unit test complexity level.
 
     Higher complexity results in more comprehensive testing at
     the expect of longer test running times.
