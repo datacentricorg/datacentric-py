@@ -12,17 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import attr
 from abc import ABC
-
 from bson import ObjectId
 from pymongo import MongoClient
 from pymongo.database import Database
 
+from datacentric import MongoServerKey
 from datacentric.storage.context import Context
 from datacentric.storage.data_source import DataSource
 from datacentric.storage.env_type import EnvType
 
 
+@attr.s(slots=True, auto_attribs=True)
 class MongoDataSource(DataSource, ABC):
     """
     Abstract base class for data source implementations based on MongoDB.
@@ -30,36 +32,24 @@ class MongoDataSource(DataSource, ABC):
     This class provides functionality shared by all MongoDB data source types.
     """
 
-    __slots__ = ('__env_type', '__client', '__db', '__db_name', '__prev_object_id', 'mongo_server')
+    mongo_server: MongoServerKey = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """
+    Specifies Mongo server for this data source.
+
+    Defaults to local server on the standard port if not specified.
+
+    Server URI specified here must refer to the entire server, not
+    an individual database.
+    """
 
     __prohibited_symbols = '/\\. "$*<>:|?'
     __max_db_name_length = 64
 
-    __env_type: EnvType
-    __db: Database
-    __db_name: str
-    __client: MongoClient
-    __prev_object_id: ObjectId
-
-    mongo_server: str
-
-    def __init__(self):
-        super().__init__()
-        self.__env_type = None
-        self.__client = None
-        self.__db = None
-        self.__db_name = None
-        self.__prev_object_id = DataSource._empty_id
-
-        self.mongo_server = None
-        """
-        Specifies Mongo server for this data source.
-
-        Defaults to local server on the standard port if not specified.
-
-        Server URI specified here must refer to the entire server, not
-        an individual database.
-        """
+    __env_type: EnvType = attr.ib(default=None, init=False)
+    __db: Database = attr.ib(default=None, init=False)
+    __db_name: str = attr.ib(default=None, init=False)
+    __client: MongoClient = attr.ib(default=None, init=False)
+    __prev_object_id: ObjectId = attr.ib(default=DataSource._empty_id, init=False)
 
     def init(self, context: Context) -> None:
         """Set context and perform validation of the record's data,
