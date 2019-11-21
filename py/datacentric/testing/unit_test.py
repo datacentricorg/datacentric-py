@@ -12,7 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Optional
+import attr
+from abc import ABC, abstractmethod
 from datacentric.storage.context import Context
 from datacentric.storage.unit_test_context import UnitTestContext
 from datacentric.storage.typed_key import TypedKey
@@ -20,6 +21,7 @@ from datacentric.storage.typed_record import TypedRecord
 from datacentric.testing.unit_test_complexity import UnitTestComplexity
 
 
+@attr.s(slots=True, auto_attribs=True)
 class UnitTestKey(TypedKey['UnitTest']):
     """
     Base class for executing the tests using:
@@ -32,57 +34,43 @@ class UnitTestKey(TypedKey['UnitTest']):
     access to the xUnit test runner is not available.
     """
 
-    __slots__ = ('unit_test_name',)
+    unit_test_name: str = attr.ib(default=None, kw_only=True)
+    """
+    Unique unit test name.
 
-    unit_test_name: Optional[str]
-
-    def __init__(self):
-        super().__init__()
-
-        self.unit_test_name = None
-        """
-        Unique test name.
-
-        The name is set to the fully qualified test class name
-        in the constructor of this class.
-        """
+    The name is set to the fully qualified test class name
+    in the constructor of this class.
+    """
 
 
-class UnitTest(TypedRecord[UnitTestKey]):
+@attr.s(slots=True, auto_attribs=True)
+class UnitTest(TypedRecord[UnitTestKey], ABC):
     """
     Base class for executing the tests using:
 
-    * A standard Python unittest runner; or
+    * A standard xUnit test runner; or
     * A handler via CLI or the front end
 
     This makes it possible to test not only inside the development
     environment but also on a deployed version of the application where
-    access to the unittest runner is not available.
+    access to the xUnit test runner is not available.
     """
 
-    __slots__ = ('unit_test_name', 'complexity')
+    unit_test_name: str = attr.ib(default=None, kw_only=True)
+    """
+    Unique unit test name.
 
-    unit_test_name: Optional[str]
-    complexity: Optional[UnitTestComplexity]
+    The name is set to the fully qualified test class name
+    in the constructor of this class.
+    """
 
-    def __init__(self):
-        super().__init__()
+    complexity: UnitTestComplexity = attr.ib(default=None, kw_only=True)
+    """
+    Test complexity level.
 
-        self.unit_test_name = f'{self.__class__.__module__}.{self.__class__.__qualname__}'
-        """
-        Unique unit test name.
-
-        The name is set to the fully qualified test class name
-        in the constructor of this class.
-        """
-
-        self.complexity = None
-        """
-        Test complexity level.
-
-        Higher complexity results in more comprehensive testing at
-        the expect of longer test running times.
-        """
+    Higher complexity results in more comprehensive testing at
+    the expect of longer test running times.
+    """
 
     # --- METHODS
 
@@ -113,6 +101,7 @@ class UnitTest(TypedRecord[UnitTestKey]):
             # unit test method
             raise NotImplementedError()
 
+    @abstractmethod
     def run_all(self):
         """
         Run all methods in this class that have [Fact] or [Theory] attribute.
@@ -120,4 +109,4 @@ class UnitTest(TypedRecord[UnitTestKey]):
         This method will run each of the test methods using its own instance
         of the test class in parallel.
         """
-        raise NotImplementedError()
+        pass
