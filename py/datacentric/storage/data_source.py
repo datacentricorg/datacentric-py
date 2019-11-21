@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import attr
 from abc import ABC, abstractmethod
 from typing import Optional, TypeVar, Iterable, List
 from bson import ObjectId
@@ -26,6 +27,7 @@ from datacentric.storage.env_type import EnvType
 TRecord = TypeVar('TRecord', bound=Record)
 
 
+@attr.s(slots=True, auto_attribs=True)
 class DataSourceKey(TypedKey['DataSource']):
     """
     Data source is a logical concept similar to database
@@ -41,17 +43,11 @@ class DataSourceKey(TypedKey['DataSource']):
     This record is stored in root dataset.
     """
 
-    __slots__ = ('data_source_name',)
-
-    data_source_name: Optional[str]
-
-    def __init__(self):
-        super().__init__()
-
-        self.data_source_name = None
-        """Unique data source name."""
+    data_source_name: str = attr.ib(default=None, kw_only=True)
+    """Unique data source name."""
 
 
+@attr.s(slots=True, auto_attribs=True)
 class DataSource(TypedRecord[DataSourceKey], ABC):
     """
     Data source is a logical concept similar to database
@@ -66,80 +62,67 @@ class DataSource(TypedRecord[DataSourceKey], ABC):
 
     This record is stored in root dataset.
     """
-
-    __slots__ = ('data_source_name', 'env_type', 'env_group', 'env_name', 'non_temporal', 'read_only')
-
     _empty_id = ObjectId('000000000000000000000000')
     common_id: str = 'Common'
 
-    data_source_name: Optional[str]
-    env_type: Optional[EnvType]
-    env_group: Optional[str]
-    env_name: Optional[str]
-    non_temporal: bool
-    read_only: bool
+    data_source_name: str = attr.ib(default=None, kw_only=True)
+    """Unique data source name."""
 
-    def __init__(self):
-        super().__init__()
+    env_type: EnvType = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """
+    Environment type enumeration.
 
-        self.data_source_name = None
-        """Unique data source name."""
+    Some API functions are restricted based on the environment type.
+    """
 
-        self.env_type = None
-        """
-        Environment type enumeration.
+    env_group: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """
+    The meaning of environment group depends on the environment type.
 
-        Some API functions are restricted based on the environment type.
-        """
+    * For PROD, UAT, and DEV environment types, environment group
+    identifies the endpoint.
 
-        self.env_group = None
-        """
-        The meaning of environment group depends on the environment type.
+    * For USER environment type, environment group is user alias.
 
-        * For PROD, UAT, and DEV environment types, environment group
-        identifies the endpoint.
+    * For TEST environment type, environment group is the name of
+    the unit test class (test fixture).
+    """
 
-        * For USER environment type, environment group is user alias.
+    env_name: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """
+    The meaning of environment name depends on the environment type.
 
-        * For TEST environment type, environment group is TestCaseName,
-        the unique identifier of test case record.
-        """
+    * For PROD, UAT, DEV, and USER environment types, it is the
+    name of the user environment selected in the client.
 
-        self.env_name = None
-        """
-        The meaning of environment name depends on the environment type.
+    * For TEST environment type, it is the test method name.
+    """
 
-        * For PROD, UAT, DEV, and USER environment types, it is the
-        name of the user environment selected in the client.
+    non_temporal: bool = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """
+    Flag indicating that the data source is non-temporal.
 
-        * For TEST environment type, it is the test method name.
-        """
+    For the data stored in data sources where NonTemporal == false,
+    the data source keeps permanent history of changes to each
+    record (except where dataset or record are marked as NonTemporal),
+    and provides the ability to access the record as of the specified
+    TemporalId, where TemporalId serves as a timeline (records created
+    later have greater TemporalId than records created earlier).
 
-        self.non_temporal = None
-        """
-        Flag indicating that the data source is non-temporal.
+    For the data stored in data source where NonTemporal == true,
+    the data source keeps only the latest version of the record. All
+    datasets created by a NonTemporal data source must also be non-temporal.
 
-        For the data stored in data sources where NonTemporal == false,
-        the data source keeps permanent history of changes to each
-        record (except where dataset or record are marked as NonTemporal),
-        and provides the ability to access the record as of the specified
-        TemporalId, where TemporalId serves as a timeline (records created
-        later have greater TemporalId than records created earlier).
+    In a non-temporal data source, this flag is ignored as all
+    datasets in such data source are non-temporal.
+    """
 
-        For the data stored in data source where NonTemporal == true,
-        the data source keeps only the latest version of the record. All
-        datasets created by a NonTemporal data source must also be non-temporal.
+    read_only: bool = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """
+    Use this flag to mark data source as readonly.
 
-        In a non-temporal data source, this flag is ignored as all
-        datasets in such data source are non-temporal.
-        """
-
-        self.read_only = None
-        """
-        Use this flag to mark data source as readonly.
-
-        Data source may also be readonly because CutoffTime is set.
-        """
+    Data source may also be readonly because CutoffTime is set.
+    """
 
     @abstractmethod
     def create_ordered_object_id(self) -> ObjectId:
