@@ -1,74 +1,44 @@
+import attr
 import unittest
 import datetime as dt
-from typing import Optional
 from bson import ObjectId
 from datacentric.storage.typed_record import TypedRecord
 from datacentric.storage.typed_key import TypedKey
 from datacentric.test.storage.data_sample import BaseSampleKey
 
 
+@attr.s(slots=True, auto_attribs=True)
 class CompositeKeySampleKey(TypedKey['CompositeKeySample']):
-    __slots__ = ['key_element1', 'key_element2', 'key_element3']
-
-    key_element1: Optional[str]
-    key_element2: Optional[BaseSampleKey]
-    key_element3: Optional[str]
-
-    def __init__(self):
-        super().__init__()
-        self.key_element1 = None
-        self.key_element2 = None
-        self.key_element3 = None
+    key_element1: str = attr.ib(default=None, kw_only=True)
+    key_element2: BaseSampleKey = attr.ib(default=None, kw_only=True)
+    key_element3: str = attr.ib(default=None, kw_only=True)
 
 
+@attr.s(slots=True, auto_attribs=True)
 class CompositeKeySample(TypedRecord[CompositeKeySampleKey]):
-    __slots__ = ['key_element1', 'key_element2', 'key_element3']
-
-    key_element1: Optional[str]
-    key_element2: Optional[BaseSampleKey]
-    key_element3: Optional[str]
-
-    def __init__(self):
-        super().__init__()
-        self.key_element1 = None
-        self.key_element2 = None
-        self.key_element3 = None
+    key_element1: str = attr.ib(default=None, kw_only=True)
+    key_element2: BaseSampleKey = attr.ib(default=None, kw_only=True)
+    key_element3: str = attr.ib(default=None, kw_only=True)
 
 
+@attr.s(slots=True, auto_attribs=True)
 class SingletonSampleKey(TypedKey['SingletonSample']):
-    __slots__ = ()
-
-    def __init__(self):
-        super().__init__()
+    pass
 
 
+@attr.s(slots=True, auto_attribs=True)
 class SingletonSample(TypedRecord[SingletonSampleKey]):
-
-    __slots__ = ['string_element']
-
-    string_element: Optional[str]
-
-    def __init__(self):
-        super().__init__()
-        self.string_element = None
+    string_element: str = attr.ib(default=None, kw_only=True)
 
 
+@attr.s(slots=True, auto_attribs=True)
 class IdBasedKeySampleKey(TypedKey['IdBasedKeySample']):
-    __slots__ = ['id_']
-    id_: ObjectId
-
-    def __init__(self):
-        super().__init__()
-        self.id_ = None
+    id_: ObjectId = attr.ib(default=None, kw_only=True)
 
 
+@attr.s(slots=True, auto_attribs=True)
 class IdBasedKeySample(TypedRecord[IdBasedKeySampleKey]):
-    __slots__ = ['string_element']
-    string_element: str
-
-    def __init__(self):
-        super().__init__()
-        self.string_element = ''
+    string_element: str = attr.ib(default=None, kw_only=True)
 
 
 class TestMongoKey(unittest.TestCase):

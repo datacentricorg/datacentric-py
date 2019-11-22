@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import unittest
-import sys
 from datacentric.testing.unit_test import UnitTest
 from datacentric.io.text_writer import TextWriter
 from datacentric.io.file_writer import FileWriter
