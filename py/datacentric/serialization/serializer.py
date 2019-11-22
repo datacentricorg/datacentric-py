@@ -7,10 +7,12 @@ from enum import IntEnum
 from typing import Dict, Any, get_type_hints, TypeVar, Union
 from typing_inspect import get_origin, get_args
 
-import datacentric.date_time.date_ext as date_ext
 from datacentric.types.string_util import StringUtil
 from datacentric.storage.class_info import ClassInfo
+from datacentric.date_time.local_time import LocalTime
 from datacentric.date_time.local_minute import LocalMinute
+from datacentric.date_time.local_date import LocalDate
+from datacentric.date_time.local_date_time import LocalDateTime
 from datacentric.storage.key import Key
 from datacentric.storage.record import Record
 from datacentric.storage.data import Data
@@ -89,14 +91,8 @@ def _serialize_list(list_):
 
 def _serialize_primitive(value):
     value_type = type(value)
-    if value_type == LocalMinute:
-        return date_ext.minute_to_iso_int(value)
-    elif value_type == dt.date:
-        return date_ext.date_to_iso_int(value)
-    elif value_type == dt.time:
-        return date_ext.time_to_iso_int(value)
-    elif value_type == dt.datetime:
-        return value
+    if value_type in [LocalMinute, LocalTime, LocalDate, LocalDateTime]:
+        return value.to_iso_int()
     elif value_type == str:
         return value
     elif value_type == bool:
@@ -191,13 +187,13 @@ def _deserialize_primitive(expected_type, value):
     elif expected_type == bool:
         return value
     elif expected_type == LocalMinute:
-        return date_ext.iso_int_to_local_minute(value)
-    elif expected_type == dt.datetime:
-        return value
-    elif expected_type == dt.date:
-        return date_ext.iso_int_to_date(value)
-    elif expected_type == dt.time:
-        return date_ext.iso_int_to_time(value)
+        return LocalMinute.from_iso_int(value)
+    elif expected_type == LocalDateTime:
+        return LocalDateTime.from_iso_int(value)
+    elif expected_type == LocalDate:
+        return LocalDate.from_iso_int(value)
+    elif expected_type == LocalTime:
+        return LocalTime.from_iso_int(value)
     elif expected_type == int:
         return value
     elif expected_type == float:

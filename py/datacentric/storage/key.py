@@ -19,8 +19,10 @@ from enum import IntEnum
 from typing import List
 from bson import ObjectId
 from datacentric.storage.data import Data
+from datacentric.date_time.local_time import LocalTime
 from datacentric.date_time.local_minute import LocalMinute
-import datacentric.date_time.date_ext as date_ext
+from datacentric.date_time.local_date import LocalDate
+from datacentric.date_time.local_date_time import LocalDateTime
 
 
 @attr.s(slots=True)
@@ -169,14 +171,14 @@ class Key(Data, ABC):
                 value = bool(token.capitalize())
             elif member_type == int:
                 value = int(token)
-            elif member_type == dt.date:
-                value = date_ext.iso_int_to_date(int(token))
-            elif member_type == dt.time:
-                value = date_ext.iso_int_to_time(int(token))
+            elif member_type == LocalDate:
+                value = LocalDate.from_iso_int(int(token))
+            elif member_type == LocalTime:
+                value = LocalTime.from_iso_int(int(token))
             elif member_type == LocalMinute:
-                value = date_ext.iso_int_to_local_minute(int(token))
-            elif member_type == dt.datetime:
-                value = date_ext.iso_int_to_date_time(int(token))
+                value = LocalMinute.from_iso_int(int(token))
+            elif member_type == LocalDateTime:
+                value = LocalDateTime.from_iso_int(int(token))
             elif member_type == ObjectId:
                 value = ObjectId(token)
             elif issubclass(member_type, IntEnum):

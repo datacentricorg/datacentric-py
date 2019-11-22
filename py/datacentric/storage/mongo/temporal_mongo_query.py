@@ -1,16 +1,18 @@
 from __future__ import annotations
 
+import numpy as np
 from enum import IntEnum
 from typing import Iterable, Dict, Any, List, TypeVar
 from bson import ObjectId
 from pymongo.collection import Collection
 from pymongo.command_cursor import CommandCursor
-import datetime as dt
-import numpy as np
+
 
 from datacentric.types.string_util import StringUtil
-from datacentric.date_time import date_ext
+from datacentric.date_time.local_time import LocalTime
 from datacentric.date_time.local_minute import LocalMinute
+from datacentric.date_time.local_date import LocalDate
+from datacentric.date_time.local_date_time import LocalDateTime
 from datacentric.storage.record import Record
 from datacentric.serialization.serializer import deserialize
 
@@ -102,14 +104,8 @@ class TemporalMongoQuery:
     def __process_element(value) -> Any:
         """Serializes elements to bson valid objects."""
         value_type = type(value)
-        if value_type == LocalMinute:
-            return date_ext.minute_to_iso_int(value)
-        elif value_type == dt.date:
-            return date_ext.date_to_iso_int(value)
-        elif value_type == dt.time:
-            return date_ext.time_to_iso_int(value)
-        elif value_type == dt.datetime:
-            return value
+        if value_type in [LocalMinute, LocalDate, LocalDateTime, LocalTime]:
+            return value.to_iso_int()
         elif value_type == np.ndarray:
             return value.tolist()
         elif issubclass(value_type, IntEnum):

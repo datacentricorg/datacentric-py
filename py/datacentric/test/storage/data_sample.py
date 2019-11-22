@@ -1,7 +1,6 @@
 import attr
-import datetime as dt
 from enum import IntEnum
-from typing import List, Optional
+from typing import List
 
 from datacentric.date_time.local_date import LocalDate
 from datacentric.date_time.local_time import LocalTime
@@ -29,10 +28,10 @@ class BaseSample(TypedRecord['BaseSampleKey']):
     record_id: str = attr.ib(default=None, kw_only=True)
     record_index: int = attr.ib(default=None, kw_only=True)
     double_element: float = attr.ib(default=None, kw_only=True)
-    local_date_element: dt.date = attr.ib(default=None, kw_only=True)
-    local_time_element: dt.time = attr.ib(default=None, kw_only=True)
+    local_date_element: LocalDate = attr.ib(default=None, kw_only=True)
+    local_time_element: LocalTime = attr.ib(default=None, kw_only=True)
     local_minute_element: LocalMinute = attr.ib(default=None, kw_only=True)
-    local_date_time_element: dt.datetime = attr.ib(default=None, kw_only=True)
+    local_date_time_element: LocalDateTime = attr.ib(default=None, kw_only=True)
     enum_value: SampleEnum = attr.ib(default=None, kw_only=True)
     version: int = attr.ib(default=None, kw_only=True)
 

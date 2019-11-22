@@ -12,10 +12,10 @@ def save_base_record(context: Context, data_set_id, record_id, record_index) -> 
     rec.record_id = record_id
     rec.record_index = record_index
     rec.double_element = 100.0
-    rec.local_date_element = dt.date(2003, 5, 1)
-    rec.local_time_element = dt.time(10, 15, 30)  # 10:15:30
+    rec.local_date_element = LocalDate(2003, 5, 1)
+    rec.local_time_element = LocalTime(10, 15, 30)  # 10:15:30
     rec.local_minute_element = LocalMinute(10, 15)  # 10:15
-    rec.local_date_time_element = dt.datetime(2003, 5, 1, 10, 15)  # 2003-05-01T10:15:00
+    rec.local_date_time_element = LocalDateTime(2003, 5, 1, 10, 15)  # 2003-05-01T10:15:00
     rec.enum_value = SampleEnum.EnumValue2
 
     data_set = context.data_source.get_data_set(data_set_id, context.data_set)
@@ -29,10 +29,10 @@ def save_derived_record(context, data_set_id, record_id, record_index) -> Object
     rec.record_id = record_id
     rec.record_index = record_index
     rec.double_element = 300.
-    rec.local_date_element = dt.date(2003, 5, 1)
-    rec.local_time_element = dt.time(10, 15, 30)  # 10:15:30
+    rec.local_date_element = LocalDate(2003, 5, 1)
+    rec.local_time_element = LocalTime(10, 15, 30)  # 10:15:30
     rec.local_minute_element = LocalMinute(10, 15)  # 10:15
-    rec.local_date_time_element = dt.datetime(2003, 5, 1, 10, 15)  # 2003-05-01T10:15:00
+    rec.local_date_time_element = LocalDateTime(2003, 5, 1, 10, 15)  # 2003-05-01T10:15:00
     rec.string_element2 = ''
     rec.double_element = 200.
     rec.list_of_string = ['A', 'B', 'C']
