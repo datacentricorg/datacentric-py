@@ -26,3 +26,21 @@ class LocalDate:
     This class is inspired by NodaTime.LocalDate and follows the NodaTime
     naming conventions.
     """
+
+    def __init__(self, year: int, month: int, day: int):
+        self._date = dt.date(year, month, day)
+
+    def __str__(self):
+        return str(self._date)
+
+    def to_iso_int(self) -> int:
+        return self._date.year * 10_000 + self._date.month * 100 + self._date.day
+
+    @classmethod
+    def from_iso_int(cls, value: int) -> LocalDate:
+        year = value // 100_00
+        value -= year * 100_00
+        month = value // 100
+        value -= month * 100
+        day = value
+        return cls(year, month, day)

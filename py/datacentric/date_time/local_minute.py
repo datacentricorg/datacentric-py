@@ -16,6 +16,7 @@ from __future__ import annotations
 import datetime as dt
 import numpy as np
 
+
 # TODO - implementation is incomplete
 
 
@@ -49,8 +50,18 @@ class LocalMinute:
         return dt.time(self.hour, self.minute)
 
     @property
-    def minute_of_day(self) -> np.int32:
+    def minute_of_day(self) -> int:
         return self.hour * 60 + self.minute
+
+    def to_iso_int(self) -> int:
+        return self.hour * 100 + self.minute
+
+    @classmethod
+    def from_iso_int(cls, value: int) -> LocalMinute:
+        hour = value // 100
+        value -= hour * 100
+        minute = value
+        return cls(hour, minute)
 
     def __eq__(self, other):
         """
