@@ -14,7 +14,7 @@
 
 import attr
 from abc import ABC, abstractmethod
-from typing import Optional, TypeVar, Iterable, List
+from typing import Optional, TypeVar, Iterable, List, ClassVar
 from bson import ObjectId
 
 from datacentric.storage.data_set_flags import DataSetFlags
@@ -62,8 +62,10 @@ class DataSource(TypedRecord[DataSourceKey], ABC):
 
     This record is stored in root dataset.
     """
-    _empty_id = ObjectId('000000000000000000000000')
-    common_id: str = 'Common'
+
+    # Class variables
+    _empty_id: ClassVar[ObjectId] = ObjectId('000000000000000000000000')
+    common_id: ClassVar[str] = 'Common'
 
     data_source_name: str = attr.ib(default=None, kw_only=True)
     """Unique data source name."""
