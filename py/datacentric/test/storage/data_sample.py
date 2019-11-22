@@ -25,34 +25,34 @@ class SampleEnum(IntEnum):
 
 @attr.s(slots=True, auto_attribs=True)
 class BaseSample(TypedRecord['BaseSampleKey']):
-    record_id: str = attr.ib(default=None, kw_only=True)
-    record_index: int = attr.ib(default=None, kw_only=True)
-    double_element: float = attr.ib(default=None, kw_only=True)
-    local_date_element: LocalDate = attr.ib(default=None, kw_only=True)
-    local_time_element: LocalTime = attr.ib(default=None, kw_only=True)
-    local_minute_element: LocalMinute = attr.ib(default=None, kw_only=True)
-    local_date_time_element: LocalDateTime = attr.ib(default=None, kw_only=True)
-    enum_value: SampleEnum = attr.ib(default=None, kw_only=True)
-    version: int = attr.ib(default=None, kw_only=True)
+    record_id: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    record_index: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    double_element: float = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_date_element: LocalDate = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_time_element: LocalTime = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_minute_element: LocalMinute = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_date_time_element: LocalDateTime = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    enum_value: SampleEnum = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    version: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
 
 
 @attr.s(slots=True, auto_attribs=True)
 class BaseSampleKey(TypedKey[BaseSample]):
-    record_id: str = attr.ib(default=None, kw_only=True)
-    record_index: int = attr.ib(default=None, kw_only=True)
+    record_id: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    record_index: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
 
 
 @attr.s(slots=True, auto_attribs=True)
 class DerivedSample(BaseSample):
-    double_element2: float = attr.ib(default=None, kw_only=True)
-    string_element2: str = attr.ib(default=None, kw_only=True)
-    list_of_string: List[str] = attr.ib(default=None, kw_only=True)
-    list_of_double: List[float] = attr.ib(default=None, kw_only=True)
-    list_of_nullable_double: List[float] = attr.ib(default=None, kw_only=True)
-    data_element: ElementSample = attr.ib(default=None, kw_only=True)
-    data_element_list: List[ElementSample] = attr.ib(default=None, kw_only=True)
-    key_element: BaseSampleKey = attr.ib(default=None, kw_only=True)
-    key_element_list: List[BaseSampleKey] = attr.ib(default=None, kw_only=True)
+    double_element2: float = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    string_element2: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    list_of_string: List[str] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    list_of_double: List[float] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    list_of_nullable_double: List[float] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    data_element: ElementSample = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    data_element_list: List[ElementSample] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    key_element: BaseSampleKey = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    key_element_list: List[BaseSampleKey] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
 
 
 @attr.s(slots=True, auto_attribs=True)
