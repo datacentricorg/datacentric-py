@@ -1,7 +1,9 @@
 import unittest
-import datetime as dt
 
 from datacentric.date_time.local_minute import LocalMinute
+from datacentric.date_time.local_time import LocalTime
+from datacentric.date_time.local_date import LocalDate
+from datacentric.date_time.local_date_time import LocalDateTime
 from datacentric.test.storage.data_sample import NullableElementsSample, SampleEnum
 from datacentric.test.storage.mongo.temporal_test_context import TemporalTestContext
 
@@ -19,10 +21,10 @@ class TestQuery(unittest.TestCase):
                 record.string_token = 'A' + str(record_index_mod4)
                 record.bool_token = record_index_mod2 == 0
                 record.int_token = record_index_mod4
-                record.local_date_token = dt.date(2003, 5, 1) + dt.timedelta(days=record_index_mod4)
-                record.local_time_token = dt.time(10, 15, 30 + record_index_mod4)
+                record.local_date_token = LocalDate(2003, 5, 1+record_index_mod4)
+                record.local_time_token = LocalTime(10, 15, 30 + record_index_mod4)
                 record.local_minute_token = LocalMinute(10, record_index_mod4)
-                record.local_date_time_token = dt.datetime(2003, 5, 1, 10, 15) + dt.timedelta(days=record_index_mod4)
+                record.local_date_time_token = LocalDateTime(2003, 5, 1 + record_index_mod4, 10, 15)
                 record.enum_token = SampleEnum(record_index_mod2 + 1)
 
                 context.data_source.save_one(NullableElementsSample, record, context.data_set)
@@ -45,10 +47,10 @@ class TestQuery(unittest.TestCase):
             # Query with constraints
             query = context.data_source.get_query(NullableElementsSample, context.data_set) \
                 .where({'string_token': 'A1'}).where({'bool_token': False}).where({'int_token': 1}) \
-                .where({'local_date_token': dt.date(2003, 5, 1) + dt.timedelta(days=1)}) \
-                .where({'local_time_token': dt.time(10, 15, 30 + 1)}) \
+                .where({'local_date_token': LocalDate(2003, 5, 1+1)}) \
+                .where({'local_time_token': LocalTime(10, 15, 30 + 1)}) \
                 .where({'local_minute_token': LocalMinute(10, 1)}) \
-                .where({'local_date_time_token': dt.datetime(2003, 5, 1, 10, 15) + dt.timedelta(days=1)}) \
+                .where({'local_date_time_token': LocalDateTime(2003, 5, 1 + 1, 10, 15)}) \
                 .where({'enum_token': SampleEnum.EnumValue2})
 
             constrained_results = []
