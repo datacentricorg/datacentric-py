@@ -73,14 +73,14 @@ class Key(Data, ABC):
         elif attr_type == float:
             raise ValueError(f'Key element {slot} of type {type(obj).__name__} has type float. '
                              f'Elements of this type cannot be part of key due to serialization format uncertainty.')
-        elif attr_type == dt.date:
-            return str(date_ext.date_to_iso_int(attr_value))
-        elif attr_type == dt.time:
-            return str(date_ext.time_to_iso_int(attr_value))
+        elif attr_type == LocalDate:
+            return str(LocalDate.to_iso_int(attr_value))
+        elif attr_type == LocalTime:
+            return str(LocalTime.to_iso_int(attr_value))
         elif attr_type == LocalMinute:
-            return str(date_ext.minute_to_iso_int(attr_value))
-        elif attr_type == dt.datetime:
-            return str(date_ext.date_time_to_iso_int(attr_value))
+            return str(LocalMinute.to_iso_int(attr_value))
+        elif attr_type == LocalDateTime:
+            return str(LocalDateTime.to_iso_int(attr_value))
         elif attr_type == bool:
             if attr_value:
                 return 'true'

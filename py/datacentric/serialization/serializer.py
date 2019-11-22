@@ -1,10 +1,8 @@
-import datetime as dt
+import attr
 import numpy as np
-import inspect
-import itertools
 from bson import ObjectId
 from enum import IntEnum
-from typing import Dict, Any, get_type_hints, TypeVar, Union
+from typing import Dict, Any, get_type_hints, TypeVar, Union, List
 from typing_inspect import get_origin, get_args
 
 from datacentric.types.string_util import StringUtil
@@ -34,29 +32,30 @@ def serialize(obj: TRecord):
 
 def _serialize_class(obj: TRecord):
     dict_ = dict()
-    dict_['_t'] = obj.__class__.__name__
-    mro = inspect.getmro(type(obj))
-    from datacentric.storage.data import Data
-    from datacentric.storage.record import Record
 
+    cls_type = type(obj)
+    class_name = cls_type.__name__
+    dict_['_t'] = class_name
+
+    mro = cls_type.__mro__
+    fields = attr.fields(cls_type)
     if Record in mro:
-        idx = mro.index(Record)
-        chain = mro[:idx]
+        serializable_fields = fields[4:]
     elif Data in mro:
-        idx = mro.index(Data)
-        chain = mro[:idx]
+        serializable_fields = fields
     else:
-        raise Exception(f'Cannot serialize class {obj.__class__.__name__} not derived from Record or Data.')
+        raise Exception(f'Cannot serialize class {class_name} not derived from Record or Data.')
 
-    slot_lists = [x.__slots__ for x in chain]
-    slots = list(itertools.chain.from_iterable(slot_lists))
-
-    for slot in slots:
-        value = obj.__getattribute__(slot)
+    field: attr.Attribute
+    for field in serializable_fields:
+        value = getattr(obj, field.name)
+        value_type = type(value)
+        is_optional = field.metadata.get('optional', False)
         if value is None:
+            if not is_optional:
+                raise Exception(f'Missing required field: {field.name} in type: {class_name}')
             continue
 
-        value_type = type(value)
         if issubclass(value_type, Key):
             serialized_value = value.value
         elif issubclass(value_type, Data):
@@ -64,34 +63,46 @@ def _serialize_class(obj: TRecord):
         elif issubclass(value_type, IntEnum):
             serialized_value = value.name
         elif value_type is list:
-            serialized_value = _serialize_list(value)
+            serialized_value = _serialize_list(value, is_optional)
         else:
             serialized_value = _serialize_primitive(value)
 
-        dict_[StringUtil.to_pascal_case(slot)] = serialized_value
+        dict_[StringUtil.to_pascal_case(field.name)] = serialized_value
     return dict_
 
 
-def _serialize_list(list_):
-    result = []
+def _serialize_list(list_, is_optional: bool) -> List[Any]:
+    result: List[Any] = []
     for value in list_:
-        value_type = type(value)
-        if issubclass(value_type, Key):
-            result.append(value.value)
-        elif issubclass(value_type, Data):
-            result.append(_serialize_class(value))
-        elif issubclass(value_type, IntEnum):
-            result.append(value.name)
-        elif value_type is list:
-            raise Exception(f'List of lists are prohibited.')
+        if value is None:
+            if is_optional:
+                result.append(None)
+            else:
+                raise Exception('Lists not marked as optional cannot contain None elements.')
         else:
-            result.append(_serialize_primitive(value))
+            value_type = type(value)
+            if issubclass(value_type, Key):
+                result.append(value.value)
+            elif issubclass(value_type, Data):
+                result.append(_serialize_class(value))
+            elif issubclass(value_type, IntEnum):
+                result.append(value.name)
+            elif value_type is list:
+                raise Exception(f'List of lists are prohibited.')
+            else:
+                result.append(_serialize_primitive(value))
     return result
 
 
 def _serialize_primitive(value):
     value_type = type(value)
-    if value_type in [LocalMinute, LocalTime, LocalDate, LocalDateTime]:
+    if value_type == LocalMinute:
+        return value.to_iso_int()
+    if value_type == LocalTime:
+        return value.to_iso_int()
+    if value_type == LocalDate:
+        return value.to_iso_int()
+    if value_type == LocalDateTime:
         return value.to_iso_int()
     elif value_type == str:
         return value
@@ -118,7 +129,7 @@ def deserialize(dict_: Dict) -> TRecord:
     _key = dict_.pop('_key')
     id_ = dict_.pop('_id')
 
-    new_obj = _deserialize_class(dict_)
+    new_obj: TRecord = _deserialize_class(dict_)
 
     new_obj.__setattr__('data_set', data_set)
     new_obj.__setattr__('_key', _key)
