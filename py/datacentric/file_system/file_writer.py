@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from datacentric.io.text_writer import TextWriter
+from datacentric.file_system.text_writer import TextWriter
 
 
 class FileWriter(TextWriter):

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import io
-from datacentric.io.text_writer import TextWriter
+from datacentric.file_system.text_writer import TextWriter
 
 
 class StringWriter(TextWriter):

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import attr
-from datacentric.io.file_writer import FileWriter
+from datacentric.file_system.file_writer import FileWriter
 from datacentric.log.text_log import TextLog
 from datacentric.storage.context import Context
 

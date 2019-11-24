@@ -14,8 +14,8 @@
 
 import unittest
 from datacentric.testing.unit_test import UnitTest
-from datacentric.io.text_writer import TextWriter
-from datacentric.io.file_writer import FileWriter
+from datacentric.file_system.text_writer import TextWriter
+from datacentric.file_system.file_writer import FileWriter
 
 
 class TestFileWriter(unittest.TestCase, UnitTest):
