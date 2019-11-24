@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import attr
-from datacentric.logging.log import Log
+from datacentric.log.log import Log
 
 
 @attr.s(slots=True, auto_attribs=True)

@@ -14,7 +14,7 @@
 
 import attr
 from datacentric.io.file_writer import FileWriter
-from datacentric.logging.text_log import TextLog
+from datacentric.log.text_log import TextLog
 from datacentric.storage.context import Context
 
 

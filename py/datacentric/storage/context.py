@@ -18,7 +18,7 @@ from bson.objectid import ObjectId
 
 # To prevent linter error on type hint in quotes
 if False:
-    from datacentric.logging.log import Log
+    from datacentric.log.log import Log
     from datacentric.storage.data_source import DataSource
 
 
@@ -55,7 +55,7 @@ class Context:
         """Logging interface."""
 
         # Define log
-        from datacentric.logging.log import Log
+        from datacentric.log.log import Log
 
         if not self.__log:
             raise Exception('fLog property is not set in {GetType().Name}.')

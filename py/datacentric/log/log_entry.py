@@ -17,10 +17,10 @@ from bson import ObjectId
 from datacentric.storage.context import Context
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
-from datacentric.logging.log_verbosity import LogVerbosity
+from datacentric.log.log_verbosity import LogVerbosity
 
 if False:
-    from datacentric.logging.log import LogKey
+    from datacentric.log.log import LogKey
 
 
 @attr.s(slots=True, auto_attribs=True)

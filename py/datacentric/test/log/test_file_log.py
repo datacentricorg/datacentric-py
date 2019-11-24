@@ -15,8 +15,8 @@
 import unittest
 import sys
 from datacentric.testing.unit_test import UnitTest
-from datacentric.logging.log_verbosity import LogVerbosity
-from datacentric.logging.file_log import FileLog
+from datacentric.log.log_verbosity import LogVerbosity
+from datacentric.log.file_log import FileLog
 from datacentric.storage.context import Context
 
 

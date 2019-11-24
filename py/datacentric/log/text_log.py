@@ -16,9 +16,9 @@ import attr
 from abc import ABC
 from typing import List
 from datacentric.types.string_util import StringUtil
-from datacentric.logging.log import Log
+from datacentric.log.log import Log
 from datacentric.io.text_writer import TextWriter
-from datacentric.logging.log_entry import LogEntry
+from datacentric.log.log_entry import LogEntry
 
 
 @attr.s(slots=True, auto_attribs=True)

@@ -17,8 +17,8 @@ from abc import ABC, abstractmethod
 from datacentric.storage.context import Context
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
-from datacentric.logging.log_verbosity import LogVerbosity
-from datacentric.logging.log_entry import LogEntry
+from datacentric.log.log_verbosity import LogVerbosity
+from datacentric.log.log_entry import LogEntry
 
 
 @attr.s(slots=True, auto_attribs=True)
