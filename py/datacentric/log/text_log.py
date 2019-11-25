@@ -15,7 +15,7 @@
 import attr
 from abc import ABC
 from typing import List
-from datacentric.types.string_util import StringUtil
+from datacentric.primitive.string_util import StringUtil
 from datacentric.log.log import Log
 from datacentric.file_system.text_writer import TextWriter
 from datacentric.log.log_entry import LogEntry

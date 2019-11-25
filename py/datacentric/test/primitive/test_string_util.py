@@ -15,7 +15,7 @@
 import unittest
 from datacentric.storage.context import Context
 from datacentric.testing.unit_test import UnitTest
-from datacentric.types.string_util import StringUtil
+from datacentric.primitive.string_util import StringUtil
 
 
 class TestStringUtil(unittest.TestCase, UnitTest):

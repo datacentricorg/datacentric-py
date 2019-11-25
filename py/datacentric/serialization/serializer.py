@@ -5,7 +5,7 @@ from enum import IntEnum
 from typing import Dict, Any, get_type_hints, TypeVar, Union, List
 from typing_inspect import get_origin, get_args
 
-from datacentric.types.string_util import StringUtil
+from datacentric.primitive.string_util import StringUtil
 from datacentric.storage.class_info import ClassInfo
 from datacentric.date_time.local_time import LocalTime
 from datacentric.date_time.local_minute import LocalMinute

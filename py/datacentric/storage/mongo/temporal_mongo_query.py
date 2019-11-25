@@ -8,7 +8,7 @@ from pymongo.collection import Collection
 from pymongo.command_cursor import CommandCursor
 
 
-from datacentric.types.string_util import StringUtil
+from datacentric.primitive.string_util import StringUtil
 from datacentric.date_time.local_time import LocalTime
 from datacentric.date_time.local_minute import LocalMinute
 from datacentric.date_time.local_date import LocalDate
