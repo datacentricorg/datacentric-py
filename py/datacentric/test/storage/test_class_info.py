@@ -4,6 +4,7 @@ from datacentric.storage.class_info import ClassInfo
 from datacentric.storage.typed_record import TypedRecord
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.data import Data
+from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 
 class BaseKey(TypedKey['BaseRecord']):
@@ -22,7 +23,7 @@ class ElementData(Data):
     pass
 
 
-class TestClassInfo(unittest.TestCase):
+class TestClassInfo(unittest.TestCase, UnitTest):
     def test_root_type(self):
         with self.assertRaises(Exception):
             ClassInfo.get_root_type(TypedKey[BaseRecord])

@@ -5,6 +5,7 @@ from bson import ObjectId
 from datacentric.storage.typed_record import TypedRecord
 from datacentric.storage.typed_key import TypedKey
 from datacentric.test.storage.data_sample import BaseSampleKey
+from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 
 @attr.s(slots=True, auto_attribs=True)
@@ -41,7 +42,7 @@ class IdBasedKeySample(TypedRecord[IdBasedKeySampleKey]):
     string_element: str = attr.ib(default=None, kw_only=True)
 
 
-class TestMongoKey(unittest.TestCase):
+class TestMongoKey(unittest.TestCase, UnitTest):
     def test_composite_key(self):
         rec = CompositeKeySample()
         rec.key_element1 = 'abc'

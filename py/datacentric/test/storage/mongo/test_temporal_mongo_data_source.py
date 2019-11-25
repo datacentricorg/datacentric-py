@@ -4,7 +4,8 @@ from bson import ObjectId
 from datacentric.storage.context import Context
 from datacentric.storage.data_set import DataSet
 from datacentric.storage.mongo.temporal_mongo_unit_test_context import TemporalMongoUnitTestContext
-from datacentric.test.storage.data_sample import *
+from datacentric.testing.unit_test import UnitTestKey, UnitTest
+from datacentric.test.storage.data_sample import *  # TODO - correct?
 
 
 def save_base_record(context: Context, data_set_id, record_id, record_index) -> ObjectId:
@@ -105,7 +106,7 @@ def save_minimal_record(context, data_set_id, record_id, record_index, version):
     return rec.id_
 
 
-class TestTemporalMongoDataSource(unittest.TestCase):
+class TestTemporalMongoDataSource(unittest.TestCase, UnitTest):
     def test_smoke(self):
         with TemporalMongoUnitTestContext(self) as context:
             save_basic_data(context)

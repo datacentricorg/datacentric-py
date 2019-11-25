@@ -6,9 +6,10 @@ from datacentric.date_time.local_date import LocalDate
 from datacentric.date_time.local_date_time import LocalDateTime
 from datacentric.test.storage.data_sample import NullableElementsSample, SampleEnum
 from datacentric.storage.mongo.temporal_mongo_unit_test_context import TemporalMongoUnitTestContext
+from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 
-class TestQuery(unittest.TestCase):
+class TestQuery(unittest.TestCase, UnitTest):
     def test_nullable_elements(self):
         with TemporalMongoUnitTestContext(self) as context:
 

@@ -18,6 +18,7 @@ from datacentric.testing.unit_test import UnitTest
 from datacentric.log.log_verbosity import LogVerbosity
 from datacentric.log.file_log import FileLog
 from datacentric.storage.context import Context
+from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 
 class TestFileLog(unittest.TestCase, UnitTest):
@@ -43,6 +44,7 @@ class TestFileLog(unittest.TestCase, UnitTest):
         file_log.assert_(False, 'Title for false assert', 'Description for false assert')
         file_log.info('Multi-line title\nSecond line of title',
                       'Multi-line description\nSecond line of description')
+
 
 if __name__ == "__main__":
     unittest.main()
