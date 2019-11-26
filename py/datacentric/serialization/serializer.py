@@ -21,7 +21,7 @@ TRecord = TypeVar('TRecord', bound=Record)
 # Serialization: object -> dict
 
 def serialize(obj: TRecord):
-    dict_ = _serialize_class(obj)
+    dict_ = _serialize_class(obj, type(obj))
     dict_['_t'] = obj.__class__.__name__
     dict_['_dataset'] = obj.data_set
     dict_['_key'] = obj.key
@@ -30,12 +30,16 @@ def serialize(obj: TRecord):
     return dict_
 
 
-def _serialize_class(obj: TRecord):
-    dict_ = dict()
+def _serialize_class(obj: TRecord, expected_: type):
+    dict_: Dict[str, Any] = dict()
 
     cls_type = type(obj)
-    class_name = cls_type.__name__
-    dict_['_t'] = class_name
+    # Check that object has expected type
+    if cls_type != expected_:
+        raise Exception(f'Expected: {expected_.__name__}, actual: {cls_type.__name__}')
+
+    cls_name = cls_type.__name__
+    dict_['_t'] = cls_name
 
     mro = cls_type.__mro__
     fields = attr.fields(cls_type)
@@ -44,58 +48,75 @@ def _serialize_class(obj: TRecord):
     elif Data in mro:
         serializable_fields = fields
     else:
-        raise Exception(f'Cannot serialize class {class_name} not derived from Record or Data.')
+        raise Exception(f'Cannot serialize class {cls_name} not derived from Record or Data.')
 
     field: attr.Attribute
     for field in serializable_fields:
         value = getattr(obj, field.name)
-        value_type = type(value)
+        expected_type = field.type
+
         is_optional = field.metadata.get('optional', False)
+        is_list = get_origin(expected_type) is not None and get_origin(expected_type) is list
+
         if value is None:
-            if not is_optional:
-                raise Exception(f'Missing required field: {field.name} in type: {class_name}')
+            if not is_optional and not is_list:
+                raise Exception(f'Missing required field: {field.name} in type: {cls_name}')
             continue
 
-        if issubclass(value_type, Key):
-            serialized_value = value.value
-        elif issubclass(value_type, Data):
-            serialized_value = _serialize_class(value)
-        elif issubclass(value_type, IntEnum):
-            serialized_value = value.name
-        elif value_type is list:
-            serialized_value = _serialize_list(value, is_optional)
+        if is_list:
+            expected_arg = get_args(expected_type)[0]
+            serialized_value = _serialize_list(value, expected_arg, is_optional)
+        elif issubclass(expected_type, Key):
+            serialized_value = _serialize_key(value)
+        elif issubclass(expected_type, Data):
+            serialized_value = _serialize_class(value, expected_type)
+        elif issubclass(expected_type, IntEnum):
+            serialized_value = _serialize_enum(value)
         else:
-            serialized_value = _serialize_primitive(value)
+            serialized_value = _serialize_primitive(value, expected_type)
 
         dict_[StringUtil.to_pascal_case(field.name)] = serialized_value
     return dict_
 
 
-def _serialize_list(list_, is_optional: bool) -> List[Any]:
-    result: List[Any] = []
-    for value in list_:
-        if value is None:
-            if is_optional:
-                result.append(None)
-            else:
-                raise Exception('Lists not marked as optional cannot contain None elements.')
-        else:
-            value_type = type(value)
-            if issubclass(value_type, Key):
-                result.append(value.value)
-            elif issubclass(value_type, Data):
-                result.append(_serialize_class(value))
-            elif issubclass(value_type, IntEnum):
-                result.append(value.name)
-            elif value_type is list:
-                raise Exception(f'List of lists are prohibited.')
-            else:
-                result.append(_serialize_primitive(value))
-    return result
+def _serialize_list(list_, expected_, is_optional: bool) -> List[Any]:
+    is_required = not is_optional
+    if is_required and None in list_:
+        Exception('Lists not marked as optional cannot contain None elements.')
+
+    if issubclass(expected_, Key):
+        return [_serialize_key(x) for x in list_]
+    elif issubclass(expected_, Data):
+        return [_serialize_class(x, expected_) for x in list_]
+    elif issubclass(expected_, IntEnum):
+        return [_serialize_enum(x) for x in list_]
+    else:
+        return [_serialize_primitive(x, expected_) for x in list_]
 
 
-def _serialize_primitive(value):
+def _serialize_enum(value_: IntEnum):
+    if issubclass(type(value_), IntEnum):
+        return value_.name
+    else:
+        raise Exception(f'Expected subclass of IntEnum, got {type(value_)}')
+
+
+def _serialize_key(value_: Key):
+    if issubclass(type(value_), Key):
+        return value_.value
+    else:
+        raise Exception(f'Expected subclass of Key, got {type(value_)}')
+
+
+def _serialize_primitive(value, expected_):
+    # The only case to have None here -> List with optional in metadata
+    if value is None:
+        return None
+
     value_type = type(value)
+    if value_type != expected_:
+        raise Exception(f'Expected {expected_.__name__}, got {value_type.__name__}')
+
     if value_type == LocalMinute:
         return value.to_iso_int()
     if value_type == LocalTime:
@@ -114,9 +135,6 @@ def _serialize_primitive(value):
         return value
     elif value_type == ObjectId:
         return value
-    # TODO: check for pymongo.binary.Binary to speed-up
-    elif value_type == np.ndarray:
-        return value.tolist()
     else:
         raise Exception(f'Cannot serialize type {value_type.__name__}')
 
