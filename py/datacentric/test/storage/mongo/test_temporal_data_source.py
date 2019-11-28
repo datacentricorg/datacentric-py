@@ -3,7 +3,7 @@ import unittest
 from bson import ObjectId
 from datacentric.storage.context import Context
 from datacentric.storage.data_set import DataSet
-from datacentric.test.storage.mongo.temporal_test_context import TemporalTestContext
+from datacentric.storage.mongo.temporal_mongo_unit_test_context import TemporalMongoUnitTestContext
 from datacentric.test.storage.data_sample import *
 
 
@@ -105,9 +105,9 @@ def save_minimal_record(context, data_set_id, record_id, record_index, version):
     return rec.id_
 
 
-class TestTemporalDataSource(unittest.TestCase):
+class TestTemporalMongoDataSource(unittest.TestCase):
     def test_smoke(self):
-        with TemporalTestContext(self) as context:
+        with TemporalMongoUnitTestContext(self) as context:
             save_basic_data(context)
 
             key_a0 = BaseSampleKey()
@@ -124,7 +124,7 @@ class TestTemporalDataSource(unittest.TestCase):
             self.assertEqual(verify_load(context, 'DataSet1', key_b0), 'Found. Type = DerivedSample')
 
     def test_multiple_data_set_query(self):
-        with TemporalTestContext(self) as context:
+        with TemporalMongoUnitTestContext(self) as context:
             # Begin from DataSet0
             data_set0 = context.data_source.create_data_set('DataSet0', context.data_set)
 
@@ -192,7 +192,7 @@ class TestTemporalDataSource(unittest.TestCase):
 
     def test_create_ordered_id(self):
         """Stress tests to check ObjectIds are created in increasing order."""
-        with TemporalTestContext(self) as context:
+        with TemporalMongoUnitTestContext(self) as context:
             for i in range(10_000):
                 context.data_source.create_ordered_object_id()
 

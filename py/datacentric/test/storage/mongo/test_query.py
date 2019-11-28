@@ -5,12 +5,12 @@ from datacentric.date_time.local_time import LocalTime
 from datacentric.date_time.local_date import LocalDate
 from datacentric.date_time.local_date_time import LocalDateTime
 from datacentric.test.storage.data_sample import NullableElementsSample, SampleEnum
-from datacentric.test.storage.mongo.temporal_test_context import TemporalTestContext
+from datacentric.storage.mongo.temporal_mongo_unit_test_context import TemporalMongoUnitTestContext
 
 
 class TestQuery(unittest.TestCase):
     def test_nullable_elements(self):
-        with TemporalTestContext(self) as context:
+        with TemporalMongoUnitTestContext(self) as context:
 
             for record_index in range(8):
                 record_index_mod2 = record_index % 2

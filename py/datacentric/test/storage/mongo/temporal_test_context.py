@@ -3,7 +3,7 @@ from datacentric.storage.mongo.temporal_mongo_data_source import TemporalMongoDa
 from datacentric.storage.env_type import EnvType
 
 
-class TemporalTestContext:
+class TemporalMongoUnitTestContext:
     def __init__(self, test):
         self.test = test
 
