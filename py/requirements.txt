@@ -1,6 +1,8 @@
 attrs>=19.3
-mypy>=0.740
 typing-inspect>=0.5.0
 pymongo>=3.9.0
 numpy>=1.17.4
 pandas>=0.25.3
+mypy>=0.750
+pycodestyle>=2.5.0
+autopep8>=1.4.4
