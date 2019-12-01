@@ -108,4 +108,4 @@ class UnitTest(TypedRecord[UnitTestKey]):
         This method will run each of the test methods using its own instance
         of the test class in parallel.
         """
-        raise NotImplemented
+        raise NotImplementedError()

@@ -61,17 +61,17 @@ class Key(Data, ABC):
         attr_value = obj.__getattribute__(slot)
         attr_type = type(attr_value)
         if attr_value is None:
-            raise ValueError(f'Key element {slot} of type {type(obj).__name__} is null. '
+            raise Exception(f'Key element {slot} of type {type(obj).__name__} is null. '
                              f'Null elements are not permitted in key.')
         elif attr_type == str:
             if attr_value == '':
-                raise ValueError(f'String key element {slot} is empty. Empty elements are not permitted in key.')
+                raise Exception(f'String key element {slot} is empty. Empty elements are not permitted in key.')
             if ';' in attr_value:
-                raise ValueError(f'Key element {slot} of type {type(obj).__name__} includes semicolon delimiter. '
+                raise Exception(f'Key element {slot} of type {type(obj).__name__} includes semicolon delimiter. '
                                  f'The use of this delimiter is reserved for separating key tokens.')
             return attr_value
         elif attr_type == float:
-            raise ValueError(f'Key element {slot} of type {type(obj).__name__} has type float. '
+            raise Exception(f'Key element {slot} of type {type(obj).__name__} has type float. '
                              f'Elements of this type cannot be part of key due to serialization format uncertainty.')
         elif attr_type == LocalDate:
             return str(LocalDate.to_iso_int(attr_value))
@@ -95,7 +95,7 @@ class Key(Data, ABC):
         elif issubclass(attr_type, IntEnum):
             return attr_value.name
         else:
-            raise ValueError(f'Key element {slot} of type {type(obj).__name__} has type {attr_type.__name__} '
+            raise Exception(f'Key element {slot} of type {type(obj).__name__} has type {attr_type.__name__} '
                              f'that is not one of the supported key element types. Available key element types are '
                              f'string, double, bool, int, long, LocalDate, LocalTime, LocalMinute, LocalDateTime, '
                              f'LocalMinute, ObjectId, or Enum.')

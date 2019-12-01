@@ -230,4 +230,4 @@ def _deserialize_primitive(expected_type, value):
     elif expected_type == ObjectId:
         return value
     else:
-        raise TypeError(f'Cannot deduce type {expected_type}')
+        raise Exception(f'Cannot deduce type {expected_type}')

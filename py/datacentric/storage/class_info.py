@@ -22,7 +22,7 @@ class ClassInfo:
             ClassInfo.__is_initialized = True
 
         if name not in ClassInfo.__data_types_map:
-            raise KeyError
+            raise Exception(f'Class {name} is not found in ClassInfo data types map')
 
         return ClassInfo.__data_types_map[name]
 

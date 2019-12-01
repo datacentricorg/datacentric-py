@@ -252,7 +252,7 @@ class DataSource(TypedRecord[DataSourceKey], ABC):
         Error message if there is no record for the specified ObjectId,
         or if the record exists but is not derived from record_type.
         """
-        raise NotImplemented
+        raise NotImplementedError()
 
     def load_by_key(self, key_: TypedKey, load_from: ObjectId) -> TRecord:
         """Load record from context.data_source, overriding the dataset

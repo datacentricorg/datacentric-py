@@ -25,7 +25,7 @@ class TestFileWriter(unittest.TestCase, UnitTest):
     def setUp(self):
         """
         Must call UnitTest constructor from setUp() method
-        to avoid AttributeError in properties of the base class.
+        to avoid exception in properties of the base class.
         """
         UnitTest.__init__(self)
 
