@@ -61,10 +61,17 @@ class TestLocalTime(unittest.TestCase, UnitTest):
         self.assertEqual(str(t1), time_str)
         t6_str = '10:15:30'
         self.assertEqual(str(LocalTime(t6_str)), t6_str)
-        t7_str = '10:15:30.12'
+        t7_str = '10:15:30.1'
         self.assertEqual(str(LocalTime(t7_str)), t7_str)
-        t8_str = '10:15:30.123'
+        t8_str = '10:15:30.12'
         self.assertEqual(str(LocalTime(t8_str)), t8_str)
+        t9_str = '10:15:30.123'
+        self.assertEqual(str(LocalTime(t9_str)), t9_str)
+
+        # Test rounding to the whole millisecond
+        t10_str = '10:15:30.1234'
+        t10_str_rounded = '10:15:30.123'
+        self.assertEqual(str(LocalTime(t10_str)), t10_str_rounded)
 
 
 if __name__ == "__main__":

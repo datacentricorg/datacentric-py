@@ -66,10 +66,17 @@ class TestInstant(unittest.TestCase, UnitTest):
         self.assertEqual(str(t1), date_str)
         t6_str = '2003-05-01T10:15:30Z'
         self.assertEqual(str(Instant(t6_str)), t6_str)
-        t7_str = '2003-05-01T10:15:30.12Z'
+        t7_str = '2003-05-01T10:15:30.1Z'
         self.assertEqual(str(Instant(t7_str)), t7_str)
-        t8_str = '2003-05-01T10:15:30.123Z'
+        t8_str = '2003-05-01T10:15:30.12Z'
         self.assertEqual(str(Instant(t8_str)), t8_str)
+        t9_str = '2003-05-01T10:15:30.123Z'
+        self.assertEqual(str(Instant(t9_str)), t9_str)
+
+        # Test rounding to the whole millisecond
+        t10_str = '2003-05-01T10:15:30.1234Z'
+        t10_str_rounded = '2003-05-01T10:15:30.123Z'
+        self.assertEqual(str(Instant(t10_str)), t10_str_rounded)
 
 
 if __name__ == "__main__":
