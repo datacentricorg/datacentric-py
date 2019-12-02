@@ -24,7 +24,7 @@ class Instant:
     Represents an instant on the global timeline in UTC timezone, with
     one millisecond resolution, and provides conversion to and from:
 
-    * Int year, month, day, hour, minute, second, and millisecond
+    * Int year, month, day, hour, minute, second, and millisecond in UTC
     * Int value of milliseconds since the Unix epoch
     * ISO string in yyy-mm-ddThh:mm:ss.fffZ format
     * Python dt.datetime
@@ -48,7 +48,7 @@ class Instant:
         Creates Instant to millisecon precision from the specified
         arguments. The options for the arguments include:
 
-        * Int year, month, day, hour, minute, second, and millisecond
+        * Int year, month, day, hour, minute, second, and millisecond in UTC
         * Int value of milliseconds since the Unix epoch
         * ISO string in yyy-mm-ddThh:mm:ss.fffZ format
         * Python dt.datetime
@@ -123,7 +123,15 @@ class Instant:
                                 f'indicates UTC timezone.')
 
             # Coonvert to datetime and set UTC timezone
-            dtime_from_str: dt.datetime = dt.datetime.strptime(iso_string, '%Y-%m-%dT%H:%M:%S.%fZ')
+            dtime_from_str: dt.datetime
+            if '.' in iso_string:
+                # Has milliseconds
+                dtime_from_str = dt.datetime.strptime(iso_string, '%Y-%m-%dT%H:%M:%S.%fZ')
+            else:
+                # Does not have milliseconds
+                dtime_from_str = dt.datetime.strptime(iso_string, '%Y-%m-%dT%H:%M:%SZ')
+
+            # Set tzinfo to the standard UTC singleton from pytz module
             dtime_from_str = dtime_from_str.replace(tzinfo=pytz.UTC)
 
             # Round to the nearest whole milliseconds since Unix epoch
@@ -177,6 +185,26 @@ class Instant:
             if millisecond is not None:
                 raise Exception(f'In Instant constructor, first argument {year_or_value} is the entire datetime '
                                 f'rather than year, in which case millisecond={millisecond} must be None.')
+
+    def __str__(self) -> str:
+        """
+        Convert to string in ISO format with UTC (Z) timezone suffix
+        to millisecond precision, for example:
+
+        2003-05-01T10:15:30.500Z
+
+        Fractional seconds are omitted if zero.
+        """
+        dtime: dt.datetime = self.to_datetime()
+        second_str: str = dtime.strftime('%Y-%m-%dT%H:%M:%S')
+        if dtime.microsecond == 0:
+            # No milliseconds
+            return second_str + 'Z'
+        else:
+            # Include milliseconds without the trailing zeroes
+            millis_str: str = str(dtime.microsecond / 1.0e6).lstrip('0.')
+            result: str = second_str + '.' + millis_str + 'Z'
+            return result
 
     def to_unix_millis(self) -> int:
         """

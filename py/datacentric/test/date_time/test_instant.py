@@ -33,7 +33,8 @@ class TestInstant(unittest.TestCase, UnitTest):
     def test_smoke(self):
         """Smoke test"""
 
-        # Created dates t1-t5 must match this value of Unix millis
+        # Created dates t1-t5 must match this value of string and/or Unix millis
+        date_str: str = '2003-05-01T10:15:30.5Z'
         unix_millis: int = 1051784130500
 
         # Create from milliseconds since Unix epoch
@@ -45,21 +46,30 @@ class TestInstant(unittest.TestCase, UnitTest):
         self.assertEqual(t2.to_unix_millis(), unix_millis)
 
         # Create from string
-        t3: Instant = Instant('2003-05-01T10:15:30.500Z')
+        t3: Instant = Instant(date_str)
         self.assertEqual(t3.to_unix_millis(), unix_millis)
 
         # Create from dt.datetime
-        dtime: dt.datetime = dateutil.parser.parse('2003-05-01T10:15:30.500Z')
+        dtime: dt.datetime = dateutil.parser.parse(date_str)
         t4: Instant = Instant(dtime)
         self.assertEqual(t4.to_unix_millis(), unix_millis)
 
         # Create from pd.timestamp
-        tstamp: pd.Timestamp = pd.Timestamp('2003-05-01T10:15:30.500Z')
+        tstamp: pd.Timestamp = pd.Timestamp(date_str)
         t5: Instant = Instant(tstamp)
         self.assertEqual(t5.to_unix_millis(), unix_millis)
 
         # Test conversion to dt.datetime
         self.assertEqual(t1.to_datetime(), dtime)
+
+        # Test string representation roundtrip
+        self.assertEqual(str(t1), date_str)
+        t6_str = '2003-05-01T10:15:30Z'
+        self.assertEqual(str(Instant(t6_str)), t6_str)
+        t7_str = '2003-05-01T10:15:30.12Z'
+        self.assertEqual(str(Instant(t7_str)), t7_str)
+        t8_str = '2003-05-01T10:15:30.123Z'
+        self.assertEqual(str(Instant(t8_str)), t8_str)
 
 
 if __name__ == "__main__":
