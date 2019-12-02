@@ -93,6 +93,9 @@ class LocalDate:
 
             # If argument is a string, it must use ISO yyyy-mm-dd format without timezone
             iso_string: str = year_or_value
+            if iso_string.endswith('Z'):
+                raise Exception(f'String {iso_string} passed to LocalDate ctor must not end with capital Z that '
+                                f'indicates UTC timezone because LocalDate does not include timezone.')
 
             # Convert from string in yyyy-mm-dd format
             date_from_str: dt.date = dt.date.fromisoformat(iso_string)
@@ -146,3 +149,45 @@ class LocalDate:
         day: int = value
         result: dt.date = dt.date(year, month, day)
         return result
+
+    def __eq__(self, other):
+        """
+        True if lhs and rhs represent the same moment in time.
+
+        Returns NotImplemented if rhs is None or not a LocalDate.
+        """
+        if isinstance(other, LocalDate):
+            return self.__iso_int == other.__iso_int
+        return NotImplemented
+
+    def __lt__(self, other: LocalDate):
+        """
+        True if lhs is strictly earlier than rhs.
+
+        Error message if rhs is None.
+        """
+        return self.__iso_int < other.__iso_int
+
+    def __le__(self, other: LocalDate):
+        """
+        True if lhs is earlier than or equal to rhs.
+
+        Error message if rhs is None.
+        """
+        return self.__iso_int <= other.__iso_int
+
+    def __gt__(self, other: LocalDate):
+        """
+        True if lhs is strictly later than rhs.
+
+        Error message if rhs is None.
+        """
+        return self.__iso_int > other.__iso_int
+
+    def __ge__(self, other: LocalDate):
+        """
+        True if lhs is later than or equal to rhs.
+
+        Error message if rhs is None.
+        """
+        return self.__iso_int >= other.__iso_int

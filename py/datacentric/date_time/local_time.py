@@ -105,7 +105,7 @@ class LocalTime:
                     # Otherwise check the range
                     if not (0 <= millisecond <= 9999):
                         raise Exception(f'In LocalTime constructor, millisecond is specified but is '
-                                    f'not an integer in the range from 0 to 999.')
+                                        f'not an integer in the range from 0 to 999.')
 
                 # Convert to int in ISO hhmmssfff format
                 self.__iso_int = 10_000_000 * hour + 100_000 * minute + 1000 * second + millisecond
@@ -114,6 +114,9 @@ class LocalTime:
 
             # If argument is a string, it must use ISO hh:mm:ss.fff format
             iso_string: str = hour_or_value
+            if iso_string.endswith('Z'):
+                raise Exception(f'String {iso_string} passed to LocalTime ctor must not end with capital Z that '
+                                f'indicates UTC timezone because LocalTime does not include timezone.')
 
             time_whole_seconds: dt.time
             millisecond_int: int
@@ -202,8 +205,8 @@ class LocalTime:
         else:
             # Include milliseconds without the trailing zeroes
             millis_str: str = str(millisecond / 1000.0).lstrip('0.')
-            result: str = time_whole_seconds_str + '.' + millis_str
-            return result
+            local_time_str: str = time_whole_seconds_str + '.' + millis_str
+            return local_time_str
 
     def to_iso_int(self) -> int:
         """Convert to int in ISO hhmmssfff format."""
@@ -221,3 +224,45 @@ class LocalTime:
         millisecond: int = value
         result: dt.time = dt.time(hour, minute, second, 1000 * millisecond)
         return result
+
+    def __eq__(self, other):
+        """
+        True if lhs and rhs represent the same moment in time.
+
+        Returns NotImplemented if rhs is None or not a LocalTime.
+        """
+        if isinstance(other, LocalTime):
+            return self.__iso_int == other.__iso_int
+        return NotImplemented
+
+    def __lt__(self, other: LocalTime):
+        """
+        True if lhs is strictly earlier than rhs.
+
+        Error message if rhs is None.
+        """
+        return self.__iso_int < other.__iso_int
+
+    def __le__(self, other: LocalTime):
+        """
+        True if lhs is earlier than or equal to rhs.
+
+        Error message if rhs is None.
+        """
+        return self.__iso_int <= other.__iso_int
+
+    def __gt__(self, other: LocalTime):
+        """
+        True if lhs is strictly later than rhs.
+
+        Error message if rhs is None.
+        """
+        return self.__iso_int > other.__iso_int
+
+    def __ge__(self, other: LocalTime):
+        """
+        True if lhs is later than or equal to rhs.
+
+        Error message if rhs is None.
+        """
+        return self.__iso_int >= other.__iso_int

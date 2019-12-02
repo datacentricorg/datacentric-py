@@ -118,7 +118,7 @@ class Instant:
             # If argument is a string, it must specify UTC (Z) timezone explicitly
             iso_string: str = year_or_value
             if not iso_string.endswith('Z'):
-                raise Exception(f'Datetime string {iso_string} passed to Instant ctor must end with capital Z that '
+                raise Exception(f'String {iso_string} passed to Instant ctor must end with capital Z that '
                                 f'indicates UTC timezone.')
 
             # Convert to datetime and set UTC timezone
@@ -221,3 +221,45 @@ class Instant:
         # Convert milliseconds from Unix epoch to seconds, then construct the date
         # and replace timezone with pytz.UTC which is more standard
         return dt.datetime.utcfromtimestamp(self.__unix_millis / 1000.0).replace(tzinfo=pytz.UTC)
+
+    def __eq__(self, other):
+        """
+        True if lhs and rhs represent the same moment in time.
+
+        Returns NotImplemented if rhs is None or not a Instant.
+        """
+        if isinstance(other, Instant):
+            return self.__unix_millis == other.__unix_millis
+        return NotImplemented
+
+    def __lt__(self, other: Instant):
+        """
+        True if lhs is strictly earlier than rhs.
+
+        Error message if rhs is None.
+        """
+        return self.__unix_millis < other.__unix_millis
+
+    def __le__(self, other: Instant):
+        """
+        True if lhs is earlier than or equal to rhs.
+
+        Error message if rhs is None.
+        """
+        return self.__unix_millis <= other.__unix_millis
+
+    def __gt__(self, other: Instant):
+        """
+        True if lhs is strictly later than rhs.
+
+        Error message if rhs is None.
+        """
+        return self.__unix_millis > other.__unix_millis
+
+    def __ge__(self, other: Instant):
+        """
+        True if lhs is later than or equal to rhs.
+
+        Error message if rhs is None.
+        """
+        return self.__unix_millis >= other.__unix_millis

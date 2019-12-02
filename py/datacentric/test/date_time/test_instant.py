@@ -78,6 +78,22 @@ class TestInstant(unittest.TestCase, UnitTest):
         t10_str_rounded = '2003-05-01T10:15:30.123Z'
         self.assertEqual(str(Instant(t10_str)), t10_str_rounded)
 
+        # Check comparison operators
+        t11a = Instant('2003-05-01T10:15:30.1Z')
+        t11a_new_instance = Instant('2003-05-01T10:15:30.1Z')
+        t11b = Instant('2003-05-01T10:15:30.12Z')
+        self.assertTrue(t11a == t11a)
+        self.assertTrue(t11a == t11a_new_instance)
+        self.assertTrue(t11a != t11b)
+        self.assertTrue(t11a <= t11a)
+        self.assertTrue(t11a <= t11a_new_instance)
+        self.assertTrue(t11a >= t11a)
+        self.assertTrue(t11a >= t11a_new_instance)
+        self.assertTrue(t11a < t11b)
+        self.assertTrue(t11a <= t11b)
+        self.assertTrue(t11b > t11a)
+        self.assertTrue(t11b >= t11a)
+
 
 if __name__ == "__main__":
     unittest.main()

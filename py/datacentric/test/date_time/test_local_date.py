@@ -60,6 +60,22 @@ class TestLocalDate(unittest.TestCase, UnitTest):
         # Test string representation roundtrip
         self.assertEqual(str(d1), date_str)
 
+        # Check comparison operators
+        d5a = LocalDate('2003-05-01')
+        d5a_new_instance = LocalDate('2003-05-01')
+        d5b = LocalDate('2003-05-02')
+        self.assertTrue(d5a == d5a)
+        self.assertTrue(d5a == d5a_new_instance)
+        self.assertTrue(d5a != d5b)
+        self.assertTrue(d5a <= d5a)
+        self.assertTrue(d5a <= d5a_new_instance)
+        self.assertTrue(d5a >= d5a)
+        self.assertTrue(d5a >= d5a_new_instance)
+        self.assertTrue(d5a < d5b)
+        self.assertTrue(d5a <= d5b)
+        self.assertTrue(d5b > d5a)
+        self.assertTrue(d5b >= d5a)
+
 
 if __name__ == "__main__":
     unittest.main()

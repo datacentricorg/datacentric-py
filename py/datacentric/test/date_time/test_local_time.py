@@ -73,6 +73,22 @@ class TestLocalTime(unittest.TestCase, UnitTest):
         t10_str_rounded = '10:15:30.123'
         self.assertEqual(str(LocalTime(t10_str)), t10_str_rounded)
 
+        # Check comparison operators
+        t11a = LocalTime('10:15:30.1')
+        t11a_new_instance = LocalTime('10:15:30.1')
+        t11b = LocalTime('10:15:30.12')
+        self.assertTrue(t11a == t11a)
+        self.assertTrue(t11a == t11a_new_instance)
+        self.assertTrue(t11a != t11b)
+        self.assertTrue(t11a <= t11a)
+        self.assertTrue(t11a <= t11a_new_instance)
+        self.assertTrue(t11a >= t11a)
+        self.assertTrue(t11a >= t11a_new_instance)
+        self.assertTrue(t11a < t11b)
+        self.assertTrue(t11a <= t11b)
+        self.assertTrue(t11b > t11a)
+        self.assertTrue(t11b >= t11a)
+
 
 if __name__ == "__main__":
     unittest.main()
