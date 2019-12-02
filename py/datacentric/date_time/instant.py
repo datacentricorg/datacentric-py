@@ -190,7 +190,7 @@ class Instant:
         Convert to string in ISO format with UTC (Z) timezone suffix
         to millisecond precision, for example:
 
-        2003-05-01T10:15:30.500Z
+        2003-05-01T10:15:30.5Z
 
         Fractional seconds are omitted if zero.
         """
