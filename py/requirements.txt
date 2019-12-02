@@ -1,5 +1,6 @@
 attrs>=19.3
 typing-inspect>=0.5.0
+python-dateutil>=1.13.0
 pymongo>=3.9.0
 numpy>=1.17.4
 pandas>=0.25.3
