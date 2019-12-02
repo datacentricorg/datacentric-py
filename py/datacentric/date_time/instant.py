@@ -15,7 +15,6 @@
 from __future__ import annotations
 from typing import Union, Optional
 import datetime as dt
-import pandas as pd
 import pytz
 
 
@@ -39,7 +38,7 @@ class Instant:
     def __init__(self,
                  year_or_value: Union[int, str, dt.datetime],
                  month: Optional[int] = None,
-                 day_of_month: Optional[int] = None,
+                 day: Optional[int] = None,
                  hour: Optional[int] = None,
                  minute: Optional[int] = None,
                  second: Optional[int] = None,
@@ -82,9 +81,9 @@ class Instant:
                 if month is None:
                     raise Exception(f'In Instant constructor, first argument {year} is year '
                                     f'in which case month must be specified.')
-                if day_of_month is None:
+                if day is None:
                     raise Exception(f'In Instant constructor, first argument {year} is year '
-                                    f'in which case day_of_month must be specified.')
+                                    f'in which case day must be specified.')
                 if hour is None:
                     raise Exception(f'In Instant constructor, first argument {year} is year '
                                     f'in which case hour must be specified.')
@@ -100,7 +99,7 @@ class Instant:
                     millisecond = 0
 
                 # Create dt.datetime in UTC timezone
-                value: dt.datetime = dt.datetime(year, month, day_of_month, hour, minute, second, 1000 * millisecond,
+                value: dt.datetime = dt.datetime(year, month, day, hour, minute, second, 1000 * millisecond,
                                                  pytz.UTC)
 
                 # Round to the nearest whole milliseconds since Unix epoch
@@ -122,7 +121,7 @@ class Instant:
                 raise Exception(f'Datetime string {iso_string} passed to Instant ctor must end with capital Z that '
                                 f'indicates UTC timezone.')
 
-            # Coonvert to datetime and set UTC timezone
+            # Convert to datetime and set UTC timezone
             dtime_from_str: dt.datetime
             if '.' in iso_string:
                 # Has milliseconds
@@ -170,9 +169,9 @@ class Instant:
             if month is not None:
                 raise Exception(f'In Instant constructor, first argument {year_or_value} is the entire datetime '
                                 f'rather than year, in which case month={month} must be None.')
-            if day_of_month is not None:
+            if day is not None:
                 raise Exception(f'In Instant constructor, first argument {year_or_value} is the entire datetime '
-                                f'rather than year, in which case day_of_month={day_of_month} must be None.')
+                                f'rather than year, in which case day={day} must be None.')
             if hour is not None:
                 raise Exception(f'In Instant constructor, first argument {year_or_value} is the entire datetime '
                                 f'rather than year, in which case hour={hour} must be None.')
