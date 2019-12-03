@@ -1,5 +1,6 @@
 import attr
 import numpy as np
+import datetime as dt
 from bson import ObjectId
 from enum import IntEnum
 from typing import Dict, Any, get_type_hints, TypeVar, Union, List
@@ -7,17 +8,18 @@ from typing_inspect import get_origin, get_args
 
 from datacentric.primitive.string_util import StringUtil
 from datacentric.storage.class_info import ClassInfo
-from datacentric.date_time.local_time import LocalTime
-from datacentric.date_time.local_minute import LocalMinute
-from datacentric.date_time.local_date import LocalDate
-from datacentric.date_time.local_date_time import LocalDateTime
+from datacentric.date_time.local_time import LocalTime, LocalTimeHint
+from datacentric.date_time.local_minute import LocalMinute, LocalMinuteHint
+from datacentric.date_time.local_date import LocalDate, LocalDateHint
+from datacentric.date_time.local_date_time import LocalDateTime, LocalDateTimeHint
+from datacentric.date_time.instant import Instant, InstantHint
 from datacentric.storage.key import Key
 from datacentric.storage.record import Record
 from datacentric.storage.data import Data
 
 TRecord = TypeVar('TRecord', bound=Record)
 
-
+_local_hints_ = [LocalMinuteHint, LocalDateTimeHint, LocalDateHint, LocalTimeHint]
 # Serialization: object -> dict
 
 def serialize(obj: TRecord):
@@ -57,15 +59,20 @@ def _serialize_class(obj: TRecord, expected_: type):
 
         is_optional = field.metadata.get('optional', False)
         is_list = get_origin(expected_type) is not None and get_origin(expected_type) is list
+        is_union = get_origin(expected_type) is not None and get_origin(expected_type) is Union
 
         if value is None:
             if not is_optional and not is_list:
                 raise Exception(f'Missing required field: {field.name} in type: {cls_name}')
             continue
 
-        if is_list:
+        if is_union:
+            serialized_value = _serialize_unions(expected_type, value)
+
+        elif is_list:
             expected_arg = get_args(expected_type)[0]
             serialized_value = _serialize_list(value, expected_arg, is_optional)
+
         elif issubclass(expected_type, Key):
             serialized_value = _serialize_key(value)
         elif issubclass(expected_type, Data):
@@ -79,11 +86,31 @@ def _serialize_class(obj: TRecord, expected_: type):
     return dict_
 
 
+def _serialize_unions(type_hint, value_) -> Any:
+    args = get_args(type_hint)
+    if args[0] is str and args[1].__name__.endswith('Hint'):
+        if type(value_) is not str:
+            raise Exception(f'Expected str')
+        return value_
+    if args[0] is int and args[1] in _local_hints_:
+        if type(value_) is not int:
+            raise Exception(f'Expected int')
+        return value_
+    if args[0] is dt.datetime and args[1] == InstantHint:
+        if type(value_) is not dt.datetime:
+            raise Exception(f'Expected dt.datetime')
+        return value_
+    raise Exception(f'Unexpected Union arguments: {args}')
+
+
 def _serialize_list(list_, expected_, is_optional: bool) -> List[Any]:
     is_required = not is_optional
     if is_required and None in list_:
         Exception('Lists not marked as optional cannot contain None elements.')
+    is_union = get_origin(expected_) is not None and get_origin(expected_) is Union
 
+    if is_union:
+        return [_serialize_unions(expected_, x) for x in list_]
     if issubclass(expected_, Key):
         return [_serialize_key(x) for x in list_]
     elif issubclass(expected_, Data):
@@ -160,11 +187,13 @@ def _deserialize_class(dict_: Dict[str, Any]) -> TRecord:
     type_name: str = dict_.pop('_t')
 
     type_info = ClassInfo.get_type(type_name)
+
+    hints = get_type_hints(type_info)
     new_obj = type_info()
 
     for dict_key, dict_value in dict_.items():
         slot = StringUtil.to_snake_case(dict_key)
-        hints = get_type_hints(type_info)
+
         member_type = hints[slot]
 
         # Resolve Optional[Type] case
@@ -175,6 +204,8 @@ def _deserialize_class(dict_: Dict[str, Any]) -> TRecord:
 
         if get_origin(member_type) is not None and get_origin(member_type) is list:
             deserialized_value = _deserialize_list(member_type, dict_value)
+        elif get_origin(member_type) is not None and get_origin(member_type) is Union:
+            deserialized_value = dict_value
         elif issubclass(member_type, Key):
             deserialized_value = member_type()
             deserialized_value.populate_from_string(dict_value)
@@ -191,6 +222,9 @@ def _deserialize_class(dict_: Dict[str, Any]) -> TRecord:
 
 def _deserialize_list(type_: type, list_):
     expected_item_type = get_args(type_)[0]
+    origin = get_origin(expected_item_type)
+    if origin is not None and origin is Union:
+        return list_
     if issubclass(expected_item_type, Key):
         result = []
         for item in list_:
