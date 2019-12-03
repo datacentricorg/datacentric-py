@@ -18,6 +18,10 @@ import datetime as dt
 import pytz
 
 
+class InstantHint:
+    pass
+
+
 class Instant:
     """
     Represents an instant on the global timeline in UTC timezone, with

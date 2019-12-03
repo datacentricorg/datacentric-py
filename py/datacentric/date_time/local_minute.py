@@ -18,6 +18,8 @@ import numpy as np
 
 
 # TODO - implementation is incomplete
+class LocalMinuteHint:
+    pass
 
 
 class LocalMinute:

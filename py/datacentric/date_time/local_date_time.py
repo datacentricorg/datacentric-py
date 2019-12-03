@@ -17,6 +17,8 @@ import datetime as dt
 
 
 # TODO - this is a placeholder, implement
+class LocalDateTimeHint:
+    pass
 
 
 class LocalDateTime:

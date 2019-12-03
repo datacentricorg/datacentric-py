@@ -17,6 +17,10 @@ from typing import Union, Optional
 import datetime as dt
 
 
+class LocalDateHint:
+    pass
+
+
 class LocalDate:
     """
     Represents a date within the calendar, with no reference to a particular

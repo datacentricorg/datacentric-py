@@ -17,7 +17,10 @@ from typing import Union, Optional
 import locale
 import datetime as dt
 
+
 # TODO - this is a placeholder, implement
+class LocalTimeHint:
+    pass
 
 
 class LocalTime:
@@ -143,7 +146,7 @@ class LocalTime:
 
             # Convert to int in ISO hhmmssfff format
             self.__iso_int = 10_000_000 * time_whole_seconds.hour + 100_000 * time_whole_seconds.minute \
-                + 1000 * time_whole_seconds.second + millisecond_int
+                             + 1000 * time_whole_seconds.second + millisecond_int
 
         elif isinstance(hour_or_value, dt.time):
 
@@ -152,7 +155,7 @@ class LocalTime:
 
             # Convert to int in ISO hhmmssfff format
             self.__iso_int = 10_000_000 * time_arg.hour + 100_000 * time_arg.minute \
-                + 1000 * time_arg.second + round(time_arg.microsecond / 1000.0)
+                             + 1000 * time_arg.second + round(time_arg.microsecond / 1000.0)
 
         else:
             raise Exception(f'First argument of LocalTime constructor {hour_or_value} must be one of '
