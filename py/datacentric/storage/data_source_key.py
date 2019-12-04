@@ -18,15 +18,18 @@ from abc import ABC, abstractmethod
 from datacentric.storage.key import Key
 
 
-class LogKey(Key):
+class DataSourceKey(Key):
     """
-    Provides a unified API for writing log output to:
+    Data source is a logical concept similar to database
+    that can be implemented for a document DB, relational DB,
+    key-value store, or filesystem.
 
-    * Console
-    * String
-    * File
-    * Database
-    * Logging frameworks such as log4net and other logging frameworks
-    * Cloud logging services such as AWS CloudWatch
+    Data source API provides the ability to:
+
+    (a) store and query datasets;
+    (b) store records in a specific dataset; and
+    (c) query record across a group of datasets.
+
+    This record is stored in root dataset.
     """
     pass

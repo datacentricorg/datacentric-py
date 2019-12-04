@@ -17,6 +17,7 @@ from typing import Union, Optional, List, Any
 from bson import ObjectId
 from datacentric.storage.key import Key
 from datacentric.storage.record import Record
+from datacentric.storage.data_set_detail_key import DataSetDetailKey
 
 
 @attr.s(slots=True, auto_attribs=True)
@@ -80,10 +81,6 @@ class DataSetDetail(Record):
 
     # --- METHODS
 
-    def to_key(self) -> Union[str, 'DataSetDetailKey']:
+    def to_key(self) -> Union[str, DataSetDetailKey]:
         """Create key string from the current record."""
         return 'DataSetDetail=' + str(self.data_set_id)
-
-
-class DataSetDetailKey(Key):
-    pass

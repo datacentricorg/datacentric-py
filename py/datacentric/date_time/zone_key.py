@@ -14,13 +14,11 @@
 
 import attr
 from typing import Union, Optional, List, Any
+from abc import ABC, abstractmethod
 from datacentric.storage.key import Key
-from datacentric.storage.record import Record
-from datacentric.date_time.zone_key import ZoneKey
 
 
-@attr.s(slots=True, auto_attribs=True)
-class Zone(Record):
+class ZoneKey(Key):
     """
     This class provides timezone conversion between UTC
     and local datetime for the specified timezone.
@@ -41,30 +39,4 @@ class Zone(Record):
     has two slash-delimited tokens, the first referencing the
     country and the other the city, for example America/New_York.
     """
-
-    zone_name: str = attr.ib(default=None, kw_only=True)
-    """
-    Unique timezone name.
-
-    Only the following timezone names are permitted:
-
-    * UTC; and
-    * IANA city timezones such as America/New_York
-
-    Other 3-letter regional timezones such as EST or EDT are
-    not permitted because they do not handle the transition
-    between winter and summer time automatically for those
-    regions where winter time is defined.
-
-    Because ZoneName is used to look up timezone conventions,
-    it must match either the string UTC or the code in IANA
-    timezone database precisely. The IANA city timezone code
-    has two slash-delimited tokens, the first referencing the
-    country and the other the city, for example America/New_York.
-    """
-
-    # --- METHODS
-
-    def to_key(self) -> Union[str, ZoneKey]:
-        """Create key string from the current record."""
-        return 'Zone=' + self.zone_name
+    pass

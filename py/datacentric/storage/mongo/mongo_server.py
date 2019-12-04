@@ -16,6 +16,7 @@ import attr
 from typing import Union, Optional, List, Any
 from datacentric.storage.key import Key
 from datacentric.storage.record import Record
+from datacentric.storage.mongo.mongo_server_key import MongoServerKey
 
 
 @attr.s(slots=True, auto_attribs=True)
@@ -37,10 +38,6 @@ class MongoServer(Record):
 
     # --- METHODS
 
-    def to_key(self) -> Union[str, 'MongoServerKey']:
+    def to_key(self) -> Union[str, MongoServerKey]:
         """Create key string from the current record."""
         return 'MongoServer=' + self.mongo_server_uri
-
-
-class MongoServerKey(Key):
-    pass

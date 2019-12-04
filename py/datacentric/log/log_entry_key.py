@@ -18,15 +18,15 @@ from abc import ABC, abstractmethod
 from datacentric.storage.key import Key
 
 
-class LogKey(Key):
+class LogEntryKey(Key):
     """
-    Provides a unified API for writing log output to:
+    Contains a single entry (message) in a log.
 
-    * Console
-    * String
-    * File
-    * Database
-    * Logging frameworks such as log4net and other logging frameworks
-    * Cloud logging services such as AWS CloudWatch
+    The Log record serves as the key for querying LogEntry records.
+    To obtain the entire log, run a query for the Log element of
+    the LogEntry record, then sort the entry records by their TemporalId.
+
+    Derive from this class to provide specialized LogEntry subtypes
+    that include additional data.
     """
     pass

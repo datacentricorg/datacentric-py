@@ -18,15 +18,11 @@ from abc import ABC, abstractmethod
 from datacentric.storage.key import Key
 
 
-class LogKey(Key):
+class MongoServerKey(Key):
     """
-    Provides a unified API for writing log output to:
+    Provides Mongo server URI.
 
-    * Console
-    * String
-    * File
-    * Database
-    * Logging frameworks such as log4net and other logging frameworks
-    * Cloud logging services such as AWS CloudWatch
+    Server URI specified here must refer to the entire server, not
+    an individual database.
     """
     pass

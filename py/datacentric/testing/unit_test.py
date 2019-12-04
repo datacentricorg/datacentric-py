@@ -19,6 +19,7 @@ from datacentric.storage.unit_test_context import UnitTestContext
 from datacentric.storage.key import Key
 from datacentric.storage.record import Record
 from datacentric.testing.unit_test_complexity import UnitTestComplexity
+from datacentric.testing.unit_test_key import UnitTestKey
 
 
 @attr.s(slots=True, auto_attribs=True)
@@ -88,10 +89,6 @@ class UnitTest(Record):
         """
         raise NotImplementedError()
 
-    def to_key(self) -> Union[str, 'UnitTestKey']:
+    def to_key(self) -> Union[str, UnitTestKey]:
         """Create key string from the current record."""
         return 'UnitTest=' + self.unit_test_name
-
-
-class UnitTestKey(Key):
-    pass

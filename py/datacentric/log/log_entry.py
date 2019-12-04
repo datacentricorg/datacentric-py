@@ -20,6 +20,7 @@ from datacentric.storage.key import Key
 from datacentric.storage.record import Record
 from datacentric.log.log_verbosity import LogVerbosity
 from datacentric.log.log_key import LogKey
+from datacentric.log.log_entry_key import LogEntryKey
 
 
 @attr.s(slots=True, auto_attribs=True)
@@ -103,10 +104,6 @@ class LogEntry(Record):
         # TODO - provide correct format
         return self.title
 
-    def to_key(self) -> Union[str, 'LogEntryKey']:
+    def to_key(self) -> Union[str, LogEntryKey]:
         """Create key string from the current record."""
         return 'LogEntry=' + str(self.id_)
-
-
-class LogEntryKey(Key):
-    pass

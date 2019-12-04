@@ -235,6 +235,6 @@ class Log(Record, ABC):
         else:
             self.verify(title, description)
 
-    def to_key(self) -> Union[str, 'LogKey']:
+    def to_key(self) -> Union[str, LogKey]:
         """Create key string from the current record."""
         return 'Log=' + self.log_name

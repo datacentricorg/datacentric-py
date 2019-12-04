@@ -18,15 +18,15 @@ from abc import ABC, abstractmethod
 from datacentric.storage.key import Key
 
 
-class LogKey(Key):
+class UnitTestKey(Key):
     """
-    Provides a unified API for writing log output to:
+    Base class for executing the tests using:
 
-    * Console
-    * String
-    * File
-    * Database
-    * Logging frameworks such as log4net and other logging frameworks
-    * Cloud logging services such as AWS CloudWatch
+    * A standard xUnit test runner; or
+    * A handler via CLI or the front end
+
+    This makes it possible to test not only inside the development
+    environment but also on a deployed version of the application where
+    access to the xUnit test runner is not available.
     """
     pass

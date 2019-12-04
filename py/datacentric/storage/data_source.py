@@ -16,12 +16,12 @@ import attr
 from abc import ABC, abstractmethod
 from typing import Optional, TypeVar, Iterable, List, ClassVar, Tuple, Type, Union
 from bson import ObjectId
-
 from datacentric.storage.data_set_flags import DataSetFlags
 from datacentric.storage.key import Key
 from datacentric.storage.record import Record
 from datacentric.storage.data_set import DataSet
 from datacentric.storage.env_type import EnvType
+from datacentric.storage.data_source_key import DataSourceKey
 
 TRecord = TypeVar('TRecord', bound=Record)
 
@@ -330,11 +330,6 @@ class DataSource(Record, ABC):
 
         return result.id_
 
-    def to_key(self) -> Union[str, 'DataSourceKey']:
+    def to_key(self) -> Union[str, DataSourceKey]:
         """Create key string from the current record."""
         return 'DataSource=' + self.data_source_name
-
-
-@attr.s(slots=True, auto_attribs=True)
-class DataSourceKey(Key, ABC):
-    pass

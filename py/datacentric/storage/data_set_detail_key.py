@@ -18,15 +18,19 @@ from abc import ABC, abstractmethod
 from datacentric.storage.key import Key
 
 
-class LogKey(Key):
+class DataSetDetailKey(Key):
     """
-    Provides a unified API for writing log output to:
+    Provides the ability to change data associated with the dataset
+    without changing the dataset record, which is immutable in a
+    temporal data source.
 
-    * Console
-    * String
-    * File
-    * Database
-    * Logging frameworks such as log4net and other logging frameworks
-    * Cloud logging services such as AWS CloudWatch
+    The reason dataset record is immutable is that any change to the
+    the dataset record in a temporal data source results in creation
+    of a record with new TemporalId, which is treated as a new dataset.
+
+    The DataSetDetail record uses TemporalId of the referenced dataset
+    as its primary key. It is located in the parent of the dataset
+    record to which it applies, rather than inside that record, so it
+    is not affected by its own settings.
     """
     pass
