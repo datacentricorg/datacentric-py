@@ -36,6 +36,7 @@ TRecord = TypeVar('TRecord', bound=Record)
 _local_hints_ = [LocalMinuteHint, LocalDateTimeHint, LocalDateHint, LocalTimeHint]
 # Serialization: object -> dict
 
+
 def serialize(obj: TRecord):
     dict_ = _serialize_class(obj, type(obj))
     dict_['_t'] = obj.__class__.__name__

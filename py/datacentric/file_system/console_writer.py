@@ -14,6 +14,7 @@
 
 from datacentric.file_system.text_writer import TextWriter
 
+
 class ConsoleWriter(TextWriter):
     """
     Implements TextWriter for writing to the console.
@@ -23,7 +24,7 @@ class ConsoleWriter(TextWriter):
         """
         Write __str__ of the argument to the output stream.
         """
-        print(value, end = '')
+        print(value, end='')
 
     def write_line(self, value: object) -> None:
         """

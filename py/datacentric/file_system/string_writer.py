@@ -41,7 +41,7 @@ class StringWriter(TextWriter):
         """
         Write __str__ of the argument to the output stream.
         """
-        print(value, end = '', file=self.__str_io)
+        print(value, end='', file=self.__str_io)
 
     def write_line(self, value: object) -> None:
         """

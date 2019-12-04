@@ -35,7 +35,7 @@ class TestQuery(unittest.TestCase, UnitTest):
                 record.string_token = 'A' + str(record_index_mod4)
                 record.bool_token = record_index_mod2 == 0
                 record.int_token = record_index_mod4
-                record.local_date_token = LocalDate(2003, 5, 1+record_index_mod4).to_iso_int()
+                record.local_date_token = LocalDate(2003, 5, 1 + record_index_mod4).to_iso_int()
                 record.local_time_token = LocalTime(10, 15, 30 + record_index_mod4).to_iso_int()
                 record.local_minute_token = LocalMinute(10, record_index_mod4).to_iso_int()
                 record.local_date_time_token = LocalDateTime(2003, 5, 1 + record_index_mod4, 10, 15).to_iso_int()
@@ -61,7 +61,7 @@ class TestQuery(unittest.TestCase, UnitTest):
             # Query with constraints
             query = context.data_source.get_query(NullableElementsSample, context.data_set) \
                 .where({'string_token': 'A1'}).where({'bool_token': False}).where({'int_token': 1}) \
-                .where({'local_date_token': LocalDate(2003, 5, 1+1)}) \
+                .where({'local_date_token': LocalDate(2003, 5, 1 + 1)}) \
                 .where({'local_time_token': LocalTime(10, 15, 30 + 1)}) \
                 .where({'local_minute_token': LocalMinute(10, 1)}) \
                 .where({'local_date_time_token': LocalDateTime(2003, 5, 1 + 1, 10, 15)}) \

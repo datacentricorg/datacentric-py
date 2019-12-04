@@ -31,7 +31,7 @@ class TestFileWriter(unittest.TestCase, UnitTest):
 
     def test_smoke(self):
         """Smoke test"""
-        file_path: str = __file__.replace(".py",".test_smoke.approved.txt")
+        file_path: str = __file__.replace(".py", ".test_smoke.approved.txt")
         file_writer: TextWriter = FileWriter(file_path)
         file_writer.write('A')
         file_writer.write_line('BC')

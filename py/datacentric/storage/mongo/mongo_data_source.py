@@ -17,7 +17,6 @@ from abc import ABC
 from bson import ObjectId
 from pymongo import MongoClient
 from pymongo.database import Database
-
 from datacentric.storage.mongo.mongo_server import MongoServerKey
 from datacentric.storage.context import Context
 from datacentric.storage.data_source import DataSource

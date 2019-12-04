@@ -38,7 +38,7 @@ class UnitTestContext(Context):
             caller_frame = sys._getframe(stack_frame_index)
             if caller_frame.f_code.co_name != 'create_method_context':
                 break
-            stack_frame_index = stack_frame_index+1
+            stack_frame_index = stack_frame_index + 1
 
         test_file_path: str = caller_frame.f_code.co_filename
         method_name: str = caller_frame.f_code.co_name
