@@ -18,42 +18,10 @@ import datetime as dt
 from bson import ObjectId
 from datacentric.storage.typed_record import TypedRecord
 from datacentric.storage.typed_key import TypedKey
-from datacentric.test.storage.base_sample import BaseSampleKey
+from datacentric.test.storage.composite_key_sample import CompositeKeySample, CompositeKeySampleKey
+from datacentric.test.storage.singleton_sample import SingletonSample, SingletonSampleKey
+from datacentric.test.storage.id_based_key_sample import IdBasedKeySample, IdBasedKeySampleKey
 from datacentric.testing.unit_test import UnitTestKey, UnitTest
-
-
-@attr.s(slots=True, auto_attribs=True)
-class CompositeKeySampleKey(TypedKey['CompositeKeySample']):
-    key_element1: str = attr.ib(default=None, kw_only=True)
-    key_element2: BaseSampleKey = attr.ib(default=None, kw_only=True)
-    key_element3: str = attr.ib(default=None, kw_only=True)
-
-
-@attr.s(slots=True, auto_attribs=True)
-class CompositeKeySample(TypedRecord[CompositeKeySampleKey]):
-    key_element1: str = attr.ib(default=None, kw_only=True)
-    key_element2: BaseSampleKey = attr.ib(default=None, kw_only=True)
-    key_element3: str = attr.ib(default=None, kw_only=True)
-
-
-@attr.s(slots=True, auto_attribs=True)
-class SingletonSampleKey(TypedKey['SingletonSample']):
-    pass
-
-
-@attr.s(slots=True, auto_attribs=True)
-class SingletonSample(TypedRecord[SingletonSampleKey]):
-    string_element: str = attr.ib(default=None, kw_only=True)
-
-
-@attr.s(slots=True, auto_attribs=True)
-class IdBasedKeySampleKey(TypedKey['IdBasedKeySample']):
-    id_: ObjectId = attr.ib(default=None, kw_only=True)
-
-
-@attr.s(slots=True, auto_attribs=True)
-class IdBasedKeySample(TypedRecord[IdBasedKeySampleKey]):
-    string_element: str = attr.ib(default=None, kw_only=True)
 
 
 class TestMongoKey(unittest.TestCase, UnitTest):
