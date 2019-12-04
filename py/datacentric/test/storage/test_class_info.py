@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import unittest
-
 from datacentric.storage.class_info import ClassInfo
 from datacentric.storage.typed_record import TypedRecord
 from datacentric.storage.typed_key import TypedKey

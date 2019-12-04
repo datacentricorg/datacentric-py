@@ -17,7 +17,8 @@ from datacentric.date_time.local_minute import LocalMinute
 from datacentric.date_time.local_time import LocalTime
 from datacentric.date_time.local_date import LocalDate
 from datacentric.date_time.local_date_time import LocalDateTime
-from datacentric.test.storage.data_sample import NullableElementsSample, SampleEnum
+from datacentric.test.storage.enum_sample import EnumSample
+from datacentric.test.storage.nullable_elements_sample import NullableElementsSample, NullableElementsSampleKey
 from datacentric.storage.mongo.temporal_mongo_unit_test_context import TemporalMongoUnitTestContext
 from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
@@ -39,7 +40,7 @@ class TestQuery(unittest.TestCase, UnitTest):
                 record.local_time_token = LocalTime(10, 15, 30 + record_index_mod4).to_iso_int()
                 record.local_minute_token = LocalMinute(10, record_index_mod4).to_iso_int()
                 record.local_date_time_token = LocalDateTime(2003, 5, 1 + record_index_mod4, 10, 15).to_iso_int()
-                record.enum_token = SampleEnum(record_index_mod2 + 1)
+                record.enum_token = EnumSample(record_index_mod2 + 1)
 
                 context.data_source.save_one(NullableElementsSample, record, context.data_set)
 
@@ -65,7 +66,7 @@ class TestQuery(unittest.TestCase, UnitTest):
                 .where({'local_time_token': LocalTime(10, 15, 30 + 1)}) \
                 .where({'local_minute_token': LocalMinute(10, 1)}) \
                 .where({'local_date_time_token': LocalDateTime(2003, 5, 1 + 1, 10, 15)}) \
-                .where({'enum_token': SampleEnum.EnumValue2})
+                .where({'enum_token': EnumSample.EnumValue2})
 
             constrained_results = []
             for obj in query.as_iterable():

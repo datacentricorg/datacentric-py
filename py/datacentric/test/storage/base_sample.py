@@ -21,7 +21,7 @@ from datacentric.date_time.local_minute import LocalMinute, LocalMinuteHint
 from datacentric.date_time.local_date_time import LocalDateTime, LocalDateTimeHint
 from datacentric.storage.typed_record import TypedRecord
 from datacentric.storage.typed_key import TypedKey
-from datacentric.test.storage.enum_sample import SampleEnum
+from datacentric.test.storage.enum_sample import EnumSample
 
 
 @attr.s(slots=True, auto_attribs=True)
@@ -34,7 +34,7 @@ class BaseSample(TypedRecord):
     local_time_element: Union[int, LocalTimeHint] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     local_minute_element: Union[int, LocalMinuteHint] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     local_date_time_element: Union[int, LocalDateTimeHint] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
-    enum_value: SampleEnum = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    enum_value: EnumSample = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     version: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
 
 

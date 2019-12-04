@@ -22,7 +22,7 @@ from datacentric.date_time.local_date_time import LocalDateTime, LocalDateTimeHi
 from datacentric.storage.typed_record import TypedRecord
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.data import Data
-from datacentric.test.storage.enum_sample import SampleEnum
+from datacentric.test.storage.enum_sample import EnumSample
 from datacentric.test.storage.base_sample import BaseSample, BaseSampleKey
 from datacentric.test.storage.element_sample import ElementSample
 
@@ -51,5 +51,5 @@ class NullableElementsSample(TypedRecord):
     local_time_token: Union[int, LocalTimeHint] = attr.ib(default=None, kw_only=True)
     local_minute_token: Union[int, LocalMinuteHint] = attr.ib(default=None, kw_only=True)
     local_date_time_token: Union[int, LocalDateTimeHint] = attr.ib(default=None, kw_only=True)
-    enum_token: SampleEnum = attr.ib(default=None, kw_only=True)
+    enum_token: EnumSample = attr.ib(default=None, kw_only=True)
     record_index: int = attr.ib(default=None, kw_only=True)

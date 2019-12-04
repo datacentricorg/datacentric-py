@@ -18,7 +18,7 @@ import datetime as dt
 from bson import ObjectId
 from datacentric.storage.typed_record import TypedRecord
 from datacentric.storage.typed_key import TypedKey
-from datacentric.test.storage.data_sample import BaseSampleKey
+from datacentric.test.storage.base_sample import BaseSampleKey
 from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 

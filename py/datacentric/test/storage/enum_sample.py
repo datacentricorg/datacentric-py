@@ -17,7 +17,7 @@ from enum import IntEnum
 from typing import List, ClassVar, Tuple, Union
 
 
-class SampleEnum(IntEnum):
+class EnumSample(IntEnum):
     Empty = 0
     EnumValue1 = 1
     EnumValue2 = 2
