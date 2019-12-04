@@ -14,7 +14,7 @@
 
 import attr
 from bson import ObjectId
-from typing import List, ClassVar, Tuple
+from typing import Union, Optional, List, Any
 from datacentric.storage.key import Key
 from datacentric.storage.record import Record
 
@@ -78,7 +78,10 @@ class DataSet(Record):
     default and must be included in the list of Imports explicitly.
     """
 
-    def to_key(self) -> str:
+    # --- METHODS
+
+    def to_key(self) -> Union[str, 'DataSetKey']:
+        """Create key string from the current record."""
         return 'DataSet=' + self.data_set_name
 
 

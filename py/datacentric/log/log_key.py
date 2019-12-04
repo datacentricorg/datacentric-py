@@ -14,33 +14,9 @@
 
 import attr
 from typing import Union, Optional, List, Any
+from abc import ABC, abstractmethod
 from datacentric.storage.key import Key
-from datacentric.storage.record import Record
 
 
-@attr.s(slots=True, auto_attribs=True)
-class MongoServer(Record):
-    """
-    Provides Mongo server URI.
-
-    Server URI specified here must refer to the entire server, not
-    an individual database.
-    """
-
-    mongo_server_uri: str = attr.ib(default=None, kw_only=True)
-    """
-    Mongo server URI.
-
-    Server URI specified here must refer to the entire server, not
-    an individual database.
-    """
-
-    # --- METHODS
-
-    def to_key(self) -> Union[str, 'MongoServerKey']:
-        """Create key string from the current record."""
-        return 'MongoServer=' + self.mongo_server_uri
-
-
-class MongoServerKey(Key):
+class LogKey(Key):
     pass

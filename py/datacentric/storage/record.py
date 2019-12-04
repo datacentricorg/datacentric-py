@@ -14,7 +14,7 @@
 
 import attr
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Union, Optional, List, Any
 from bson import ObjectId
 from datacentric.storage.data import Data
 from datacentric.storage.context import Context
@@ -82,10 +82,16 @@ class Record(Data, ABC):
 
     @property
     @abstractmethod
-    def to_key(self) -> str:
-        """String key consists of semicolon delimited primary key elements:
+    def to_key(self) -> Any:
+        """
+        Create key string from the current record.
 
-        key_element1;key_element2
+        String key consists of collection name followed by the equal sign (=)
+        and then semicolon delimited primary key elements:
+
+        collection_name=key_element1;key_element2
+
+        Collection name is the name of the class derived from Record directly.
 
         To avoid serialization format uncertainty, key elements
         can have any atomic type except float.

@@ -14,11 +14,12 @@
 
 import attr
 from bson import ObjectId
-from typing import Union
+from typing import Union, Optional, List, Any
 from datacentric.storage.context import Context
 from datacentric.storage.key import Key
 from datacentric.storage.record import Record
 from datacentric.log.log_verbosity import LogVerbosity
+from datacentric.log.log_key import LogKey
 
 
 @attr.s(slots=True, auto_attribs=True)
@@ -73,6 +74,8 @@ class LogEntry(Record):
     will be preserved when the log entry is displayed.
     """
 
+    # --- METHODS
+
     def init(self, context: Context) -> None:
         """
         Set Context property and perform validation of the record's data,
@@ -99,6 +102,10 @@ class LogEntry(Record):
         """
         # TODO - provide correct format
         return self.title
+
+    def to_key(self) -> Union[str, 'LogEntryKey']:
+        """Create key string from the current record."""
+        return 'LogEntry=' + str(self.id_)
 
 
 class LogEntryKey(Key):

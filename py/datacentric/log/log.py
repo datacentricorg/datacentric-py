@@ -13,12 +13,14 @@
 # limitations under the License.
 
 import attr
+from typing import Union, Optional, List, Any
 from abc import ABC, abstractmethod
 from datacentric.storage.context import Context
 from datacentric.storage.key import Key
 from datacentric.storage.record import Record
 from datacentric.log.log_verbosity import LogVerbosity
 from datacentric.log.log_entry import LogEntry
+from datacentric.log.log_key import LogKey
 
 
 @attr.s(slots=True, auto_attribs=True)
@@ -40,8 +42,7 @@ class Log(Record, ABC):
     verbosity: LogVerbosity = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Minimal verbosity for which log entry will be displayed."""
 
-    def to_key(self) -> str:
-        return 'Log=' + self.log_name
+    # --- METHODS
 
     def init(self, context: Context) -> None:
         """
@@ -234,6 +235,6 @@ class Log(Record, ABC):
         else:
             self.verify(title, description)
 
-
-class LogKey(Key):
-    pass
+    def to_key(self) -> Union[str, 'LogKey']:
+        """Create key string from the current record."""
+        return 'Log=' + self.log_name

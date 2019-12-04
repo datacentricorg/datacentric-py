@@ -34,7 +34,7 @@ class TestFileLog(unittest.TestCase, UnitTest):
         file_log: FileLog = FileLog()
         file_log.verbosity = LogVerbosity.Verify
         file_log.log_file_path = file_path
-        file_log.init(Context()) # TODO - provide actual context
+        file_log.init(Context())  # TODO - provide actual context
 
         # Test logging
         file_log.error('Title for error', 'Description for error')

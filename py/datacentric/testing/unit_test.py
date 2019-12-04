@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import attr
+from typing import Union, Optional, List, Any
 from datacentric.storage.context import Context
 from datacentric.storage.unit_test_context import UnitTestContext
 from datacentric.storage.key import Key
@@ -48,9 +49,6 @@ class UnitTest(Record):
     Higher complexity results in more comprehensive testing at
     the expect of longer test running times.
     """
-
-    def to_key(self) -> str:
-        return 'UnitTest=' + self.unit_test_name
 
     # --- METHODS
 
@@ -89,6 +87,10 @@ class UnitTest(Record):
         of the test class in parallel.
         """
         raise NotImplementedError()
+
+    def to_key(self) -> Union[str, 'UnitTestKey']:
+        """Create key string from the current record."""
+        return 'UnitTest=' + self.unit_test_name
 
 
 class UnitTestKey(Key):
