@@ -130,7 +130,7 @@ class DataSource(TypedRecord, ABC):
         pass
 
     @abstractmethod
-    def load_or_null_by_key(self, key_: str, type_: Type[TRecord], load_from: ObjectId) -> Optional[TRecord]:
+    def load_or_null_by_key(self, key_, load_from: ObjectId):
         """Load record by string key from the specified dataset or
         its list of imports. The lookup occurs first in descending
         order of dataset ObjectIds, and then in the descending
@@ -234,7 +234,7 @@ class DataSource(TypedRecord, ABC):
         """
         raise NotImplementedError()
 
-    def load_by_key(self, key_: str, type_: Type[TRecord], load_from: ObjectId) -> TRecord:
+    def load_by_key(self, key_, load_from: ObjectId):
         """Load record from context.data_source, overriding the dataset
         specified in the context with the value specified as the
         second parameter. The lookup occurs in the specified dataset
@@ -246,7 +246,7 @@ class DataSource(TypedRecord, ABC):
 
         Error message if the record is not found or is a DeletedRecord.
         """
-        result = self.load_or_null_by_key(key_, type_, load_from)
+        result = self.load_or_null_by_key(key_, load_from)
         if result is None:
             raise Exception(f'Record with key {key_} is not found in dataset with TemporalId={load_from}.')
         return result
