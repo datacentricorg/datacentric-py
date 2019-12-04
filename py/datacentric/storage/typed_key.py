@@ -33,15 +33,13 @@ class TypedKey(Generic[TRecord], Key, ABC):
         """Populate key attributes by taking them from the matching
         attributes of the argument record.
         """
-        root_type_name = ClassInfo.get_root_type(type(self))
-        record_elements = type(record).__slots__
-        key_elements = type(self).__slots__
+        key_elements = attr.fields(type(self))
+        record_elements = attr.fields(type(record))
 
         if len(record_elements) < len(key_elements):
             raise Exception(
-                f'Root data type {root_type_name} has fewer elements than key type {type(self).__name__}.')
+                f'Root data type {type(record).__name__} has fewer elements than key type {type(self).__name__}.')
 
-        key_element: str
         for key_element in key_elements:
-            value = record.__getattribute__(key_element)
-            self.__setattr__(key_element, value)
+            value = record.__getattribute__(key_element.name)
+            self.__setattr__(key_element.name, value)
