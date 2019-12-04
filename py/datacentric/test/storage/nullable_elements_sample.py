@@ -27,8 +27,6 @@ from datacentric.test.storage.enum_sample import EnumSample
 
 @attr.s(slots=True, auto_attribs=True)
 class NullableElementsSample(TypedRecord):
-    _keys: ClassVar[Tuple[str]] = ('string_token', 'bool_token', 'int_token', 'local_date_token', 'local_time_token',
-                                   'local_minute_token', 'local_date_time_token', 'enum_token')
     string_token: str = attr.ib(default=None, kw_only=True)
     bool_token: bool = attr.ib(default=None, kw_only=True)
     int_token: int = attr.ib(default=None, kw_only=True)

@@ -42,7 +42,6 @@ class DataSet(TypedRecord):
     or its own DataSet record. It is always last in the dataset
     lookup sequence. The root dataset cannot have Imports.
     """
-    _keys: ClassVar[Tuple[str]] = ('data_set_name',)
 
     data_set_name: str = attr.ib(default=None, kw_only=True)
     """Unique dataset name."""

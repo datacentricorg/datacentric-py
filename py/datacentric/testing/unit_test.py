@@ -32,7 +32,6 @@ class UnitTest(TypedRecord):
     environment but also on a deployed version of the application where
     access to the xUnit test runner is not available.
     """
-    _keys = ('unit_test_name',)
 
     unit_test_name: str = attr.ib(default=None, kw_only=True)
     """

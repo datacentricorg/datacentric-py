@@ -35,8 +35,6 @@ class DataSetDetail(TypedRecord):
     is not affected by its own settings.
     """
 
-    _keys = ('data_set_id',)
-
     data_set_id: ObjectId = attr.ib(default=None, kw_only=True)
     """TemporalId of the referenced dataset."""
 

@@ -39,7 +39,7 @@ class Zone(TypedRecord):
     has two slash-delimited tokens, the first referencing the
     country and the other the city, for example America/New_York.
     """
-    _keys = ('zone_name',)
+
     zone_name: str = attr.ib(default=None, kw_only=True)
     """
     Unique timezone name.

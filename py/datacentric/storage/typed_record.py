@@ -27,7 +27,6 @@ TKey = TypeVar('TKey')
 @attr.s(slots=True)
 class TypedRecord(Record, ABC):
     """Base class of records stored in data source."""
-    _keys: ClassVar[Tuple[str]] = ()
 
     @property
     def key(self) -> str:

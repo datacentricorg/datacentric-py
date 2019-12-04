@@ -26,7 +26,6 @@ from datacentric.test.storage.enum_sample import EnumSample
 
 @attr.s(slots=True, auto_attribs=True)
 class BaseSample(TypedRecord):
-    _keys: ClassVar[Tuple[str]] = ('record_id', 'record_index')
     record_id: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     record_index: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     double_element: float = attr.ib(default=None, kw_only=True, metadata={'optional': True})

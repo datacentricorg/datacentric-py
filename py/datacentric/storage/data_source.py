@@ -42,7 +42,6 @@ class DataSource(TypedRecord, ABC):
 
     This record is stored in root dataset.
     """
-    _keys: ClassVar[Tuple[str]] = ('data_source_name',)
 
     # Class variables
     _empty_id: ClassVar[ObjectId] = ObjectId('000000000000000000000000')

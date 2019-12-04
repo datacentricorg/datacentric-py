@@ -25,7 +25,6 @@ class MongoServer(TypedRecord):
     Server URI specified here must refer to the entire server, not
     an individual database.
     """
-    _keys = ('mongo_server_uri',)
 
     mongo_server_uri: str = attr.ib(default=None, kw_only=True)
     """

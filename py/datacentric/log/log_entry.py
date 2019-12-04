@@ -36,8 +36,6 @@ class LogEntry(TypedRecord):
     that include additional data.
     """
 
-    _keys = ('id_',)
-
     id_: ObjectId = attr.ib(default=None, kw_only=True)
     """Defining element Id here includes the record's TemporalId
     in its key. Because TemporalId of the record is specific

@@ -33,7 +33,6 @@ class Log(TypedRecord, ABC):
     * Logging frameworks such as log4net and other logging frameworks
     * Cloud logging services such as AWS CloudWatch
     """
-    _keys = ('log_name',)
 
     log_name: str = attr.ib(default=None, kw_only=True)
     """Unique log name."""
