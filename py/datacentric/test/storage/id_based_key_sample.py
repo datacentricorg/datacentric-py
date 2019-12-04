@@ -23,7 +23,7 @@ from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 
 @attr.s(slots=True, auto_attribs=True)
-class IdBasedKeySample(TypedRecord[IdBasedKeySampleKey]):
+class IdBasedKeySample(TypedRecord):
     string_element: str = attr.ib(default=None, kw_only=True)
 
 

@@ -75,8 +75,9 @@ class ClassInfo:
 
     @staticmethod
     def get_root_type(type_: type) -> type:
-        """Returns type of the class at the root of the inheritance chain, one
-        before Data, TypedKey[TRecord], TypedRecord[TKey] or RootRecord[TKey].
+        """
+        Returns type of the class at the root of the inheritance chain, one
+        before Data, TypedKey[TRecord], TypedRecord or RootRecord.
         """
         from datacentric.storage.data import Data
         from datacentric.storage.typed_key import TypedKey
