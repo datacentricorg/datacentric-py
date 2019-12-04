@@ -27,8 +27,6 @@ class ClassInfo:
         """Returns data derived type given its name."""
         if not ClassInfo.__is_initialized:
             from datacentric.storage.data import Data
-            from datacentric.storage.typed_key import TypedKey
-            from datacentric.storage.typed_record import TypedRecord
             children = ClassInfo.__get_runtime_imported_data(Data, [])
             for child in children:
                 if child not in ClassInfo.__data_types_map:
@@ -80,10 +78,9 @@ class ClassInfo:
         before Data, TypedKey[TRecord], TypedRecord or RootRecord.
         """
         from datacentric.storage.data import Data
-        from datacentric.storage.typed_key import TypedKey
-        from datacentric.storage.typed_record import TypedRecord
+        from datacentric.storage.record import Record
         from datacentric.storage.root_record import RootRecord
-        root_types = [TypedKey, TypedRecord, RootRecord, Data]
+        root_types = [RootRecord, Record, Data]
 
         if type_.mro()[0] in root_types:
             raise Exception(f'Cannot get root type from root type.')

@@ -10,8 +10,8 @@ from datacentric.date_time.local_date_time import LocalDateTime, LocalDateTimeHi
 from datacentric.date_time.instant import Instant, InstantHint
 from datacentric.storage.env_type import EnvType
 from datacentric.storage.context import Context
-from datacentric.storage.typed_key import TypedKey
-from datacentric.storage.typed_record import TypedRecord
+from datacentric.storage.key import Key
+from datacentric.storage.record import Record
 from datacentric.storage.data_source import DataSource, DataSourceKey
 from datacentric.storage.mongo.mongo_data_source import MongoDataSource
 from datacentric.storage.mongo.temporal_mongo_data_source import TemporalMongoDataSource

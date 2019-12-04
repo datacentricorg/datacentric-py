@@ -14,17 +14,15 @@
 
 import attr
 from bson import ObjectId
+from typing import Union
 from datacentric.storage.context import Context
-from datacentric.storage.typed_key import TypedKey
-from datacentric.storage.typed_record import TypedRecord
+from datacentric.storage.key import Key
+from datacentric.storage.record import Record
 from datacentric.log.log_verbosity import LogVerbosity
-
-if False:
-    from datacentric.log.log import LogKey
 
 
 @attr.s(slots=True, auto_attribs=True)
-class LogEntry(TypedRecord):
+class LogEntry(Record):
     """
     Contains a single entry (message) in a log.
 
@@ -48,7 +46,7 @@ class LogEntry(TypedRecord):
     timestamp that matches update time.
     """
 
-    log: 'LogKey' = attr.ib(default=None, kw_only=True)
+    log: Union[str, 'LogKey'] = attr.ib(default=None, kw_only=True)
     """
     Log for which the entry is recorded.
 
@@ -103,6 +101,5 @@ class LogEntry(TypedRecord):
         return self.title
 
 
-@attr.s(slots=True, auto_attribs=True)
-class LogEntryKey(TypedKey[LogEntry]):
+class LogEntryKey(Key):
     pass

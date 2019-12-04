@@ -14,12 +14,12 @@
 
 import attr
 from bson import ObjectId
-from datacentric.storage.typed_key import TypedKey
-from datacentric.storage.typed_record import TypedRecord
+from datacentric.storage.key import Key
+from datacentric.storage.record import Record
 
 
 @attr.s(slots=True, auto_attribs=True)
-class DataSetDetail(TypedRecord):
+class DataSetDetail(Record):
     """
     Provides the ability to change data associated with the dataset
     without changing the dataset record, which is immutable in a
@@ -77,7 +77,9 @@ class DataSetDetail(TypedRecord):
     the earlier of the two values will be used.
     """
 
+    def to_key(self) -> str:
+        return 'DataSetDetail=' + str(self.data_set_id)
 
-@attr.s(slots=True, auto_attribs=True)
-class DataSetDetailKey(TypedKey['DataSetDetail']):
+
+class DataSetDetailKey(Key):
     pass

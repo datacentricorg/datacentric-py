@@ -24,7 +24,7 @@ from datacentric.storage.context import Context
 class Record(Data, ABC):
     """Base class of records stored in data source."""
 
-    __context: 'Context' = attr.ib(default=None, init=False)
+    __context: Context = attr.ib(default=None, init=False)
     """
     Execution context provides access to key resources including:
 
@@ -51,18 +51,8 @@ class Record(Data, ABC):
     DataSet element should be TemporalId.Empty.
     """
 
-    _key: str = attr.ib(default=None, init=False)
-    """
-    String key consists of semicolon delimited primary key elements:
-
-    KeyElement1;KeyElement2
-
-    To avoid serialization format uncertainty, key elements
-    can have any atomic type except float.
-    """
-
     @property
-    def context(self) -> Optional['Context']:
+    def context(self) -> Optional[Context]:
         """
         Execution context provides access to key resources including:
 
@@ -74,7 +64,7 @@ class Record(Data, ABC):
         """
         return self.__context
 
-    def init(self, context: Optional['Context']) -> None:
+    def init(self, context: Optional[Context]) -> None:
         """
         Set Context property and perform validation of the record's data,
         then initialize any fields or properties that depend on that data.
@@ -92,7 +82,7 @@ class Record(Data, ABC):
 
     @property
     @abstractmethod
-    def key(self) -> str:
+    def to_key(self) -> str:
         """String key consists of semicolon delimited primary key elements:
 
         key_element1;key_element2

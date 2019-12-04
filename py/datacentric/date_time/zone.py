@@ -13,12 +13,12 @@
 # limitations under the License.
 
 import attr
-from datacentric.storage.typed_key import TypedKey
-from datacentric.storage.typed_record import TypedRecord
+from datacentric.storage.key import Key
+from datacentric.storage.record import Record
 
 
 @attr.s(slots=True, auto_attribs=True)
-class Zone(TypedRecord):
+class Zone(Record):
     """
     This class provides timezone conversion between UTC
     and local datetime for the specified timezone.
@@ -61,7 +61,9 @@ class Zone(TypedRecord):
     country and the other the city, for example America/New_York.
     """
 
+    def to_key(self) -> str:
+        return 'Zone=' + self.zone_name
 
-@attr.s(slots=True, auto_attribs=True)
-class ZoneKey(TypedKey[Zone]):
+
+class ZoneKey(Key):
     pass

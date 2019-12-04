@@ -17,11 +17,11 @@ from abc import ABC
 from bson import ObjectId
 
 from datacentric.storage.context import Context
-from datacentric.storage.typed_record import TypedRecord
+from datacentric.storage.record import Record
 
 
 @attr.s(slots=True)
-class RootRecord(TypedRecord, ABC):
+class RootRecord(Record, ABC):
     """
     Base class of records stored in root dataset of the data store.
 

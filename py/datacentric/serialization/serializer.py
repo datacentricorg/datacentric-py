@@ -27,7 +27,6 @@ from datacentric.date_time.local_date import LocalDate, LocalDateHint
 from datacentric.date_time.local_date_time import LocalDateTime, LocalDateTimeHint
 from datacentric.date_time.instant import Instant, InstantHint
 from datacentric.storage.key import Key
-from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.record import Record
 from datacentric.storage.data import Data
 
@@ -41,7 +40,7 @@ def serialize(obj: TRecord):
     dict_ = _serialize_class(obj, type(obj))
     dict_['_t'] = obj.__class__.__name__
     dict_['_dataset'] = obj.data_set
-    dict_['_key'] = obj.key
+    dict_['_key'] = obj.to_key()
     dict_['_id'] = obj.id_
 
     return dict_
@@ -104,7 +103,7 @@ def _serialize_class(obj: TRecord, expected_: type):
 def _serialize_unions(type_hint, value_) -> Any:
     args = get_args(type_hint)
 
-    if args[0] is str and issubclass(args[1], TypedKey):
+    if args[0] is str and issubclass(args[1], Key):
         if type(value_) is not str:
             raise Exception(f'Expected str')
         return value_
@@ -193,7 +192,7 @@ def deserialize(dict_: Dict) -> TRecord:
     new_obj: TRecord = _deserialize_class(dict_)
 
     new_obj.__setattr__('data_set', data_set)
-    new_obj.__setattr__('_key', _key)
+    # new_obj.__setattr__('_key', _key)
     new_obj.__setattr__('id_', id_)
 
     return new_obj

@@ -14,13 +14,12 @@
 
 import attr
 from abc import ABC, abstractmethod
-from typing import Optional, TypeVar, Iterable, List, ClassVar, Tuple, Type
+from typing import Optional, TypeVar, Iterable, List, ClassVar, Tuple, Type, Union
 from bson import ObjectId
 
 from datacentric.storage.data_set_flags import DataSetFlags
-from datacentric.storage.typed_key import TypedKey
+from datacentric.storage.key import Key
 from datacentric.storage.record import Record
-from datacentric.storage.typed_record import TypedRecord
 from datacentric.storage.data_set import DataSet
 from datacentric.storage.env_type import EnvType
 
@@ -28,7 +27,7 @@ TRecord = TypeVar('TRecord', bound=Record)
 
 
 @attr.s(slots=True, auto_attribs=True)
-class DataSource(TypedRecord, ABC):
+class DataSource(Record, ABC):
     """
     Data source is a logical concept similar to database
     that can be implemented for a document DB, relational DB,
@@ -106,6 +105,9 @@ class DataSource(TypedRecord, ABC):
     Data source may also be readonly because CutoffTime is set.
     """
 
+    def to_key(self) -> str:
+        return 'DataSource=' + self.data_source_name
+
     @abstractmethod
     def create_ordered_object_id(self) -> ObjectId:
         """The returned ObjectIds have the following order guarantees:
@@ -120,7 +122,7 @@ class DataSource(TypedRecord, ABC):
         pass
 
     @abstractmethod
-    def load_or_null(self, record_type: type, id_: ObjectId) -> Optional[TRecord]:
+    def load_or_null(self, record_type: Type[TRecord], id_: ObjectId) -> Optional[TRecord]:
         """Load record by its ObjectId.
 
         Return None if there is no record for the specified ObjectId;
@@ -130,7 +132,7 @@ class DataSource(TypedRecord, ABC):
         pass
 
     @abstractmethod
-    def load_or_null_by_key(self, key_, load_from: ObjectId):
+    def load_or_null_by_key(self, record_type: Type[TRecord], key_: Union[str, Key], load_from: ObjectId) -> Optional[TRecord]:
         """Load record by string key from the specified dataset or
         its list of imports. The lookup occurs first in descending
         order of dataset ObjectIds, and then in the descending
@@ -154,7 +156,7 @@ class DataSource(TypedRecord, ABC):
         pass
 
     @abstractmethod
-    def get_query(self, record_type: type, load_from: ObjectId):
+    def get_query(self, record_type: Type[TRecord], load_from: ObjectId):
         """Get query for the specified type.
 
         After applying query parameters, the lookup occurs first in
@@ -171,7 +173,7 @@ class DataSource(TypedRecord, ABC):
         pass
 
     @abstractmethod
-    def save_many(self, record_type: type, records: Iterable[TRecord], save_to: ObjectId) -> None:
+    def save_many(self, record_type: Type[TRecord], records: Iterable[TRecord], save_to: ObjectId) -> None:
         """Save multiple records to the specified dataset. After the method exits,
         for each record the property record.data_set will be set to the value of
         the save_to parameter.
@@ -188,7 +190,7 @@ class DataSource(TypedRecord, ABC):
         pass
 
     @abstractmethod
-    def delete(self, key: TypedKey[TRecord], delete_in: ObjectId) -> None:
+    def delete(self, record_type: Type[TRecord], key: str, delete_in: ObjectId) -> None:
         """Write a DeletedRecord in delete_in dataset for the specified key
         instead of actually deleting the record. This ensures that
         a record in another dataset does not become visible during
@@ -226,7 +228,7 @@ class DataSource(TypedRecord, ABC):
         pass
 
     # From extensions:
-    def load(self, record_type: type, id_: ObjectId) -> TRecord:
+    def load(self, record_type: Type[TRecord], id_: ObjectId) -> TRecord:
         """Load record by its ObjectId.
 
         Error message if there is no record for the specified ObjectId,
@@ -234,7 +236,7 @@ class DataSource(TypedRecord, ABC):
         """
         raise NotImplementedError()
 
-    def load_by_key(self, key_, load_from: ObjectId):
+    def load_by_key(self, record_type: Type[TRecord], key_, load_from: ObjectId) -> TRecord:
         """Load record from context.data_source, overriding the dataset
         specified in the context with the value specified as the
         second parameter. The lookup occurs in the specified dataset
@@ -246,12 +248,12 @@ class DataSource(TypedRecord, ABC):
 
         Error message if the record is not found or is a DeletedRecord.
         """
-        result = self.load_or_null_by_key(key_, load_from)
+        result = self.load_or_null_by_key(record_type, key_, load_from)
         if result is None:
             raise Exception(f'Record with key {key_} is not found in dataset with TemporalId={load_from}.')
         return result
 
-    def save_one(self, record_type: type, record: TRecord, save_to: ObjectId):
+    def save_one(self, record_type: Type[TRecord], record: TRecord, save_to: ObjectId):
         """Save one record to the specified dataset. After the method exits,
         record.data_set will be set to the value of the data_set parameter.
 
@@ -331,5 +333,5 @@ class DataSource(TypedRecord, ABC):
 
 
 @attr.s(slots=True, auto_attribs=True)
-class DataSourceKey(TypedKey[DataSource]):
+class DataSourceKey(Key, ABC):
     pass

@@ -15,12 +15,12 @@
 import attr
 from bson import ObjectId
 from typing import List, ClassVar, Tuple
-from datacentric.storage.typed_key import TypedKey
-from datacentric.storage.typed_record import TypedRecord
+from datacentric.storage.key import Key
+from datacentric.storage.record import Record
 
 
 @attr.s(slots=True, auto_attribs=True)
-class DataSet(TypedRecord):
+class DataSet(Record):
     """
     Dataset is a concept similar to a folder, applied to data in any
     data source including relational or document databases, OData
@@ -78,7 +78,9 @@ class DataSet(TypedRecord):
     default and must be included in the list of Imports explicitly.
     """
 
+    def to_key(self) -> str:
+        return 'DataSet=' + self.data_set_name
 
-@attr.s(slots=True, auto_attribs=True)
-class DataSetKey(TypedKey['DataSet']):
+
+class DataSetKey(Key):
     pass

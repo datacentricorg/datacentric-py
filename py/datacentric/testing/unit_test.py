@@ -15,13 +15,13 @@
 import attr
 from datacentric.storage.context import Context
 from datacentric.storage.unit_test_context import UnitTestContext
-from datacentric.storage.typed_key import TypedKey
-from datacentric.storage.typed_record import TypedRecord
+from datacentric.storage.key import Key
+from datacentric.storage.record import Record
 from datacentric.testing.unit_test_complexity import UnitTestComplexity
 
 
 @attr.s(slots=True, auto_attribs=True)
-class UnitTest(TypedRecord):
+class UnitTest(Record):
     """
     Base class for executing the tests using:
 
@@ -48,6 +48,9 @@ class UnitTest(TypedRecord):
     Higher complexity results in more comprehensive testing at
     the expect of longer test running times.
     """
+
+    def to_key(self) -> str:
+        return 'UnitTest=' + self.unit_test_name
 
     # --- METHODS
 
@@ -88,6 +91,5 @@ class UnitTest(TypedRecord):
         raise NotImplementedError()
 
 
-@attr.s(slots=True, auto_attribs=True)
-class UnitTestKey(TypedKey[UnitTest]):
+class UnitTestKey(Key):
     pass

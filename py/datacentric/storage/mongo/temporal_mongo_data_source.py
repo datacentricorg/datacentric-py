@@ -17,12 +17,11 @@ from typing import Dict, Optional, TypeVar, Set, Iterable, Type
 from bson import ObjectId
 from pymongo.collection import Collection
 
-from datacentric.storage.data_set_detail import DataSetDetail, DataSetDetailKey
+from datacentric.storage.data_set_detail import DataSetDetail
 from datacentric.storage.mongo.temporal_mongo_query import TemporalMongoQuery
-from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.record import Record
 from datacentric.storage.deleted_record import DeletedRecord
-from datacentric.storage.data_set import DataSet, DataSetKey
+from datacentric.storage.data_set import DataSet
 from datacentric.storage.data_source import DataSource
 from datacentric.storage.mongo.mongo_data_source import MongoDataSource
 from datacentric.storage.class_info import ClassInfo
@@ -65,7 +64,7 @@ class TemporalMongoDataSource(MongoDataSource):
     __data_set_detail_dict: Dict[ObjectId, DataSetDetail] = attr.ib(factory=dict, init=False)
     __import_dict: Dict[ObjectId, Set[ObjectId]] = attr.ib(factory=dict, init=False)
 
-    def load_or_null(self, record_type: type, id_: ObjectId) -> Optional[TRecord]:
+    def load_or_null(self, record_type: Type[TRecord], id_: ObjectId) -> Optional[TRecord]:
         """Load record by its ObjectId.
 
         Return None if there is no record for the specified ObjectId;
@@ -101,7 +100,7 @@ class TemporalMongoDataSource(MongoDataSource):
                 result.init(self.context)
                 return result
 
-    def load_or_null_by_key(self, key_: str, type_: Type[TRecord], load_from: ObjectId) -> Optional[TRecord]:
+    def load_or_null_by_key(self, type_: Type[TRecord], key_: str, load_from: ObjectId) -> Optional[TRecord]:
         """Load record by string key from the specified dataset or
         its list of imports. The lookup occurs first in descending
         order of dataset ObjectIds, and then in the descending
@@ -150,7 +149,7 @@ class TemporalMongoDataSource(MongoDataSource):
                 result.init(self.context)
                 return result
 
-    def get_query(self, record_type: type, load_from: ObjectId) -> TemporalMongoQuery:
+    def get_query(self, record_type: Type[TRecord], load_from: ObjectId) -> TemporalMongoQuery:
         """Get query for the specified type.
 
         After applying query parameters, the lookup occurs first in
@@ -167,7 +166,7 @@ class TemporalMongoDataSource(MongoDataSource):
         collection = self._get_or_create_collection(record_type)
         return TemporalMongoQuery(record_type, self, collection, load_from)
 
-    def save_many(self, record_type: type, records: Iterable[TRecord], save_to: ObjectId):
+    def save_many(self, record_type: Type[TRecord], records: Iterable[TRecord], save_to: ObjectId):
         """Save multiple records to the specified dataset. After the method exits,
         for each record the property record.data_set will be set to the value of
         the save_to parameter.
@@ -199,7 +198,7 @@ class TemporalMongoDataSource(MongoDataSource):
         else:
             collection.insert_many([serialize(x) for x in records])
 
-    def delete(self, key: TypedKey[Record], delete_in: ObjectId) -> None:
+    def delete(self, record_type: Type[TRecord], key: str, delete_in: ObjectId) -> None:
         """Write a DeletedRecord in delete_in dataset for the specified key
         instead of actually deleting the record. This ensures that
         a record in another dataset does not become visible during
@@ -210,12 +209,11 @@ class TemporalMongoDataSource(MongoDataSource):
         """
         self._check_not_readonly(delete_in)
         record = DeletedRecord()
-        record.key = key.value
+        record.key = key
 
         record.id_ = self.create_ordered_object_id()
         record.data_set = delete_in
 
-        record_type = ClassInfo.get_record_from_key(type(key))
         collection = self._get_or_create_collection(record_type)
 
         collection.insert_one(record)
@@ -241,10 +239,8 @@ class TemporalMongoDataSource(MongoDataSource):
         """
         if data_set_name in self.__data_set_dict:
             return self.__data_set_dict[data_set_name]
-        data_set_key = DataSetKey()
-        data_set_key.data_set_name = data_set_name
 
-        data_set_record = self.load_or_null_by_key(data_set_key, load_from)
+        data_set_record = self.load_or_null_by_key(DataSet, data_set_name, load_from)
 
         if data_set_record is None:
             return None
@@ -261,7 +257,7 @@ class TemporalMongoDataSource(MongoDataSource):
     def save_data_set(self, data_set: DataSet, save_to: ObjectId) -> None:
         """Save new version of the dataset and update in-memory cache to the saved dataset."""
         self.save_one(DataSet, data_set, save_to)
-        self.__data_set_dict[data_set.key] = data_set.id_
+        self.__data_set_dict[data_set.to_key()] = data_set.id_
         self.__data_set_parent_dict[data_set.id_] = data_set.data_set
 
         lookup_list = self._build_data_set_lookup_list(data_set)
@@ -302,7 +298,7 @@ class TemporalMongoDataSource(MongoDataSource):
 
         parent_id = self.__data_set_parent_dict[detail_for]
 
-        result = self.load_or_null_by_key(str(detail_for), DataSetDetail, parent_id)
+        result = self.load_or_null_by_key(DataSetDetail, str(detail_for), parent_id)
         self.__data_set_detail_dict[detail_for] = result
         return result
 
@@ -401,7 +397,7 @@ class TemporalMongoDataSource(MongoDataSource):
 
         if not ObjectId.is_valid(data_set_record.id_):
             raise Exception('Required ObjectId value is not set.')
-        if data_set_record.key == '':
+        if data_set_record.data_set_name == '':
             raise Exception('Required string value is not set.')
 
         cutoff_time = self.get_cutoff_time(data_set_record.data_set)
@@ -414,7 +410,7 @@ class TemporalMongoDataSource(MongoDataSource):
         if data_set_record.imports is not None:
             for data_set_id in data_set_record.imports:
                 if data_set_record.id_ == data_set_id:
-                    raise Exception(f'Dataset {data_set_record.key} with ObjectId={data_set_record.id_} '
+                    raise Exception(f'Dataset {data_set_record.to_key()} with ObjectId={data_set_record.id_} '
                                     f'includes itself in the list of its imports.')
                 if data_set_id not in result:
                     result.add(data_set_id)

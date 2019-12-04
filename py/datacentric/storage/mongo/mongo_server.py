@@ -13,12 +13,12 @@
 # limitations under the License.
 
 import attr
-from datacentric.storage.typed_key import TypedKey
-from datacentric.storage.typed_record import TypedRecord
+from datacentric.storage.key import Key
+from datacentric.storage.record import Record
 
 
 @attr.s(slots=True, auto_attribs=True)
-class MongoServer(TypedRecord):
+class MongoServer(Record):
     """
     Provides Mongo server URI.
 
@@ -34,7 +34,9 @@ class MongoServer(TypedRecord):
     an individual database.
     """
 
+    def to_key(self) -> str:
+        return 'MongoServer=' + self.mongo_server_uri
 
-@attr.s(slots=True, auto_attribs=True)
-class MongoServerKey(TypedKey[MongoServer]):
+
+class MongoServerKey(Key):
     pass
