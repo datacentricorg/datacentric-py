@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import attr
-from typing import Dict, Optional, TypeVar, Set, Iterable
+from typing import Dict, Optional, TypeVar, Set, Iterable, Type
 from bson import ObjectId
 from pymongo.collection import Collection
 
@@ -101,7 +101,7 @@ class TemporalMongoDataSource(MongoDataSource):
                 result.init(self.context)
                 return result
 
-    def load_or_null_by_key(self, key_: TypedKey[Record], load_from: ObjectId) -> Optional[TRecord]:
+    def load_or_null_by_key(self, key_: str, type_: Type[TRecord], load_from: ObjectId) -> Optional[TRecord]:
         """Load record by string key from the specified dataset or
         its list of imports. The lookup occurs first in descending
         order of dataset ObjectIds, and then in the descending
@@ -122,9 +122,7 @@ class TemporalMongoDataSource(MongoDataSource):
         however an exception will be thrown if the record exists but
         is not derived from TRecord.
         """
-        key_value = key_.value
-
-        base_pipe = [{"$match": {"_key": key_value}}]
+        base_pipe = [{"$match": {"_key": key_}}]
         pipe_with_constraints = self.apply_final_constraints(base_pipe, load_from)
         ordered_pipe = pipe_with_constraints
         ordered_pipe.extend(
@@ -135,8 +133,7 @@ class TemporalMongoDataSource(MongoDataSource):
             ]
         )
 
-        record_type = ClassInfo.get_record_from_key(type(key_))
-        collection = self._get_or_create_collection(record_type)
+        collection = self._get_or_create_collection(type_)
 
         cursor = collection.aggregate(ordered_pipe)
         if cursor.alive:
@@ -145,11 +142,11 @@ class TemporalMongoDataSource(MongoDataSource):
 
             if result is not None and not isinstance(result, DeletedRecord):
 
-                is_proper_record = isinstance(result, record_type)
+                is_proper_record = isinstance(result, type_)
                 if not is_proper_record:
-                    raise Exception(f'Stored type {type(result).__name__} for Key={key_value} in '
+                    raise Exception(f'Stored type {type(result).__name__} for Key={key_} in '
                                     f'data_set={load_from} is not an instance of '
-                                    f'the requested type {record_type.__name__}.')
+                                    f'the requested type {type_.__name__}.')
                 result.init(self.context)
                 return result
 
@@ -304,10 +301,8 @@ class TemporalMongoDataSource(MongoDataSource):
             return self.__data_set_detail_dict[detail_for]
 
         parent_id = self.__data_set_parent_dict[detail_for]
-        data_set_detail_key = DataSetDetailKey()
-        data_set_detail_key.data_set_id = detail_for
 
-        result = self.load_or_null_by_key(data_set_detail_key, parent_id)
+        result = self.load_or_null_by_key(str(detail_for), DataSetDetail, parent_id)
         self.__data_set_detail_dict[detail_for] = result
         return result
 

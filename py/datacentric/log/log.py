@@ -22,7 +22,7 @@ from datacentric.log.log_entry import LogEntry
 
 
 @attr.s(slots=True, auto_attribs=True)
-class LogKey(TypedKey['Log']):
+class Log(TypedRecord, ABC):
     """
     Provides a unified API for writing log output to:
 
@@ -33,23 +33,7 @@ class LogKey(TypedKey['Log']):
     * Logging frameworks such as log4net and other logging frameworks
     * Cloud logging services such as AWS CloudWatch
     """
-
-    log_name: str = attr.ib(default=None, kw_only=True)
-    """Unique log name."""
-
-
-@attr.s(slots=True, auto_attribs=True)
-class Log(TypedRecord[LogKey], ABC):
-    """
-    Provides a unified API for writing log output to:
-
-    * Console
-    * String
-    * File
-    * Database
-    * Logging frameworks such as log4net and other logging frameworks
-    * Cloud logging services such as AWS CloudWatch
-    """
+    _keys = ('log_name',)
 
     log_name: str = attr.ib(default=None, kw_only=True)
     """Unique log name."""
@@ -247,3 +231,8 @@ class Log(TypedRecord[LogKey], ABC):
             self.error(title, description)
         else:
             self.verify(title, description)
+
+
+@attr.s(slots=True, auto_attribs=True)
+class LogKey(TypedKey[Log]):
+    pass

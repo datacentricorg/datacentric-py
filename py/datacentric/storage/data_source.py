@@ -14,7 +14,7 @@
 
 import attr
 from abc import ABC, abstractmethod
-from typing import Optional, TypeVar, Iterable, List, ClassVar
+from typing import Optional, TypeVar, Iterable, List, ClassVar, Tuple, Type
 from bson import ObjectId
 
 from datacentric.storage.data_set_flags import DataSetFlags
@@ -28,7 +28,7 @@ TRecord = TypeVar('TRecord', bound=Record)
 
 
 @attr.s(slots=True, auto_attribs=True)
-class DataSourceKey(TypedKey['DataSource']):
+class DataSource(TypedRecord, ABC):
     """
     Data source is a logical concept similar to database
     that can be implemented for a document DB, relational DB,
@@ -42,26 +42,7 @@ class DataSourceKey(TypedKey['DataSource']):
 
     This record is stored in root dataset.
     """
-
-    data_source_name: str = attr.ib(default=None, kw_only=True)
-    """Unique data source name."""
-
-
-@attr.s(slots=True, auto_attribs=True)
-class DataSource(TypedRecord[DataSourceKey], ABC):
-    """
-    Data source is a logical concept similar to database
-    that can be implemented for a document DB, relational DB,
-    key-value store, or filesystem.
-
-    Data source API provides the ability to:
-
-    (a) store and query datasets;
-    (b) store records in a specific dataset; and
-    (c) query record across a group of datasets.
-
-    This record is stored in root dataset.
-    """
+    _keys: ClassVar[Tuple[str]] = ('data_source_name',)
 
     # Class variables
     _empty_id: ClassVar[ObjectId] = ObjectId('000000000000000000000000')
@@ -150,7 +131,7 @@ class DataSource(TypedRecord[DataSourceKey], ABC):
         pass
 
     @abstractmethod
-    def load_or_null_by_key(self, key_: TypedKey, load_from: ObjectId) -> Optional[TRecord]:
+    def load_or_null_by_key(self, key_: str, type_: Type[TRecord], load_from: ObjectId) -> Optional[TRecord]:
         """Load record by string key from the specified dataset or
         its list of imports. The lookup occurs first in descending
         order of dataset ObjectIds, and then in the descending
@@ -254,7 +235,7 @@ class DataSource(TypedRecord[DataSourceKey], ABC):
         """
         raise NotImplementedError()
 
-    def load_by_key(self, key_: TypedKey, load_from: ObjectId) -> TRecord:
+    def load_by_key(self, key_: str, type_: Type[TRecord], load_from: ObjectId) -> TRecord:
         """Load record from context.data_source, overriding the dataset
         specified in the context with the value specified as the
         second parameter. The lookup occurs in the specified dataset
@@ -266,7 +247,7 @@ class DataSource(TypedRecord[DataSourceKey], ABC):
 
         Error message if the record is not found or is a DeletedRecord.
         """
-        result = self.load_or_null_by_key(key_, load_from)
+        result = self.load_or_null_by_key(key_, type_, load_from)
         if result is None:
             raise Exception(f'Record with key {key_} is not found in dataset with TemporalId={load_from}.')
         return result
@@ -348,3 +329,8 @@ class DataSource(TypedRecord[DataSourceKey], ABC):
         self.save_data_set(result, parent_data_set)
 
         return result.id_
+
+
+@attr.s(slots=True, auto_attribs=True)
+class DataSourceKey(TypedKey[DataSource]):
+    pass

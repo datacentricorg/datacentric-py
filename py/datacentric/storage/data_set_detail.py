@@ -18,13 +18,8 @@ from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
 
 
-class DataSetDetailKeyHint:
-    """Type hint indicating that str represents DataSetDetailKey."""
-    pass
-
-
 @attr.s(slots=True, auto_attribs=True)
-class DataSetDetailKey(TypedKey['DataSetDetail']):
+class DataSetDetail(TypedRecord):
     """
     Provides the ability to change data associated with the dataset
     without changing the dataset record, which is immutable in a
@@ -40,26 +35,7 @@ class DataSetDetailKey(TypedKey['DataSetDetail']):
     is not affected by its own settings.
     """
 
-    data_set_id: ObjectId = attr.ib(default=None, kw_only=True)
-    """TemporalId of the referenced dataset."""
-
-
-@attr.s(slots=True, auto_attribs=True)
-class DataSetDetail(TypedRecord[DataSetDetailKey]):
-    """
-    Provides the ability to change data associated with the dataset
-    without changing the dataset record, which is immutable in a
-    temporal data source.
-
-    The reason dataset record is immutable is that any change to the
-    the dataset record in a temporal data source results in creation
-    of a record with new TemporalId, which is treated as a new dataset.
-
-    The DataSetDetail record uses TemporalId of the referenced dataset
-    as its primary key. It is located in the parent of the dataset
-    record to which it applies, rather than inside that record, so it
-    is not affected by its own settings.
-    """
+    _keys = ('data_set_id',)
 
     data_set_id: ObjectId = attr.ib(default=None, kw_only=True)
     """TemporalId of the referenced dataset."""
@@ -102,3 +78,8 @@ class DataSetDetail(TypedRecord[DataSetDetailKey]):
     If ImportsCutoffTime is set for both data source and dataset,
     the earlier of the two values will be used.
     """
+
+
+@attr.s(slots=True, auto_attribs=True)
+class DataSetDetailKey(TypedKey['DataSetDetail']):
+    pass

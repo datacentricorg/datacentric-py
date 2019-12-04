@@ -11,42 +11,65 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from enum import IntEnum
 
 import attr
 from abc import ABC
-from typing import TypeVar, Generic, List
+from bson import ObjectId, Int64
+from typing import TypeVar, List, ClassVar, Tuple
+
 from datacentric.storage.class_info import ClassInfo
-from datacentric.storage.key import Key
 from datacentric.storage.record import Record
 
 TKey = TypeVar('TKey')
 
 
 @attr.s(slots=True)
-class TypedRecord(Generic[TKey], Record, ABC):
+class TypedRecord(Record, ABC):
     """Base class of records stored in data source."""
+    _keys: ClassVar[Tuple[str]] = ()
 
     @property
     def key(self) -> str:
         """String key consists of semicolon delimited primary key elements. To avoid serialization format uncertainty,
         key elements can have any atomic type except float.
         """
-        key_type = ClassInfo.get_key_from_record(type(self))
-
-        key_slots = key_type.__slots__
-        if type(key_slots) is str:
-            key_slots = [key_slots]
-        data_slots = self.__slots__
-        if type(data_slots) is str:
-            data_slots = [data_slots]
-
-        if len(key_slots) > len(data_slots):
-            raise Exception(
-                f'Key type {key_type.__name__} has more elements than {self.__name__}.')
+        data_slots = attr.fields(type(self))
+        key_slots = [x.name for x in data_slots if x.name in self._keys]
 
         tokens: List[str] = []
         for slot in key_slots:
-            token = Key.get_key_token(self, slot)
+            attr_value = self.__getattribute__(slot)
+            attr_type = type(attr_value)
+            if attr_value is None:
+                raise Exception(f'Key element {slot} of type {type(self).__name__} is null. '
+                                f'Null elements are not permitted in key.')
+            elif attr_type == str:
+                if attr_value == '':
+                    raise Exception(f'String key element {slot} is empty. Empty elements are not permitted in key.')
+                if ';' in attr_value:
+                    raise Exception(f'Key element {slot} of type {type(self).__name__} includes semicolon delimiter. '
+                                    f'The use of this delimiter is reserved for separating key tokens.')
+                token = attr_value
+            elif attr_type == float:
+                raise Exception(f'Key element {slot} of type {type(self).__name__} has type float. '
+                                f'Elements of this type cannot be part of key due to serialization format uncertainty.')
+
+            elif attr_type == bool:
+                token = 'true' if attr_value else 'false'
+            elif attr_type == int:
+                token = str(attr_value)
+            elif attr_type == Int64:
+                token = str(attr_value)
+            elif attr_type == ObjectId:
+                token = str(attr_value)
+            elif issubclass(attr_type, IntEnum):
+                token = attr_value.name
+            else:
+                raise Exception(f'Key element {slot} of type {type(self).__name__} has type {attr_type.__name__} '
+                                f'that is not one of the supported key element types. Available key element types are '
+                                f'string, double, bool, int, long, LocalDate, LocalTime, LocalMinute, LocalDateTime, '
+                                f'LocalMinute, ObjectId, or Enum.')
             tokens.append(token)
 
         return ';'.join(tokens)

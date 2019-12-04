@@ -14,6 +14,7 @@ from datacentric.date_time.local_date import LocalDate, LocalDateHint
 from datacentric.date_time.local_date_time import LocalDateTime, LocalDateTimeHint
 from datacentric.date_time.instant import Instant, InstantHint
 from datacentric.storage.key import Key
+from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.record import Record
 from datacentric.storage.data import Data
 
@@ -88,7 +89,8 @@ def _serialize_class(obj: TRecord, expected_: type):
 
 def _serialize_unions(type_hint, value_) -> Any:
     args = get_args(type_hint)
-    if args[0] is str and args[1].__name__.endswith('Hint'):
+
+    if args[0] is str and issubclass(args[1], TypedKey):
         if type(value_) is not str:
             raise Exception(f'Expected str')
         return value_

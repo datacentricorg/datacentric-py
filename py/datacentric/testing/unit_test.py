@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import attr
-from abc import ABC, abstractmethod
 from datacentric.storage.context import Context
 from datacentric.storage.unit_test_context import UnitTestContext
 from datacentric.storage.typed_key import TypedKey
@@ -22,7 +21,7 @@ from datacentric.testing.unit_test_complexity import UnitTestComplexity
 
 
 @attr.s(slots=True, auto_attribs=True)
-class UnitTestKey(TypedKey['UnitTest']):
+class UnitTest(TypedRecord):
     """
     Base class for executing the tests using:
 
@@ -33,28 +32,7 @@ class UnitTestKey(TypedKey['UnitTest']):
     environment but also on a deployed version of the application where
     access to the xUnit test runner is not available.
     """
-
-    unit_test_name: str = attr.ib(default=None, kw_only=True)
-    """
-    Unique unit test name.
-
-    The name is set to the fully qualified test class name
-    in the constructor of this class.
-    """
-
-
-@attr.s(slots=True, auto_attribs=True)
-class UnitTest(TypedRecord[UnitTestKey]):
-    """
-    Base class for executing the tests using:
-
-    * A standard xUnit test runner; or
-    * A handler via CLI or the front end
-
-    This makes it possible to test not only inside the development
-    environment but also on a deployed version of the application where
-    access to the xUnit test runner is not available.
-    """
+    _keys = ('unit_test_name',)
 
     unit_test_name: str = attr.ib(default=None, kw_only=True)
     """
@@ -109,3 +87,8 @@ class UnitTest(TypedRecord[UnitTestKey]):
         of the test class in parallel.
         """
         raise NotImplementedError()
+
+
+@attr.s(slots=True, auto_attribs=True)
+class UnitTestKey(TypedKey[UnitTest]):
+    pass

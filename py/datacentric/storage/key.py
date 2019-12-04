@@ -62,17 +62,17 @@ class Key(Data, ABC):
         attr_type = type(attr_value)
         if attr_value is None:
             raise Exception(f'Key element {slot} of type {type(obj).__name__} is null. '
-                             f'Null elements are not permitted in key.')
+                            f'Null elements are not permitted in key.')
         elif attr_type == str:
             if attr_value == '':
                 raise Exception(f'String key element {slot} is empty. Empty elements are not permitted in key.')
             if ';' in attr_value:
                 raise Exception(f'Key element {slot} of type {type(obj).__name__} includes semicolon delimiter. '
-                                 f'The use of this delimiter is reserved for separating key tokens.')
+                                f'The use of this delimiter is reserved for separating key tokens.')
             return attr_value
         elif attr_type == float:
             raise Exception(f'Key element {slot} of type {type(obj).__name__} has type float. '
-                             f'Elements of this type cannot be part of key due to serialization format uncertainty.')
+                            f'Elements of this type cannot be part of key due to serialization format uncertainty.')
         elif attr_type == LocalDate:
             return str(LocalDate.to_iso_int(attr_value))
         elif attr_type == LocalTime:
@@ -96,9 +96,9 @@ class Key(Data, ABC):
             return attr_value.name
         else:
             raise Exception(f'Key element {slot} of type {type(obj).__name__} has type {attr_type.__name__} '
-                             f'that is not one of the supported key element types. Available key element types are '
-                             f'string, double, bool, int, long, LocalDate, LocalTime, LocalMinute, LocalDateTime, '
-                             f'LocalMinute, ObjectId, or Enum.')
+                            f'that is not one of the supported key element types. Available key element types are '
+                            f'string, double, bool, int, long, LocalDate, LocalTime, LocalMinute, LocalDateTime, '
+                            f'LocalMinute, ObjectId, or Enum.')
 
     def populate_from_string(self, value: str) -> None:
         """Populate key attributes from semicolon delimited string.

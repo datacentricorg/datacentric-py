@@ -17,42 +17,25 @@ from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
 
 
-class MongoServerKeyHint:
-    """Type hint indicating that str represents MongoServerKey."""
+@attr.s(slots=True, auto_attribs=True)
+class MongoServer(TypedRecord):
+    """
+    Provides Mongo server URI.
+
+    Server URI specified here must refer to the entire server, not
+    an individual database.
+    """
+    _keys = ('mongo_server_uri',)
+
+    mongo_server_uri: str = attr.ib(default=None, kw_only=True)
+    """
+    Mongo server URI.
+
+    Server URI specified here must refer to the entire server, not
+    an individual database.
+    """
+
+
+@attr.s(slots=True, auto_attribs=True)
+class MongoServerKey(TypedKey[MongoServer]):
     pass
-
-
-@attr.s(slots=True, auto_attribs=True)
-class MongoServerKey(TypedKey['MongoServer']):
-    """
-    Provides Mongo server URI.
-
-    Server URI specified here must refer to the entire server, not
-    an individual database.
-    """
-
-    mongo_server_uri: str = attr.ib(default=None, kw_only=True)
-    """
-    Mongo server URI.
-
-    Server URI specified here must refer to the entire server, not
-    an individual database.
-    """
-
-
-@attr.s(slots=True, auto_attribs=True)
-class MongoServer(TypedRecord[MongoServerKey]):
-    """
-    Provides Mongo server URI.
-
-    Server URI specified here must refer to the entire server, not
-    an individual database.
-    """
-
-    mongo_server_uri: str = attr.ib(default=None, kw_only=True)
-    """
-    Mongo server URI.
-
-    Server URI specified here must refer to the entire server, not
-    an individual database.
-    """

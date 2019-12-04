@@ -1,16 +1,13 @@
 import attr
 from abc import ABC
-from typing import TypeVar
 from bson import ObjectId
 
 from datacentric.storage.context import Context
 from datacentric.storage.typed_record import TypedRecord
 
-TKey = TypeVar('TKey')
-
 
 @attr.s(slots=True)
-class RootRecord(TypedRecord[TKey], ABC):
+class RootRecord(TypedRecord, ABC):
     """
     Base class of records stored in root dataset of the data store.
 

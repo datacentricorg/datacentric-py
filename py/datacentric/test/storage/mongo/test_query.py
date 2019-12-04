@@ -22,10 +22,10 @@ class TestQuery(unittest.TestCase, UnitTest):
                 record.string_token = 'A' + str(record_index_mod4)
                 record.bool_token = record_index_mod2 == 0
                 record.int_token = record_index_mod4
-                record.local_date_token = LocalDate(2003, 5, 1+record_index_mod4)
-                record.local_time_token = LocalTime(10, 15, 30 + record_index_mod4)
-                record.local_minute_token = LocalMinute(10, record_index_mod4)
-                record.local_date_time_token = LocalDateTime(2003, 5, 1 + record_index_mod4, 10, 15)
+                record.local_date_token = LocalDate(2003, 5, 1+record_index_mod4).to_iso_int()
+                record.local_time_token = LocalTime(10, 15, 30 + record_index_mod4).to_iso_int()
+                record.local_minute_token = LocalMinute(10, record_index_mod4).to_iso_int()
+                record.local_date_time_token = LocalDateTime(2003, 5, 1 + record_index_mod4, 10, 15).to_iso_int()
                 record.enum_token = SampleEnum(record_index_mod2 + 1)
 
                 context.data_source.save_one(NullableElementsSample, record, context.data_set)

@@ -6,6 +6,7 @@ from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 
 class TestDataSet(unittest.TestCase, UnitTest):
+    @unittest.skip
     def test_key_instantiation(self):
         null_key = DataSetKey()
         key = DataSetKey()

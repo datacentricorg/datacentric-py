@@ -24,7 +24,7 @@ if False:
 
 
 @attr.s(slots=True, auto_attribs=True)
-class LogEntryKey(TypedKey['LogEntry']):
+class LogEntry(TypedRecord):
     """
     Contains a single entry (message) in a log.
 
@@ -36,31 +36,7 @@ class LogEntryKey(TypedKey['LogEntry']):
     that include additional data.
     """
 
-    id_: ObjectId = attr.ib(default=None, kw_only=True)
-    """Defining element Id here includes the record's TemporalId
-    in its key. Because TemporalId of the record is specific
-    to its version, this is equivalent to using an auto-
-    incrementing column as part of the record's primary key
-    in a relational database.
-    
-    For the record's history to be captured correctly, all
-    update operations must assign a new TemporalId with the
-    timestamp that matches update time.
-    """
-
-
-@attr.s(slots=True, auto_attribs=True)
-class LogEntry(TypedRecord[LogEntryKey]):
-    """
-    Contains a single entry (message) in a log.
-
-    The Log record serves as the key for querying LogEntry records.
-    To obtain the entire log, run a query for the Log element of
-    the LogEntry record, then sort the entry records by their TemporalId.
-
-    Derive from this class to provide specialized LogEntry subtypes
-    that include additional data.
-    """
+    _keys = ('id_',)
 
     id_: ObjectId = attr.ib(default=None, kw_only=True)
     """Defining element Id here includes the record's TemporalId
@@ -127,3 +103,8 @@ class LogEntry(TypedRecord[LogEntryKey]):
         """
         # TODO - provide correct format
         return self.title
+
+
+@attr.s(slots=True, auto_attribs=True)
+class LogEntryKey(TypedKey[LogEntry]):
+    pass

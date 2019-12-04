@@ -14,18 +14,13 @@
 
 import attr
 from bson import ObjectId
-from typing import List
+from typing import List, ClassVar, Tuple
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
 
 
-class DataSetKeyHint:
-    """Type hint indicating that str represents DataSetKey."""
-    pass
-
-
 @attr.s(slots=True, auto_attribs=True)
-class DataSetKey(TypedKey['DataSet']):
+class DataSet(TypedRecord):
     """
     Dataset is a concept similar to a folder, applied to data in any
     data source including relational or document databases, OData
@@ -47,34 +42,7 @@ class DataSetKey(TypedKey['DataSet']):
     or its own DataSet record. It is always last in the dataset
     lookup sequence. The root dataset cannot have Imports.
     """
-
-    data_set_name: str = attr.ib(default=None, kw_only=True)
-    """Unique dataset name."""
-
-
-@attr.s(slots=True, auto_attribs=True)
-class DataSet(TypedRecord[DataSetKey]):
-    """
-    Dataset is a concept similar to a folder, applied to data in any
-    data source including relational or document databases, OData
-    endpoints, etc.
-
-    Datasets can be stored in other datasets. The dataset where dataset
-    record is stored is called parent dataset.
-
-    Dataset has an Imports array which provides the list of TemporalIds of
-    datasets where records are looked up if they are not found in the
-    current dataset. The specific lookup rules are specific to the data
-    source type and described in detail in the data source documentation.
-
-    Some data source types do not support Imports. If such data
-    source is used with a dataset where Imports array is not empty,
-    an error will be raised.
-
-    The root dataset uses TemporalId.Empty and does not have versions
-    or its own DataSet record. It is always last in the dataset
-    lookup sequence. The root dataset cannot have Imports.
-    """
+    _keys: ClassVar[Tuple[str]] = ('data_set_name',)
 
     data_set_name: str = attr.ib(default=None, kw_only=True)
     """Unique dataset name."""
@@ -110,3 +78,8 @@ class DataSet(TypedRecord[DataSetKey]):
     The parent dataset is not included in the list of Imports by
     default and must be included in the list of Imports explicitly.
     """
+
+
+@attr.s(slots=True, auto_attribs=True)
+class DataSetKey(TypedKey['DataSet']):
+    pass

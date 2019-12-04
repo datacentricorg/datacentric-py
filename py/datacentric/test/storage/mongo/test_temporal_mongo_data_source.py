@@ -13,10 +13,10 @@ def save_base_record(context: Context, data_set_id, record_id, record_index) -> 
     rec.record_id = record_id
     rec.record_index = record_index
     rec.double_element = 100.0
-    rec.local_date_element = LocalDate(2003, 5, 1)
-    rec.local_time_element = LocalTime(10, 15, 30)  # 10:15:30
-    rec.local_minute_element = LocalMinute(10, 15)  # 10:15
-    rec.local_date_time_element = LocalDateTime(2003, 5, 1, 10, 15)  # 2003-05-01T10:15:00
+    rec.local_date_element = LocalDate(2003, 5, 1).to_iso_int()
+    rec.local_time_element = LocalTime(10, 15, 30).to_iso_int()  # 10:15:30
+    rec.local_minute_element = LocalMinute(10, 15).to_iso_int()  # 10:15
+    rec.local_date_time_element = LocalDateTime(2003, 5, 1, 10, 15).to_iso_int()  # 2003-05-01T10:15:00
     rec.enum_value = SampleEnum.EnumValue2
 
     data_set = context.data_source.get_data_set(data_set_id, context.data_set)
@@ -30,10 +30,10 @@ def save_derived_record(context, data_set_id, record_id, record_index) -> Object
     rec.record_id = record_id
     rec.record_index = record_index
     rec.double_element = 300.
-    rec.local_date_element = LocalDate(2003, 5, 1)
-    rec.local_time_element = LocalTime(10, 15, 30)  # 10:15:30
-    rec.local_minute_element = LocalMinute(10, 15)  # 10:15
-    rec.local_date_time_element = LocalDateTime(2003, 5, 1, 10, 15)  # 2003-05-01T10:15:00
+    rec.local_date_element = LocalDate(2003, 5, 1).to_iso_int()
+    rec.local_time_element = LocalTime(10, 15, 30).to_iso_int()  # 10:15:30
+    rec.local_minute_element = LocalMinute(10, 15).to_iso_int()  # 10:15
+    rec.local_date_time_element = LocalDateTime(2003, 5, 1, 10, 15).to_iso_int()  # 2003-05-01T10:15:00
     rec.string_element2 = ''
     rec.double_element = 200.
     rec.list_of_string = ['A', 'B', 'C']
@@ -57,18 +57,10 @@ def save_derived_record(context, data_set_id, record_id, record_index) -> Object
     rec.data_element_list = [element_list0, element_list1]
 
     # Key element
-    rec.key_element = BaseSampleKey()
-    rec.key_element.record_id = 'BB'
-    rec.key_element.record_index = 2
+    rec.key_element = 'BB;2'
 
     # Key element list
-    key_list0 = BaseSampleKey()
-    key_list0.record_id = "B0"
-    key_list0.record_index = 3
-    key_list1 = BaseSampleKey()
-    key_list1.record_id = "B1"
-    key_list1.record_index = 4
-    rec.key_element_list = [key_list0, key_list1]
+    rec.key_element_list = ['B0;3', 'B1;4']
 
     data_set = context.data_source.get_data_set(data_set_id, context.data_set)
     context.data_source.save_one(DerivedSample, rec, data_set)
@@ -84,7 +76,7 @@ def save_basic_data(context: Context):
 
 def verify_load(context, data_set_id, key):
     data_set = context.data_source.get_data_set(data_set_id, context.data_set)
-    record = context.data_source.load_or_null_by_key(key, data_set)
+    record = context.data_source.load_or_null_by_key(key, BaseSample, data_set)
     if record is None:
         return 'Not found'
     else:
@@ -111,13 +103,9 @@ class TestTemporalMongoDataSource(unittest.TestCase, UnitTest):
         with TemporalMongoUnitTestContext(self) as context:
             save_basic_data(context)
 
-            key_a0 = BaseSampleKey()
-            key_a0.record_id = 'A'
-            key_a0.record_index = 0
+            key_a0 = 'A;0'
 
-            key_b0 = BaseSampleKey()
-            key_b0.record_id = 'B'
-            key_b0.record_index = 0
+            key_b0 = 'B;0'
 
             self.assertEqual(verify_load(context, 'DataSet0', key_a0), 'Found. Type = BaseSample')
             self.assertEqual(verify_load(context, 'DataSet1', key_a0), 'Found. Type = BaseSample')

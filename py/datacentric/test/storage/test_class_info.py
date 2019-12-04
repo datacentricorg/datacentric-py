@@ -4,14 +4,14 @@ from datacentric.storage.class_info import ClassInfo
 from datacentric.storage.typed_record import TypedRecord
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.data import Data
-from datacentric.testing.unit_test import UnitTestKey, UnitTest
+from datacentric.testing.unit_test import UnitTest
 
 
-class BaseKey(TypedKey['BaseRecord']):
+class BaseRecord(TypedRecord):
     pass
 
 
-class BaseRecord(TypedRecord[BaseKey]):
+class BaseKey(TypedKey[BaseRecord]):
     pass
 
 
@@ -34,6 +34,7 @@ class TestClassInfo(unittest.TestCase, UnitTest):
         self.assertTrue(ClassInfo.get_root_type(DerivedRecord) == BaseRecord)
         self.assertTrue(ClassInfo.get_root_type(ElementData) == ElementData)
 
+    @unittest.skip('Remove')
     def test_key_type(self):
         self.assertEqual(ClassInfo.get_key_from_record(BaseRecord), BaseKey)
         self.assertEqual(ClassInfo.get_key_from_record(DerivedRecord), BaseKey)
