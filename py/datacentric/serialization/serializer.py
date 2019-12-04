@@ -1,3 +1,17 @@
+# Copyright (C) 2013-present The DataCentric Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import attr
 import numpy as np
 import datetime as dt
@@ -5,7 +19,6 @@ from bson import ObjectId
 from enum import IntEnum
 from typing import Dict, Any, get_type_hints, TypeVar, Union, List
 from typing_inspect import get_origin, get_args
-
 from datacentric.primitive.string_util import StringUtil
 from datacentric.storage.class_info import ClassInfo
 from datacentric.date_time.local_time import LocalTime, LocalTimeHint
