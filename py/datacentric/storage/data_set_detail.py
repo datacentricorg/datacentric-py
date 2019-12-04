@@ -18,6 +18,11 @@ from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
 
 
+class DataSetDetailKeyHint:
+    """Type hint indicating that str represents DataSetDetailKey."""
+    pass
+
+
 @attr.s(slots=True, auto_attribs=True)
 class DataSetDetailKey(TypedKey['DataSetDetail']):
     """

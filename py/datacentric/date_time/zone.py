@@ -17,6 +17,11 @@ from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
 
 
+class ZoneKeyHint:
+    """Type hint indicating that str represents ZoneKey."""
+    pass
+
+
 @attr.s(slots=True, auto_attribs=True)
 class ZoneKey(TypedKey['Zone']):
     """

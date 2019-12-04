@@ -19,6 +19,11 @@ from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
 
 
+class DataSetKeyHint:
+    """Type hint indicating that str represents DataSetKey."""
+    pass
+
+
 @attr.s(slots=True, auto_attribs=True)
 class DataSetKey(TypedKey['DataSet']):
     """
@@ -94,7 +99,7 @@ class DataSet(TypedRecord[DataSetKey]):
     datasets in such data source are non-temporal.
     """
 
-    imports: List[ObjectId] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    imports: List[ObjectId] = attr.ib(default=None, kw_only=True, repr=False, metadata={'optional': True})
     """
     List of datasets where records are looked up if they are
     not found in the current dataset.

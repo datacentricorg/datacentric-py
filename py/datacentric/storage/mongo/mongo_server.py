@@ -17,6 +17,11 @@ from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.typed_record import TypedRecord
 
 
+class MongoServerKeyHint:
+    """Type hint indicating that str represents MongoServerKey."""
+    pass
+
+
 @attr.s(slots=True, auto_attribs=True)
 class MongoServerKey(TypedKey['MongoServer']):
     """
