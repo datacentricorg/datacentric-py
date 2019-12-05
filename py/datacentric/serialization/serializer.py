@@ -37,10 +37,21 @@ _local_hints_ = [LocalMinuteHint, LocalDateTimeHint, LocalDateHint, LocalTimeHin
 
 
 def serialize(obj: TRecord):
-    dict_ = _serialize_class(obj, type(obj))
-    dict_['_t'] = obj.__class__.__name__
+    type_: type = type(obj)
+    dict_ = _serialize_class(obj, type_)
+
+    # Field _t contains inheritance chain of the class, starting from Record
+    dict_['_t'] = ClassInfo.get_record_inheritance_chain(type_)
+
+    # ObjectId of the dataset
     dict_['_dataset'] = obj.data_set
-    dict_['_key'] = obj.to_key()
+
+    # Remove collection name prefix from key before assigning
+    key_with_collection_name_prefix: str = obj.to_key()
+    key_without_collection_name_prefix: str = key_with_collection_name_prefix.split('=', 1)[1]
+    dict_['_key'] = key_without_collection_name_prefix
+
+    # Unique object id
     dict_['_id'] = obj.id_
 
     return dict_
@@ -109,7 +120,7 @@ def _serialize_unions(type_hint, value_) -> Any:
         return value_
     if args[0] is int and args[1] in _local_hints_:
         if type(value_) is not int:
-            raise Exception(f'Expected int')
+            raise Exception(f'Expected int')  # TODO Improve comment to be specific about which date type is used
         return value_
     if args[0] is dt.datetime and args[1] == InstantHint:
         if type(value_) is not dt.datetime:
@@ -199,7 +210,8 @@ def deserialize(dict_: Dict) -> TRecord:
 
 
 def _deserialize_class(dict_: Dict[str, Any]) -> TRecord:
-    type_name: str = dict_.pop('_t')
+
+    type_name: str = dict_.pop('_t')[-1]
 
     type_info = ClassInfo.get_type(type_name)
 

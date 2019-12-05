@@ -55,10 +55,10 @@ class RootSample(Record):
     def load(cls, data_source: DataSource, key: Union[str, RootSampleKey],
              data_set: ObjectId) -> 'RootSample':
         """Load record by key (error message if not found)."""
-        return data_source.load_by_key(key, data_set)
+        return data_source.load_by_key(RootSample, key, data_set)
 
     @classmethod
     def load_or_null(cls, data_source: DataSource, key: Union[str, RootSampleKey],
                      data_set: ObjectId) -> Optional['RootSample']:
         """Load record by key (return null if not found)."""
-        return data_source.load_or_null_by_key(key, data_set)
+        return data_source.load_or_null_by_key(RootSample, key, data_set)

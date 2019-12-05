@@ -17,7 +17,8 @@ import typing_inspect
 
 
 class ClassInfo:
-    """Contains reflection based helper static methods.
+    """
+    Contains reflection based helper static methods.
     """
     __is_initialized: bool = False
     __data_types_map: Dict[str, type] = dict()
@@ -25,6 +26,7 @@ class ClassInfo:
     @staticmethod
     def get_type(name: str) -> type:
         """Returns data derived type given its name."""
+
         if not ClassInfo.__is_initialized:
             from datacentric.storage.data import Data
             children = ClassInfo.__get_runtime_imported_data(Data, [])
@@ -46,20 +48,53 @@ class ClassInfo:
 
         This is the class derived directly from Data, Record, or RootRecord.
         """
+
+        # TODO - cache ClassInfo in singleton dict so it is not recomputed every time
+
         from datacentric.storage.data import Data
         from datacentric.storage.record import Record
         from datacentric.storage.root_record import RootRecord
+
         root_types = [Data, Record, RootRecord]
 
         type_mro = type_.mro()
         if type_mro[0] in root_types:
-            raise Exception(f'Ultimate base is undefined for Data, Record, RootRecord, '
-                            f'only for classes derived from them.')
+            raise Exception('Ultimate base is undefined for Data, Record, RootRecord, '
+                            'only for classes derived from them.')
 
         for i in range(1, len(type_mro)):
             if type_mro[i] in root_types:
                 return type_mro[i - 1]
         raise Exception(f'Type is not derived from Data, Record, or RootRecord.')
+
+    @staticmethod
+    def get_record_inheritance_chain(type_: type) -> List[str]:
+        """
+        Returns the inheritance chain of the class as a list of
+        class name strings, starting from Record and ending with
+        the class itself.
+
+        The class must be derived from Record, error message otherwise.
+        """
+
+        # TODO - cache ClassInfo in singleton dict so it is not recomputed every time
+
+        from datacentric.storage.data import Data
+        from datacentric.storage.record import Record
+        from datacentric.storage.root_record import RootRecord
+
+        type_mro = type_.mro()
+        if type_mro[0] is Record:
+            raise Exception(f'Cannot get inheritance chain for the Record class, '
+                            f'only for classes derived from it.')
+
+        result: List[str] = []
+        for i in range(0, len(type_mro)):
+            result.append(type_mro[i].__name__)
+            if type_mro[i] is Record:
+                result.reverse()
+                return result
+        raise Exception(f'Type is not derived from Record')
 
     @staticmethod
     def __get_runtime_imported_data(type_: type, children: List[type]) -> List[type]:

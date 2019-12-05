@@ -96,14 +96,14 @@ def save_basic_data(context: Context):
 
 def verify_load(context, data_set_id, key):
     data_set = context.data_source.get_data_set(data_set_id, context.data_set)
-    record = context.data_source.load_or_null_by_key(key, BaseSample, data_set)
+    record = context.data_source.load_or_null_by_key(BaseSample, key, data_set)
     if record is None:
         return 'Not found'
     else:
-        if record.key != str(key):
-            return 'Found. Wrong key'
+        if record.to_key() != key:
+            return 'Found, key mismatch.'
         else:
-            return f'Found. Type = {type(record).__name__}'
+            return f'Found, type = {type(record).__name__}'
 
 
 def save_minimal_record(context, data_set_id, record_id, record_index, version):
@@ -127,9 +127,8 @@ class TestTemporalMongoDataSource(unittest.TestCase, UnitTest):
         with TemporalMongoUnitTestContext(self) as context:
             save_basic_data(context)
 
-            key_a0 = 'A;0'
-
-            key_b0 = 'B;0'
+            key_a0 = 'BaseSample=A;0'
+            key_b0 = 'BaseSample=B;0'
 
             self.assertEqual(verify_load(context, 'DataSet0', key_a0), 'Found. Type = BaseSample')
             self.assertEqual(verify_load(context, 'DataSet1', key_a0), 'Found. Type = BaseSample')

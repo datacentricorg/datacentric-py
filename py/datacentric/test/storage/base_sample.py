@@ -71,13 +71,13 @@ class BaseSample(Record):
     def load(cls, data_source: DataSource, key: Union[str, BaseSampleKey],
              data_set: ObjectId) -> 'BaseSample':
         """Load record by key (error message if not found)."""
-        return data_source.load_by_key(key, data_set)
+        return data_source.load_by_key(BaseSample, key, data_set)
 
     @classmethod
     def load_or_null(cls, data_source: DataSource, key: Union[str, BaseSampleKey],
                      data_set: ObjectId) -> Optional['BaseSample']:
         """Load record by key (return null if not found)."""
-        return data_source.load_or_null_by_key(key, data_set)
+        return data_source.load_or_null_by_key(BaseSample, key, data_set)
 
     @classmethod
     def create_key(cls, *, record_id: str, record_index: int) -> Union[str, BaseSampleKey]:

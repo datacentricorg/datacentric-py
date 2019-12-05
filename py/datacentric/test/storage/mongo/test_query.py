@@ -31,6 +31,7 @@ class TestQuery(unittest.TestCase, UnitTest):
                 record_index_mod2 = record_index % 2
                 record_index_mod4 = record_index % 4
                 record = NullableElementsSample()
+                record.record_id = ['A', 'B'][record_index % 2]
                 record.record_index = record_index
                 record.data_set = context.data_set
                 record.string_token = 'A' + str(record_index_mod4)
