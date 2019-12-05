@@ -51,13 +51,14 @@ class ClassInfo:
         from datacentric.storage.root_record import RootRecord
         root_types = [Data, Record, RootRecord]
 
-        if type_.mro()[0] in root_types:
-            raise Exception(f'Cannot get root type from root type.')
         type_mro = type_.mro()
-        for root_type in root_types:
-            if root_type in type_mro:
-                index = type_mro.index(root_type)
-                return type_mro[index - 1]
+        if type_mro[0] in root_types:
+            raise Exception(f'Ultimate base is undefined for Data, Record, RootRecord, '
+                            f'only for classes derived from them.')
+
+        for i in range(1, len(type_mro)):
+            if type_mro[i] in root_types:
+                return type_mro[i - 1]
         raise Exception(f'Type is not derived from Data, Record, or RootRecord.')
 
     @staticmethod

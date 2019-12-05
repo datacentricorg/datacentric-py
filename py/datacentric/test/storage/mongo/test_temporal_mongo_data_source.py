@@ -119,7 +119,11 @@ def save_minimal_record(context, data_set_id, record_id, record_index, version):
 
 
 class TestTemporalMongoDataSource(unittest.TestCase, UnitTest):
+    """Tests for the temporal data source."""
+
     def test_smoke(self):
+        """Smoke test."""
+
         with TemporalMongoUnitTestContext(self) as context:
             save_basic_data(context)
 
