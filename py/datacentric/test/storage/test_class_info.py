@@ -22,6 +22,7 @@ from datacentric.test.storage.base_sample import BaseSample
 from datacentric.test.storage.base_sample_key import BaseSampleKey
 from datacentric.test.storage.derived_sample import DerivedSample
 from datacentric.test.storage.element_sample import ElementSample
+from datacentric.test.storage.root_sample import RootSample
 
 
 class TestClassInfo(unittest.TestCase, UnitTest):
@@ -37,6 +38,7 @@ class TestClassInfo(unittest.TestCase, UnitTest):
         self.assertTrue(ClassInfo.get_ultimate_base(BaseSample) == BaseSample)
         self.assertTrue(ClassInfo.get_ultimate_base(DerivedSample) == BaseSample)
         self.assertTrue(ClassInfo.get_ultimate_base(ElementSample) == ElementSample)
+        self.assertTrue(ClassInfo.get_ultimate_base(RootSample) == RootSample)
 
 
 if __name__ == "__main__":
