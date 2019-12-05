@@ -16,7 +16,7 @@ from abc import ABC, abstractmethod
 import datetime as dt
 
 
-class LocalDateTime(int, ABC)
+class LocalDateTime(int, ABC):
     """
     LocalDateTime is an immutable struct representing a date and time of day
     within the calendar, with no reference to a particular time zone.
@@ -24,6 +24,18 @@ class LocalDateTime(int, ABC)
     This class is inspired by NodaTime.LocalDateTime and follows the NodaTime
     naming conventions.
     """
+
+    # --- METHODS
+
+    @abstractmethod
+    def abstract_class_guard(self) -> None:
+        """
+        Guard method to prevent this abstract base class from
+        being instantiated.
+        """
+        pass
+
+    # --- STATIC
 
     def __init__(self, year: int, month: int, day: int, hour: int = 0,
                  minute: int = 0, second: int = 0, millisecond: int = 0):

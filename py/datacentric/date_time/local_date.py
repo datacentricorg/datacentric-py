@@ -27,6 +27,18 @@ class LocalDate(int, ABC):
     * Python dt.date
     """
 
+    # --- METHODS
+
+    @abstractmethod
+    def abstract_class_guard(self) -> None:
+        """
+        Guard method to prevent this abstract base class from
+        being instantiated.
+        """
+        pass
+
+    # --- STATIC
+
     @staticmethod
     def to_iso_str(iso_int: int) -> str:
         """Convert to string in ISO yyyy-mm-dd format."""
@@ -80,11 +92,3 @@ class LocalDate(int, ABC):
 
         # Convert to int in ISO yyyymmdd format
         return 10_000 * year + 100 * month + day
-
-    @abstractmethod
-    def abstract_class_guard(self) -> None:
-        """
-        Guard method to prevent this abstract base class from
-        being instantiated.
-        """
-        pass

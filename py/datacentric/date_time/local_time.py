@@ -18,7 +18,7 @@ import locale
 import datetime as dt
 
 
-class LocalTime(int, ABC)
+class LocalTime(int, ABC):
     """
     Represents time of day to millisecond precision, with no reference to a
     particular date or time zone, and provides conversion to and from:
@@ -28,6 +28,18 @@ class LocalTime(int, ABC)
     * ISO string to millisecond precision in hh:mm:ss.fff format
     * Python dt.time
     """
+
+    # --- METHODS
+
+    @abstractmethod
+    def abstract_class_guard(self) -> None:
+        """
+        Guard method to prevent this abstract base class from
+        being instantiated.
+        """
+        pass
+
+    # --- STATIC
 
     def __init__(self,
                  hour_or_value: Union[int, str, dt.time],
@@ -218,4 +230,3 @@ class LocalTime(int, ABC)
         millisecond: int = value
         result: dt.time = dt.time(hour, minute, second, 1000 * millisecond)
         return result
-

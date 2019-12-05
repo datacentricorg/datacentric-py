@@ -19,7 +19,7 @@ import numpy as np
 # TODO - implementation is incomplete
 
 
-class LocalMinute(int, ABC)
+class LocalMinute(int, ABC):
     """
     LocalMinute is an immutable struct representing a time of day
     to one minute precision, with no reference to a particular calendar,
@@ -28,6 +28,18 @@ class LocalMinute(int, ABC)
     This class is not part of NodaTime but is inspired by NodaTime.LocalTime
     and follows the NodaTime naming conventions.
     """
+
+    # --- METHODS
+
+    @abstractmethod
+    def abstract_class_guard(self) -> None:
+        """
+        Guard method to prevent this abstract base class from
+        being instantiated.
+        """
+        pass
+
+    # --- STATIC
 
     def __init__(self, hour: int, minute: int):
         """
