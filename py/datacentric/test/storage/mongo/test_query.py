@@ -31,13 +31,13 @@ class TestQuery(unittest.TestCase, UnitTest):
                 record_index_mod2 = record_index % 2
                 record_index_mod4 = record_index % 4
                 record = NullableElementsSample()
-                record.record_id = ['A', 'B'][record_index % 2]
+                # record.record_name = ['A', 'B'][record_index % 2]
                 record.record_index = record_index
                 record.data_set = context.data_set
                 record.string_token = 'A' + str(record_index_mod4)
                 record.bool_token = record_index_mod2 == 0
                 record.int_token = record_index_mod4
-                record.local_date_token = LocalDate(2003, 5, 1 + record_index_mod4).to_iso_int()
+                record.local_date_token = LocalDate.from_ints(2003, 5, 1 + record_index_mod4)
                 record.local_time_token = LocalTime(10, 15, 30 + record_index_mod4).to_iso_int()
                 record.local_minute_token = LocalMinute(10, record_index_mod4).to_iso_int()
                 record.local_date_time_token = LocalDateTime(2003, 5, 1 + record_index_mod4, 10, 15).to_iso_int()

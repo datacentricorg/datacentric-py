@@ -30,10 +30,10 @@ from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 def save_base_record(context: Context, data_set_id, record_id, record_index) -> ObjectId:
     rec = BaseSample()
-    rec.record_id = record_id
+    rec.record_name = record_id
     rec.record_index = record_index
     rec.double_element = 100.0
-    rec.local_date_element = LocalDate(2003, 5, 1).to_iso_int()
+    rec.local_date_element = LocalDate.from_ints(2003, 5, 1)
     rec.local_time_element = LocalTime(10, 15, 30).to_iso_int()  # 10:15:30
     rec.local_minute_element = LocalMinute(10, 15).to_iso_int()  # 10:15
     rec.local_date_time_element = LocalDateTime(2003, 5, 1, 10, 15).to_iso_int()  # 2003-05-01T10:15:00
@@ -108,7 +108,7 @@ def verify_load(context, data_set_id, key):
 
 def save_minimal_record(context, data_set_id, record_id, record_index, version):
     rec = BaseSample()
-    rec.record_id = record_id
+    rec.record_name = record_id
     rec.record_index = record_index
     rec.version = version
 
@@ -185,15 +185,15 @@ class TestTemporalMongoDataSource(unittest.TestCase, UnitTest):
             save_minimal_record(context, "DataSet3", "B", 11, 0)
 
             query = context.data_source.get_query(BaseSample, data_set3) \
-                .where({'record_id': 'B'}) \
-                .sort_by('record_id') \
+                .where({'record_name': 'B'}) \
+                .sort_by('record_name') \
                 .sort_by('record_index')
 
             query_result = []
             for obj in query.as_iterable():  # type: BaseSample
                 data_set: DataSet = context.data_source.load_or_null(DataSet, obj.data_set)
                 data_set_name = data_set.data_set_name
-                query_result.append((obj.key, data_set_name, obj.version))
+                query_result.append((obj.to_key().split('=', 1)[1], data_set_name, obj.version))
 
             self.assertEqual(query_result[0], ('B;1', 'DataSet0', 2))
             self.assertEqual(query_result[1], ('B;3', 'DataSet0', 2))

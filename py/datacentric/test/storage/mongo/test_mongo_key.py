@@ -38,7 +38,7 @@ class TestMongoKey(unittest.TestCase, UnitTest):
         # From record
         rec = CompositeKeySample()
         rec.key_element1 = 'abc'
-        rec.key_element2 = BaseSample.create_key(record_id='def', record_index=123)
+        rec.key_element2 = BaseSample.create_key(record_name='def', record_index=123)
         rec.key_element3 = 'xyz'
         key1 = rec.to_key()
         self.assertEqual(key1, 'CompositeKeySample=abc;def;123;xyz')
