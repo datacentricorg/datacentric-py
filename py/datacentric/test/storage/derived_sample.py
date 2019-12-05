@@ -13,23 +13,15 @@
 # limitations under the License.
 
 import attr
-from enum import IntEnum
-from typing import List, ClassVar, Tuple, Union
-from datacentric.date_time.local_date import LocalDate
-from datacentric.date_time.local_time import LocalTime
-from datacentric.date_time.local_minute import LocalMinute
-from datacentric.date_time.local_date_time import LocalDateTime
-from datacentric.storage.record import Record
-from datacentric.storage.key import Key
-from datacentric.storage.data import Data
-from datacentric.test.storage.enum_sample import EnumSample
-from datacentric.test.storage.base_sample import BaseSample, BaseSampleKey
+from typing import List, Union
+from datacentric.test.storage.base_sample import BaseSample
 from datacentric.test.storage.element_sample import ElementSample
+from datacentric.test.storage.base_sample_key import BaseSampleKey
 
 
 @attr.s(slots=True, auto_attribs=True)
 class DerivedSample(BaseSample):
-    """Derived class sample."""
+    """Sample derived data class."""
 
     double_element2: float = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
@@ -37,23 +29,42 @@ class DerivedSample(BaseSample):
     string_element2: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    list_of_string: List[str] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    array_of_string: List[str] = attr.ib(default=None, kw_only=True, repr=False, metadata={'optional': True})
     """Sample element."""
 
-    list_of_double: List[float] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    list_of_string: List[str] = attr.ib(default=None, kw_only=True, repr=False, metadata={'optional': True})
     """Sample element."""
 
-    list_of_nullable_double: List[float] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    array_of_double: List[float] = attr.ib(default=None, kw_only=True, repr=False, metadata={'optional': True})
+    """Sample element."""
+
+    array_of_nullable_double: List[float] = attr.ib(default=None, kw_only=True, repr=False, metadata={'optional': True})
+    """Sample element."""
+
+    list_of_double: List[float] = attr.ib(default=None, kw_only=True, repr=False, metadata={'optional': True})
+    """Sample element."""
+
+    list_of_nullable_double: List[float] = attr.ib(default=None, kw_only=True, repr=False, metadata={'optional': True})
     """Sample element."""
 
     data_element: ElementSample = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    data_element_list: List[ElementSample] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    data_element_list: List[ElementSample] = attr.ib(default=None, kw_only=True, repr=False, metadata={'optional': True})
     """Sample element."""
 
     key_element: Union[str, BaseSampleKey] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    key_element_list: List[Union[str, BaseSampleKey]] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    key_element_list: List[Union[str, BaseSampleKey]] = attr.ib(default=None, kw_only=True, repr=False, metadata={'optional': True})
     """Sample element."""
+
+    @abstractmethod
+    def non_virtual_derived_handler(self):
+        """Non-virtual handler defined in base type."""
+        pass
+
+    @abstractmethod
+    def virtual_base_handler(self):
+        """Override of the virtual handler defined in base type."""
+        pass

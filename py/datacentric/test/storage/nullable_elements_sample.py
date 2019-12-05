@@ -13,53 +13,86 @@
 # limitations under the License.
 
 import attr
-from typing import Union, Optional, List, Any
-from enum import IntEnum
-from typing import List, ClassVar, Tuple, Union
+import datetime as dt
+from datacentric.storage.record import Record
+from datacentric.test.storage.nullable_elements_sample_key import NullableElementsSampleKey
+from datacentric.test.storage.sample_enum import SampleEnum
+from datacentric.date_time.local_date_time import LocalDateTime
 from datacentric.date_time.local_date import LocalDate
 from datacentric.date_time.local_time import LocalTime
 from datacentric.date_time.local_minute import LocalMinute
-from datacentric.date_time.local_date_time import LocalDateTime
-from datacentric.storage.record import Record
-from datacentric.storage.key import Key
-from datacentric.storage.data import Data
-from datacentric.test.storage.enum_sample import EnumSample
-from datacentric.test.storage.nullable_elements_sample_key import NullableElementsSampleKey
+from datacentric.date_time.instant import Instant
 
 
 @attr.s(slots=True, auto_attribs=True)
 class NullableElementsSample(Record):
-    """Sample class with every type of nullable element."""
+    """Key class that has all of the permitted nullable key elements included."""
 
-    string_token: str = attr.ib(default=None, kw_only=True)
+    string_token: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    bool_token: bool = attr.ib(default=None, kw_only=True)
+    bool_token: bool = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    int_token: int = attr.ib(default=None, kw_only=True)
+    int_token: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    local_date_token: Union[int, LocalDate] = attr.ib(default=None, kw_only=True)
+    long_token: int = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'type': 'long'})
     """Sample element."""
 
-    local_time_token: Union[int, LocalTime] = attr.ib(default=None, kw_only=True)
+    local_date_token: Union[int, LocalDate] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    local_minute_token: Union[int, LocalMinute] = attr.ib(default=None, kw_only=True)
+    local_time_token: Union[int, LocalTime] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    local_date_time_token: Union[int, LocalDateTime] = attr.ib(default=None, kw_only=True)
+    local_minute_token: Union[int, LocalMinute] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    enum_token: EnumSample = attr.ib(default=None, kw_only=True)
+    local_date_time_token: Union[int, LocalDateTime] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    record_index: int = attr.ib(default=None, kw_only=True)
+    instant_token: Union[dt.datetime, Instant] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    # --- METHODS
+    enum_token: SampleEnum = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
 
-    def to_key(self) -> Union[str, NullableElementsSampleKey]:
-        """Create key string from the current record."""
-        return 'NullableElementsSample=' + self.string_token
+    record_index: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
+    def to_key(self) -> str:
+        """Get NullableElementsSample key."""
+        return 'NullableElementsSample=' + ';'.join([self.string_token,
+                                                     str(self.bool_token).lower(),
+                                                     str(self.int_token),
+                                                     str(self.long_token),
+                                                     str(self.local_date_token),
+                                                     str(self.local_time_token),
+                                                     str(self.local_minute_token),
+                                                     str(self.local_date_time_token),
+                                                     str(self.instant_token),
+                                                     self.enum_token.name])
+
+    @classmethod
+    def create_key(cls, *, string_token: str,
+                   bool_token: bool,
+                   int_token: int,
+                   long_token: int,
+                   local_date_token: Union[int, LocalDate],
+                   local_time_token: Union[int, LocalTime],
+                   local_minute_token: Union[int, LocalMinute],
+                   local_date_time_token: Union[int, LocalDateTime],
+                   instant_token: Union[dt.datetime, Instant],
+                   enum_token: SampleEnum) -> Union[str, NullableElementsSampleKey]:
+        """Create NullableElementsSample key."""
+        return 'NullableElementsSample=' + ';'.join([string_token,
+                                                     str(bool_token).lower(),
+                                                     str(int_token),
+                                                     str(long_token),
+                                                     str(local_date_token),
+                                                     str(local_time_token),
+                                                     str(local_minute_token),
+                                                     str(local_date_time_token),
+                                                     str(instant_token),
+                                                     enum_token.name])

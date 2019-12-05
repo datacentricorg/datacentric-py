@@ -17,4 +17,5 @@ from datacentric.storage.key import Key
 
 
 class IdBasedKeySampleKey(Key, ABC):
+    """A sample type where the only key element is the record's Id."""
     pass

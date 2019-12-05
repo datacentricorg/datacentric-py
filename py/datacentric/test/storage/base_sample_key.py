@@ -17,4 +17,5 @@ from datacentric.storage.key import Key
 
 
 class BaseSampleKey(Key, ABC):
+    """Base class of sample data for data source testing."""
     pass

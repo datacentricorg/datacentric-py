@@ -13,8 +13,6 @@
 # limitations under the License.
 
 import attr
-from typing import Union, Optional, List, Any
-from datacentric.storage.key import Key
 from datacentric.storage.record import Record
 from datacentric.date_time.zone_key import ZoneKey
 
@@ -63,8 +61,11 @@ class Zone(Record):
     country and the other the city, for example America/New_York.
     """
 
-    # --- METHODS
-
-    def to_key(self) -> Union[str, ZoneKey]:
-        """Create key string from the current record."""
+    def to_key(self) -> str:
+        """Get Zone key."""
         return 'Zone=' + self.zone_name
+
+    @classmethod
+    def create_key(cls, *, zone_name: str) -> Union[str, ZoneKey]:
+        """Create Zone key."""
+        return 'Zone=' + zone_name

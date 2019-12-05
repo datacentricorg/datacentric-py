@@ -17,4 +17,5 @@ from datacentric.storage.key import Key
 
 
 class NullableElementsSampleKey(Key, ABC):
+    """Key class that has all of the permitted nullable key elements included."""
     pass

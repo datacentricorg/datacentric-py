@@ -13,35 +13,37 @@
 # limitations under the License.
 
 import attr
-from enum import IntEnum
-from typing import List, ClassVar, Tuple, Union, Optional
-from abc import ABC
-from bson import ObjectId
+import datetime as dt
+from datacentric.storage.record import Record
+from datacentric.test.storage.base_sample_key import BaseSampleKey
+from datacentric.test.storage.sample_enum import SampleEnum
+from datacentric.date_time.local_date_time import LocalDateTime
 from datacentric.date_time.local_date import LocalDate
 from datacentric.date_time.local_time import LocalTime
 from datacentric.date_time.local_minute import LocalMinute
-from datacentric.date_time.local_date_time import LocalDateTime
-from datacentric.storage.record import Record
-from datacentric.storage.key import Key
-from datacentric.storage.data_source import DataSource
-from datacentric.test.storage.enum_sample import EnumSample
-from datacentric.test.storage.base_sample_key import BaseSampleKey
+from datacentric.date_time.instant import Instant
 
 
 @attr.s(slots=True, auto_attribs=True)
 class BaseSample(Record):
-    """Base class sample."""
-
-    record_id: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
-    """Sample element."""
-
-    record_index: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
-    """Sample element."""
+    """Base class of sample data for data source testing."""
 
     double_element: float = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
     local_date_element: Union[int, LocalDate] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
+    enum_value: SampleEnum = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
+    record_name: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
+    version: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
+    record_index: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
     local_time_element: Union[int, LocalTime] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
@@ -53,33 +55,24 @@ class BaseSample(Record):
     local_date_time_element: Union[int, LocalDateTime] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    enum_value: EnumSample = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    instant_element: Union[dt.datetime, Instant] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    version: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
-    """Sample element."""
-
-    # --- METHODS
-
-    def to_key(self) -> Union[str, BaseSampleKey]:
-        """Create key string from the current record."""
-        return 'BaseSample=' + self.record_id + ';' + str(self.record_index)
-
-    # --- STATIC
+    def to_key(self) -> str:
+        """Get BaseSample key."""
+        return 'BaseSample=' + ';'.join([self.record_name, str(self.record_index)])
 
     @classmethod
-    def load(cls, data_source: DataSource, key: Union[str, BaseSampleKey],
-             data_set: ObjectId) -> 'BaseSample':
-        """Load record by key (error message if not found)."""
-        return data_source.load_by_key(BaseSample, key, data_set)
+    def create_key(cls, *, record_name: str, record_index: int) -> Union[str, BaseSampleKey]:
+        """Create BaseSample key."""
+        return 'BaseSample=' + ';'.join([record_name, str(record_index)])
 
-    @classmethod
-    def load_or_null(cls, data_source: DataSource, key: Union[str, BaseSampleKey],
-                     data_set: ObjectId) -> Optional['BaseSample']:
-        """Load record by key (return null if not found)."""
-        return data_source.load_or_null_by_key(BaseSample, key, data_set)
+    @abstractmethod
+    def non_virtual_base_handler(self):
+        """Non-virtual handler defined in base type."""
+        pass
 
-    @classmethod
-    def create_key(cls, *, record_id: str, record_index: int) -> Union[str, BaseSampleKey]:
-        """Create key string from key elements."""
-        return 'BaseSample=' + record_id + ';' + str(record_index)
+    @abstractmethod
+    def virtual_base_handler(self):
+        """Virtual handler defined in base type."""
+        pass

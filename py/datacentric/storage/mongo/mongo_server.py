@@ -13,8 +13,6 @@
 # limitations under the License.
 
 import attr
-from typing import Union, Optional, List, Any
-from datacentric.storage.key import Key
 from datacentric.storage.record import Record
 from datacentric.storage.mongo.mongo_server_key import MongoServerKey
 
@@ -36,8 +34,11 @@ class MongoServer(Record):
     an individual database.
     """
 
-    # --- METHODS
-
-    def to_key(self) -> Union[str, MongoServerKey]:
-        """Create key string from the current record."""
+    def to_key(self) -> str:
+        """Get MongoServer key."""
         return 'MongoServer=' + self.mongo_server_uri
+
+    @classmethod
+    def create_key(cls, *, mongo_server_uri: str) -> Union[str, MongoServerKey]:
+        """Create MongoServer key."""
+        return 'MongoServer=' + mongo_server_uri

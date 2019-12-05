@@ -13,16 +13,15 @@
 # limitations under the License.
 
 import attr
-from enum import IntEnum
-from typing import List, ClassVar, Tuple, Union
 from datacentric.storage.data import Data
 
 
 @attr.s(slots=True, auto_attribs=True)
 class ElementSample(Data):
-    """Element type sample."""
-    double_element3: float = attr.ib(default=None, kw_only=True)
+    """Element data class."""
+
+    double_element3: float = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    string_element3: str = attr.ib(default=None, kw_only=True)
+    string_element3: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""

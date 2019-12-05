@@ -13,9 +13,7 @@
 # limitations under the License.
 
 import attr
-from typing import Union, Optional, List, Any
 from bson import ObjectId
-from datacentric.storage.key import Key
 from datacentric.storage.record import Record
 from datacentric.storage.data_set_detail_key import DataSetDetailKey
 
@@ -79,8 +77,11 @@ class DataSetDetail(Record):
     the earlier of the two values will be used.
     """
 
-    # --- METHODS
-
-    def to_key(self) -> Union[str, DataSetDetailKey]:
-        """Create key string from the current record."""
+    def to_key(self) -> str:
+        """Get DataSetDetail key."""
         return 'DataSetDetail=' + str(self.data_set_id)
+
+    @classmethod
+    def create_key(cls, *, data_set_id: ObjectId) -> Union[str, DataSetDetailKey]:
+        """Create DataSetDetail key."""
+        return 'DataSetDetail=' + str(data_set_id)

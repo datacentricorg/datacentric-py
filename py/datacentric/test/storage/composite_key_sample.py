@@ -13,49 +13,37 @@
 # limitations under the License.
 
 import attr
-from typing import Union, Optional, List, Any
-import datetime as dt
-from bson import ObjectId
+from typing import Union
 from datacentric.storage.record import Record
-from datacentric.storage.key import Key
-from datacentric.test.storage.base_sample_key import BaseSampleKey
 from datacentric.test.storage.composite_key_sample_key import CompositeKeySampleKey
+from datacentric.test.storage.base_sample_key import BaseSampleKey
 
 
 @attr.s(slots=True, auto_attribs=True)
 class CompositeKeySample(Record):
-    """Sample for a class with composite key."""
+    """Data type sample with composite key."""
 
-    key_element1: str = attr.ib(default=None, kw_only=True)
-    """Sample element."""
+    key_element1: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """String key element."""
 
-    key_element2: Union[str, BaseSampleKey] = attr.ib(default=None, kw_only=True)
-    """Sample element."""
+    key_element2: Union[str, BaseSampleKey] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Another key."""
 
-    key_element3: str = attr.ib(default=None, kw_only=True)
-    """Sample element."""
+    key_element3: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """String key element."""
 
-    # --- METHODS
+    element4: Union[str, CompositeKeySampleKey] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Key to the same type."""
 
-    def to_key(self) -> Union[str, CompositeKeySampleKey]:
-        """Create key string from the current record."""
-        return 'CompositeKeySample=' + ';'.join(
-            [
-                self.key_element1,
-                self.key_element2.replace('BaseSample=', ''),
-                self.key_element3
-            ]
-        )
-
-    # --- STATIC
+    def to_key(self) -> str:
+        """Get CompositeKeySample key."""
+        return 'CompositeKeySample=' + ';'.join([self.key_element1,
+                                                 self.key_element2.split('=', 1)[1],
+                                                 self.key_element3])
 
     @classmethod
-    def create_key(cls, *, key_element1: str, key_element2: Union[str, BaseSampleKey], key_element3: str) -> Union[str, BaseSampleKey]:
-        """Create key string from key elements."""
-        return 'CompositeKeySample=' + ';'.join(
-            [
-                key_element1,
-                key_element2.replace('BaseSample=', ''),
-                key_element3
-            ]
-        )
+    def create_key(cls, *, key_element1: str, key_element2: Union[str, BaseSampleKey], key_element3: str) -> Union[str, CompositeKeySampleKey]:
+        """Create CompositeKeySample key."""
+        return 'CompositeKeySample=' + ';'.join([key_element1,
+                                                 key_element2.split('=', 1)[1],
+                                                 key_element3])

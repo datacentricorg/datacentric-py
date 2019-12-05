@@ -17,4 +17,5 @@ from datacentric.storage.key import Key
 
 
 class CompositeKeySampleKey(Key, ABC):
+    """Data type sample with composite key."""
     pass
