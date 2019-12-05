@@ -12,13 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import attr
-from typing import Union, Optional, List, Any
-from abc import ABC, abstractmethod
+from abc import ABC
 from datacentric.storage.key import Key
 
 
-class ZoneKey(Key):
+class ZoneKey(Key, ABC):
     """
     This class provides timezone conversion between UTC
     and local datetime for the specified timezone.

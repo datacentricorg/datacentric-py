@@ -12,13 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import attr
-from typing import Union, Optional, List, Any
-from abc import ABC, abstractmethod
+from abc import ABC
 from datacentric.storage.key import Key
 
 
-class MongoServerKey(Key):
+class MongoServerKey(Key, ABC):
     """
     Provides Mongo server URI.
 
