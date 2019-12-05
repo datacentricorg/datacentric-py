@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import attr
+from typing import Union
 from datacentric.storage.record import Record
 from datacentric.date_time.zone_key import ZoneKey
 

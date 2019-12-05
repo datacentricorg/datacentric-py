@@ -23,7 +23,7 @@ from datacentric.testing.unit_test_complexity import UnitTestComplexity
 
 
 @attr.s(slots=True, auto_attribs=True)
-class UnitTest(Record, ABC):
+class UnitTest(Record):
     """
     Base class for executing the tests using:
 
@@ -60,7 +60,7 @@ class UnitTest(Record, ABC):
         """Create UnitTest key."""
         return 'UnitTest=' + unit_test_name
 
-    @abstractmethod
+    # @abstractmethod
     def run_all(self):
         """
         Run all methods in this class that have [Fact] or [Theory] attribute.

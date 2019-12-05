@@ -14,6 +14,7 @@
 
 import attr
 from bson import ObjectId
+from typing import Union
 from datacentric.storage.record import Record
 from datacentric.storage.data_set_detail_key import DataSetDetailKey
 

@@ -14,6 +14,7 @@
 
 import attr
 import datetime as dt
+from typing import Union
 from datacentric.storage.record import Record
 from datacentric.test.storage.base_sample_key import BaseSampleKey
 from datacentric.test.storage.sample_enum import SampleEnum
@@ -67,12 +68,10 @@ class BaseSample(Record):
         """Create BaseSample key."""
         return 'BaseSample=' + ';'.join([record_name, str(record_index)])
 
-    @abstractmethod
     def non_virtual_base_handler(self):
         """Non-virtual handler defined in base type."""
         pass
 
-    @abstractmethod
     def virtual_base_handler(self):
         """Virtual handler defined in base type."""
         pass

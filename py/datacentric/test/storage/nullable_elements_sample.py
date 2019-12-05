@@ -14,6 +14,7 @@
 
 import attr
 import datetime as dt
+from typing import Union
 from datacentric.storage.record import Record
 from datacentric.test.storage.nullable_elements_sample_key import NullableElementsSampleKey
 from datacentric.test.storage.sample_enum import SampleEnum

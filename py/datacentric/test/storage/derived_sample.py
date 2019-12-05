@@ -59,12 +59,10 @@ class DerivedSample(BaseSample):
     key_element_list: List[Union[str, BaseSampleKey]] = attr.ib(default=None, kw_only=True, repr=False, metadata={'optional': True})
     """Sample element."""
 
-    @abstractmethod
     def non_virtual_derived_handler(self):
         """Non-virtual handler defined in base type."""
         pass
 
-    @abstractmethod
     def virtual_base_handler(self):
         """Override of the virtual handler defined in base type."""
         pass
