@@ -105,6 +105,15 @@ class DataSource(Record, ABC):
     Data source may also be readonly because CutoffTime is set.
     """
 
+    def to_key(self) -> str:
+        """Get DataSource key."""
+        return 'DataSource=' + self.data_source_name
+
+    @classmethod
+    def create_key(cls, *, data_source_name: str) -> Union[str, DataSourceKey]:
+        """Create DataSource key."""
+        return 'DataSource=' + data_source_name
+
     # --- METHODS
 
     @abstractmethod
@@ -329,7 +338,3 @@ class DataSource(Record, ABC):
         self.save_data_set(result, parent_data_set)
 
         return result.id_
-
-    def to_key(self) -> Union[str, DataSourceKey]:
-        """Create key string from the current record."""
-        return 'DataSource=' + self.data_source_name

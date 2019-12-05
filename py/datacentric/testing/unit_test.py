@@ -13,17 +13,17 @@
 # limitations under the License.
 
 import attr
-from typing import Union, Optional, List, Any
+from abc import ABC, abstractmethod
+from typing import Union
 from datacentric.storage.context import Context
-from datacentric.storage.unit_test_context import UnitTestContext
-from datacentric.storage.key import Key
 from datacentric.storage.record import Record
-from datacentric.testing.unit_test_complexity import UnitTestComplexity
+from datacentric.storage.unit_test_context import UnitTestContext
 from datacentric.testing.unit_test_key import UnitTestKey
+from datacentric.testing.unit_test_complexity import UnitTestComplexity
 
 
 @attr.s(slots=True, auto_attribs=True)
-class UnitTest(Record):
+class UnitTest(Record, ABC):
     """
     Base class for executing the tests using:
 
@@ -51,7 +51,24 @@ class UnitTest(Record):
     the expect of longer test running times.
     """
 
-    # --- METHODS
+    def to_key(self) -> str:
+        """Get UnitTest key."""
+        return 'UnitTest=' + self.unit_test_name
+
+    @classmethod
+    def create_key(cls, *, unit_test_name: str) -> Union[str, UnitTestKey]:
+        """Create UnitTest key."""
+        return 'UnitTest=' + unit_test_name
+
+    @abstractmethod
+    def run_all(self):
+        """
+        Run all methods in this class that have [Fact] or [Theory] attribute.
+
+        This method will run each of the test methods using its own instance
+        of the test class in parallel.
+        """
+        pass
 
     def create_method_context(self):
         """"
@@ -79,16 +96,3 @@ class UnitTest(Record):
             # called by DataCentric. We will then create a new dataset for each
             # unit test method
             raise NotImplementedError()
-
-    def run_all(self):
-        """
-        Run all methods in this class that have [Fact] or [Theory] attribute.
-
-        This method will run each of the test methods using its own instance
-        of the test class in parallel.
-        """
-        raise NotImplementedError()
-
-    def to_key(self) -> Union[str, UnitTestKey]:
-        """Create key string from the current record."""
-        return 'UnitTest=' + self.unit_test_name

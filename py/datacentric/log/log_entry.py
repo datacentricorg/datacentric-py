@@ -13,14 +13,13 @@
 # limitations under the License.
 
 import attr
+from typing import Union
 from bson import ObjectId
-from typing import Union, Optional, List, Any
 from datacentric.storage.context import Context
-from datacentric.storage.key import Key
 from datacentric.storage.record import Record
-from datacentric.log.log_verbosity import LogVerbosity
-from datacentric.log.log_key import LogKey
 from datacentric.log.log_entry_key import LogEntryKey
+from datacentric.log.log_key import LogKey
+from datacentric.log.log_verbosity import LogVerbosity
 
 
 @attr.s(slots=True, auto_attribs=True)
@@ -35,7 +34,6 @@ class LogEntry(Record):
     Derive from this class to provide specialized LogEntry subtypes
     that include additional data.
     """
-
     id_: ObjectId = attr.ib(default=None, kw_only=True)
     """Defining element Id here includes the record's TemporalId
     in its key. Because TemporalId of the record is specific
@@ -48,7 +46,7 @@ class LogEntry(Record):
     timestamp that matches update time.
     """
 
-    log: Union[str, 'LogKey'] = attr.ib(default=None, kw_only=True)
+    log: Union[str, LogKey] = attr.ib(default=None, kw_only=True)
     """
     Log for which the entry is recorded.
 
@@ -74,6 +72,15 @@ class LogEntry(Record):
     Line breaks, whitespace and other formatting in the description
     will be preserved when the log entry is displayed.
     """
+
+    def to_key(self) -> str:
+        """Get LogEntry key."""
+        return 'LogEntry=' + str(self.id_)
+
+    @classmethod
+    def create_key(cls, *, id_: ObjectId) -> Union[str, LogEntryKey]:
+        """Create LogEntry key."""
+        return 'LogEntry=' + str(id_)
 
     # --- METHODS
 
@@ -103,7 +110,3 @@ class LogEntry(Record):
         """
         # TODO - provide correct format
         return self.title
-
-    def to_key(self) -> Union[str, LogEntryKey]:
-        """Create key string from the current record."""
-        return 'LogEntry=' + str(self.id_)

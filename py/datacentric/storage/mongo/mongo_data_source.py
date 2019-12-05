@@ -15,6 +15,7 @@
 import attr
 from abc import ABC
 from bson import ObjectId
+from typing import Union
 from pymongo import MongoClient
 from pymongo.database import Database
 from datacentric.storage.mongo.mongo_server_key import MongoServerKey
@@ -31,7 +32,7 @@ class MongoDataSource(DataSource, ABC):
     This class provides functionality shared by all MongoDB data source types.
     """
 
-    mongo_server: MongoServerKey = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    mongo_server: Union[str, MongoServerKey] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """
     Specifies Mongo server for this data source.
 
