@@ -21,15 +21,15 @@ from datacentric.date_time.local_date import LocalDate, LocalDateHint
 from datacentric.date_time.local_time import LocalTime, LocalTimeHint
 from datacentric.date_time.local_minute import LocalMinute, LocalMinuteHint
 from datacentric.date_time.local_date_time import LocalDateTime, LocalDateTimeHint
-from datacentric.storage.typed_record import TypedRecord
-from datacentric.storage.typed_key import TypedKey
+from datacentric.storage.record import Record
+from datacentric.storage.key import Key
 from datacentric.storage.data_source import DataSource
 from datacentric.test.storage.enum_sample import EnumSample
 from datacentric.test.storage.base_sample_key import BaseSampleKey
 
 
 @attr.s(slots=True, auto_attribs=True)
-class BaseSample(TypedRecord):
+class BaseSample(Record):
     """Base class sample."""
 
     record_id: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})

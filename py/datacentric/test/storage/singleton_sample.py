@@ -22,7 +22,7 @@ from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 
 @attr.s(slots=True, auto_attribs=True)
-class SingletonSample(TypedRecord):
+class SingletonSample(Record):
     """
     Sample for a class with key that has no elements.
 
@@ -30,4 +30,3 @@ class SingletonSample(TypedRecord):
     """
     string_element: str = attr.ib(default=None, kw_only=True)
     """Sample element."""
-

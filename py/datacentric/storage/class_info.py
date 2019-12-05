@@ -49,8 +49,8 @@ class ClassInfo:
         if not typing_inspect.is_generic_type(type_):
             raise Exception(f'Cannot get associated key from not generic type {type_.__name__}')
 
-        from datacentric.storage.typed_key import TypedKey
-        from datacentric.storage.typed_record import TypedRecord
+        from datacentric.storage.key import Key
+        from datacentric.storage.record import Record
         from datacentric.storage.root_record import RootRecord
         from typing import ForwardRef
 

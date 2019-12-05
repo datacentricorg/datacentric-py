@@ -16,13 +16,13 @@ import attr
 import unittest
 import datetime as dt
 from bson import ObjectId
-from datacentric.storage.typed_record import TypedRecord
-from datacentric.storage.typed_key import TypedKey
+from datacentric.storage.record import Record
+from datacentric.storage.key import Key
 from datacentric.test.storage.base_sample import BaseSample, BaseSampleKey
 
 
 @attr.s(slots=True, auto_attribs=True)
-class CompositeKeySample(TypedRecord):
+class CompositeKeySample(Record):
     """Sample for a class with composite key."""
 
     key_element1: str = attr.ib(default=None, kw_only=True)

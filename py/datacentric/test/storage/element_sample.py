@@ -26,4 +26,3 @@ class ElementSample(Data):
 
     string_element3: str = attr.ib(default=None, kw_only=True)
     """Sample element."""
-

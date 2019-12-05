@@ -16,8 +16,8 @@ import attr
 import unittest
 import datetime as dt
 from bson import ObjectId
-from datacentric.storage.typed_record import TypedRecord
-from datacentric.storage.typed_key import TypedKey
+from datacentric.storage.record import Record
+from datacentric.storage.key import Key
 from datacentric.test.storage.composite_key_sample import CompositeKeySample, CompositeKeySampleKey
 from datacentric.test.storage.singleton_sample import SingletonSample, SingletonSampleKey
 from datacentric.test.storage.id_based_key_sample import IdBasedKeySample, IdBasedKeySampleKey

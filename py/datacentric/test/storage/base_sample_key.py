@@ -20,4 +20,3 @@ from datacentric.storage.key import Key
 
 class BaseSampleKey(ABC):
     """Base class sample."""
-

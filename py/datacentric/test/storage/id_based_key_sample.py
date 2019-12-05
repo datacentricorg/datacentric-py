@@ -16,14 +16,14 @@ import attr
 import unittest
 import datetime as dt
 from bson import ObjectId
-from datacentric.storage.typed_record import TypedRecord
-from datacentric.storage.typed_key import TypedKey
+from datacentric.storage.record import Record
+from datacentric.storage.key import Key
 from datacentric.test.storage.base_sample import BaseSampleKey
 from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 
 @attr.s(slots=True, auto_attribs=True)
-class IdBasedKeySample(TypedRecord):
+class IdBasedKeySample(Record):
     """Sample class with key that includes Id."""
 
     string_element: str = attr.ib(default=None, kw_only=True)

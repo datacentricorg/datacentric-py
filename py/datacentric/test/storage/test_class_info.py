@@ -14,13 +14,13 @@
 
 import unittest
 from datacentric.storage.class_info import ClassInfo
-from datacentric.storage.typed_record import TypedRecord
-from datacentric.storage.typed_key import TypedKey
+from datacentric.storage.record import Record
+from datacentric.storage.key import Key
 from datacentric.storage.data import Data
 from datacentric.testing.unit_test import UnitTest
 
 
-class BaseRecord(TypedRecord):
+class BaseRecord(Record):
     pass
 
 

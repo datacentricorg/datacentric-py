@@ -19,8 +19,8 @@ from datacentric.date_time.local_date import LocalDate, LocalDateHint
 from datacentric.date_time.local_time import LocalTime, LocalTimeHint
 from datacentric.date_time.local_minute import LocalMinute, LocalMinuteHint
 from datacentric.date_time.local_date_time import LocalDateTime, LocalDateTimeHint
-from datacentric.storage.typed_record import TypedRecord
-from datacentric.storage.typed_key import TypedKey
+from datacentric.storage.record import Record
+from datacentric.storage.key import Key
 from datacentric.storage.data import Data
 from datacentric.test.storage.enum_sample import EnumSample
 from datacentric.test.storage.base_sample import BaseSample, BaseSampleKey

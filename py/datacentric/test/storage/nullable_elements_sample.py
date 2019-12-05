@@ -19,14 +19,14 @@ from datacentric.date_time.local_date import LocalDate, LocalDateHint
 from datacentric.date_time.local_time import LocalTime, LocalTimeHint
 from datacentric.date_time.local_minute import LocalMinute, LocalMinuteHint
 from datacentric.date_time.local_date_time import LocalDateTime, LocalDateTimeHint
-from datacentric.storage.typed_record import TypedRecord
-from datacentric.storage.typed_key import TypedKey
+from datacentric.storage.record import Record
+from datacentric.storage.key import Key
 from datacentric.storage.data import Data
 from datacentric.test.storage.enum_sample import EnumSample
 
 
 @attr.s(slots=True, auto_attribs=True)
-class NullableElementsSample(TypedRecord):
+class NullableElementsSample(Record):
     """Sample class with every type of nullable element."""
 
     string_token: str = attr.ib(default=None, kw_only=True)
@@ -55,4 +55,3 @@ class NullableElementsSample(TypedRecord):
 
     record_index: int = attr.ib(default=None, kw_only=True)
     """Sample element."""
-

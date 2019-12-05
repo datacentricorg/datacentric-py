@@ -28,4 +28,3 @@ class EnumSample(IntEnum):
 
     EnumValue2 = 2
     """Sample value."""
-
