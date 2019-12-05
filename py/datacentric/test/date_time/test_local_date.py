@@ -13,9 +13,8 @@
 # limitations under the License.
 
 import unittest
+from typing import Union
 import datetime as dt
-import pandas as pd
-import dateutil
 from datacentric.date_time.local_date import LocalDate
 from datacentric.testing.unit_test import UnitTest
 
@@ -37,44 +36,28 @@ class TestLocalDate(unittest.TestCase, UnitTest):
         date_str: str = '2003-05-01'
         iso_int: int = 20030501
 
-        # Create from milliseconds since Unix epoch
-        d1: LocalDate = LocalDate(iso_int)
-        self.assertEqual(d1.to_iso_int(), iso_int)
+        # Validation
+        d1: Union[int, LocalDate] = LocalDate(iso_int)
+        LocalDate.validate(d1)
 
         # Create from year, month, day
-        d2: LocalDate = LocalDate(2003, 5, 1)
-        self.assertEqual(d2.to_iso_int(), iso_int)
+        d2: Union[int, LocalDate] = LocalDate.from_fields(2003, 5, 1)
+        self.assertEqual(d2, iso_int)
 
         # Create from string
-        d3: LocalDate = LocalDate(date_str)
-        self.assertEqual(d3.to_iso_int(), iso_int)
+        d3: Union[int, LocalDate] = LocalDate.from_str(date_str)
+        self.assertEqual(d3, iso_int)
 
         # Create from dt.date
         d: dt.date = dt.date.fromisoformat(date_str)
-        d4: LocalDate = LocalDate(d)
-        self.assertEqual(d4.to_iso_int(), iso_int)
+        d4: Union[int, LocalDate] = LocalDate.from_date(d)
+        self.assertEqual(d4, iso_int)
 
         # Test conversion to dt.date
-        self.assertEqual(d1.to_date(), d)
+        self.assertEqual(LocalDate.to_date(d1), d)
 
         # Test string representation roundtrip
-        self.assertEqual(str(d1), date_str)
-
-        # Check comparison operators
-        d5a = LocalDate('2003-05-01')
-        d5a_new_instance = LocalDate('2003-05-01')
-        d5b = LocalDate('2003-05-02')
-        self.assertTrue(d5a == d5a)
-        self.assertTrue(d5a == d5a_new_instance)
-        self.assertTrue(d5a != d5b)
-        self.assertTrue(d5a <= d5a)
-        self.assertTrue(d5a <= d5a_new_instance)
-        self.assertTrue(d5a >= d5a)
-        self.assertTrue(d5a >= d5a_new_instance)
-        self.assertTrue(d5a < d5b)
-        self.assertTrue(d5a <= d5b)
-        self.assertTrue(d5b > d5a)
-        self.assertTrue(d5b >= d5a)
+        self.assertEqual(LocalDate.to_str(d1), date_str)
 
 
 if __name__ == "__main__":

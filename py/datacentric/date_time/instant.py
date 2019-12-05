@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from abc import ABC, abstractmethod
-from typing import Union, Optional
+from typing import Union, Optional, Tuple
 import datetime as dt
 import pytz
 
@@ -54,14 +54,10 @@ class Instant(dt.datetime, ABC):
                     second: int,
                     millisecond: Optional[int] = None) -> Union[dt.datetime, 'Instant']:
         """
-        Creates Instant to millisecon precision from the specified
-        arguments. The options for the arguments include:
+        Creates Instant represented as dt.datetime to millisecond precision from
+        the the fields from year to millisecond.
 
-        * Int year, month, day, hour, minute, second, and millisecond in UTC
-        * Int value of milliseconds since the Unix epoch
-        * ISO string in yyy-mm-ddThh:mm:ss.fffZ format
-        * Python dt.datetime
-        * Pandas pd.timestamp
+        Millisecond field is optional. Zero value will be assumed if not specified.
         """
 
         # If millisecond is not specified, assume 0
@@ -69,8 +65,34 @@ class Instant(dt.datetime, ABC):
             millisecond = 0
 
         # Create dt.datetime in UTC timezone
-        result: dt.datetime = dt.datetime(year, month, day, hour, minute, second, 1000 * millisecond, pytz.UTC)
+        result: dt.datetime = dt.datetime(
+            year,
+            month,
+            day,
+            hour,
+            minute,
+            second,
+            1000 *
+            millisecond,
+            pytz.UTC)
         return result
+
+    @classmethod
+    def to_fields(cls, value: Union[dt.datetime, 'Instant']) -> Tuple[int, int, int, int, int, int, int]:
+        """
+        Convert Instant to millisecond precision
+        the tuple (hour, minute, second, millisecond).
+        """
+
+        # Perform fast validation to detect values out of range.
+        # This will not detect errors such as Feb 31
+        cls.validate(value)
+
+        # Calculate millisecond from microsecond
+        millisecond: int = round(value.microsecond / 1000.0)
+
+        # Return the tuple
+        return value.year, value.month, value.day, value.hour, value.minute, value.second, millisecond
 
     @classmethod
     def from_str(cls, value: str) -> Union[dt.datetime, 'Instant']:
@@ -85,7 +107,7 @@ class Instant(dt.datetime, ABC):
         2003-05-01T10:15:30Z
         2003-05-01T10:15:30.1Z
         ...
-        2003-05-01T10:15:30.1234567Z
+        2003-05-01T10:15:30.1234567Z (will be rounded to whole milliseconds)
         """
 
         if not value.endswith('Z'):
@@ -96,7 +118,8 @@ class Instant(dt.datetime, ABC):
         dtime_from_str: dt.datetime
         if '.' in value:
             # Has milliseconds
-            dtime_from_str = dt.datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%fZ')
+            dtime_from_str = dt.datetime.strptime(
+                value, '%Y-%m-%dT%H:%M:%S.%fZ')
         else:
             # Does not have milliseconds
             dtime_from_str = dt.datetime.strptime(value, '%Y-%m-%dT%H:%M:%SZ')
@@ -120,7 +143,8 @@ class Instant(dt.datetime, ABC):
         2003-05-01T10:15:30.500Z
         """
 
-        # Ensure the argument is in UTC and does not have fractional milliseconds
+        # Ensure the argument is in UTC and does not have fractional
+        # milliseconds
         cls.validate(value)
 
         # Convert to string in ISO format with UTC (Z) timezone suffix
@@ -131,14 +155,16 @@ class Instant(dt.datetime, ABC):
         return result
 
     @classmethod
-    def from_unix_millis(cls, unix_millis: int) -> Union[dt.datetime, 'Instant']:
+    def from_unix_millis(
+            cls, unix_millis: int) -> Union[dt.datetime, 'Instant']:
         """
         Convert milliseconds since Unix epoch Instant stored as dt.datetime
         in UTC timezone.
         """
         # Convert milliseconds from Unix epoch to seconds, then construct the date
         # and replace timezone with pytz.UTC which is more standard
-        return dt.datetime.utcfromtimestamp(unix_millis / 1000.0).replace(tzinfo=pytz.UTC)
+        return dt.datetime.utcfromtimestamp(
+            unix_millis / 1000.0).replace(tzinfo=pytz.UTC)
 
     @classmethod
     def to_unix_millis(cls, value: Union[dt.datetime, 'Instant']) -> int:
@@ -151,20 +177,22 @@ class Instant(dt.datetime, ABC):
         use Instant.round(value) to remove.
         """
 
-        # Ensure the argument is in UTC and does not have fractional milliseconds
+        # Ensure the argument is in UTC and does not have fractional
+        # milliseconds
         cls.validate(value)
 
         # Convert to milliseconds since Unix epoch and round to whole
         # milliseconds. Because we cannot subtract datetimes with two
         # different instances of tzinfo, even if both are UTC, we
-        # cannot use a class variabe for unix_epoch. It has to be
+        # cannot use a class variable for unix_epoch. It has to be
         # created in the argument timezone instead.
         unix_epoch: dt.datetime = dt.datetime.fromtimestamp(0, value.tzinfo)
         result: int = round((value - unix_epoch).total_seconds() * 1000)
         return result
 
     @classmethod
-    def round(cls, value: Union[dt.datetime, 'Instant']) -> Union[dt.datetime, 'Instant']:
+    def round(cls, value: Union[dt.datetime, 'Instant']
+              ) -> Union[dt.datetime, 'Instant']:
         """
         Round the argument to whole milliseconds.
 
@@ -252,8 +280,8 @@ class Instant(dt.datetime, ABC):
     @classmethod
     def __to_str_lenient(cls, value: Union[dt.datetime, 'Instant']) -> str:
         """
-        Performs no validation before convetring to string. Use for error
-        messages only.
+        This method performs no validation before converting to string.
+        It should be used for error messages only.
         """
 
         # Lenient conversion to string without controlling

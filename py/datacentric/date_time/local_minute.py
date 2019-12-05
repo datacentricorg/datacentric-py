@@ -65,7 +65,7 @@ class LocalMinute(int, ABC):
         return self.hour * 100 + self.minute
 
     @classmethod
-    def from_iso_int(cls, value: int) -> LocalMinute:
+    def from_iso_int(cls, value: int) -> 'LocalMinute':
         hour = value // 100
         value -= hour * 100
         minute = value

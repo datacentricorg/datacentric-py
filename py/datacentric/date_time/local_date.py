@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from abc import ABC, abstractmethod
-from typing import Union
+from typing import Union, Tuple
 import datetime as dt
 
 
@@ -39,35 +39,42 @@ class LocalDate(int, ABC):
 
     # --- STATIC
 
-    @staticmethod
-    def to_iso_str(iso_int: int) -> str:
-        """Convert to string in ISO yyyy-mm-dd format."""
-        # We could directly format the output to string, however
-        # this step will check that it is a valid date
-        d: dt.date = LocalDate.to_date(iso_int)
-        result: str = d.isoformat()
+    @classmethod
+    def from_fields(cls, year: int, month: int, day: int) -> Union[int, 'LocalDate']:
+        """
+        Convert year, month and day fields to LocalDate represented
+        as int in yyyymmdd format.
+        """
+
+        # Convert to int in ISO yyyymmdd format
+        result: int = 10_000 * year + 100 * month + day
+
+        # Perform full validation and return
+        cls.validate(result)
         return result
 
-    @staticmethod
-    def to_date(iso_int: int) -> dt.date:
-        """Convert to dt.date."""
-        value: int = iso_int
-        year: int = value // 10_000
-        value -= year * 10_000
-        month: int = value // 100
-        value -= month * 100
-        day: int = value
-        result: dt.date = dt.date(year, month, day)
-        return result
+    @classmethod
+    def to_fields(cls, value: Union[int, 'LocalDate']) -> Tuple[int, int, int]:
+        """
+        Convert LocalDate represented as int in yyyymmdd format.
+        the tuple (year, month, day).
+        """
 
-    @staticmethod
-    def from_date(date: dt.date) -> Union[int, 'LocalDate']:
-        """Convert to int in ISO yyyymmdd format."""
-        return 10_000 * date.year + 100 * date.month + date.day
+        # Perform fast validation to detect values out of range.
+        # This will not detect errors such as Feb 31
+        cls.validate(value)
 
-    @staticmethod
-    def from_iso_str(iso_string: str) -> Union[int, 'LocalDate']:
-        """Convert from str in yyyy-mm-dd format to int in ISO yyyymmdd format."""
+        # Convert to tuple
+        year, month, day = cls.__to_fields_lenient(value)
+        return year, month, day
+
+    @classmethod
+    def from_str(cls, iso_string: str) -> Union[int, 'LocalDate']:
+        """
+        Convert str in yyyy-mm-dd format to LocalDate represented
+        as int in yyyymmdd format.
+        """
+
         if iso_string.endswith('Z'):
             raise Exception(f'String {iso_string} passed to LocalDate ctor must not end with capital Z that '
                             f'indicates UTC timezone because LocalDate does not include timezone.')
@@ -78,17 +85,75 @@ class LocalDate(int, ABC):
         # Convert to int in ISO yyyymmdd format
         return 10_000 * date_from_str.year + 100 * date_from_str.month + date_from_str.day
 
-    @staticmethod
-    def from_ints(year: int, month: int, day: int) -> Union[int, 'LocalDate']:
-        """Convert int year, month and day to readable int format."""
+    @classmethod
+    def to_str(cls, value: Union[int, 'LocalDate']) -> str:
+        """
+        Convert LocalDate represented as int in yyyymmdd format 
+        to string in ISO yyyy-mm-dd format.
+        """
 
-        # TODO: improve check
+        # Perform fast validation to detect values out of range.
+        # This will not detect errors such as Feb 31
+        cls.validate(value)
+
+        # We could directly format the output to string, however
+        # this step will check that it is a valid date
+        d: dt.date = cls.to_date(value)
+        result: str = d.isoformat()
+        return result
+
+    @classmethod
+    def from_date(cls, date: dt.date) -> Union[int, 'LocalDate']:
+        """Convert dt.date to LocalDate represented as int in yyyymmdd format."""
+        return 10_000 * date.year + 100 * date.month + date.day
+
+    @classmethod
+    def to_date(cls, value: Union[int, 'LocalDate']) -> dt.date:
+        """Convert LocalDate represented as int in yyyymmdd format to dt.date."""
+
+        # Perform fast validation to detect values out of range.
+        # This will not detect errors such as Feb 31
+        cls.validate(value)
+
+        # Convert to tuple
+        year, month, day = cls.__to_fields_lenient(value)
+
+        # This will also validate the date
+        result: dt.date = dt.date(year, month, day)
+        return result
+
+    @classmethod
+    def validate(cls, value: Union[int, 'LocalDate']) -> None:
+        """
+        Raise exception if the argument is not an int in yyyymmdd format.
+
+        This fast validation method will not detect errors such as Feb 31.
+        """
+
+        # Convert to tuple
+        year, month, day = cls.__to_fields_lenient(value)
+
         if not (1970 <= year <= 9999):
-            raise Exception(f'year should be in 1970..9999 range.')
+            raise Exception(f'LocalDate {value} is not in readable yyyymmdd format. '
+                            f'The year {year} should be in 1970 to 9999 range.')
         if not (1 <= month <= 12):
-            raise Exception(f'month should be in 1..12 range.')
-        if not (1 <= month <= 31):
-            raise Exception(f'day should be in 1..31 range.')
+            raise Exception(f'LocalDate {value} is not in readable yyyymmdd format. '
+                            f'The month {month} should be in 1 to 12 range.')
+        if not (1 <= day <= 31):
+            raise Exception(f'LocalDate {value} is not in readable yyyymmdd format. '
+                            f'The day {day} should be in 1 to 31 range.')
 
-        # Convert to int in ISO yyyymmdd format
-        return 10_000 * year + 100 * month + day
+    @classmethod
+    def __to_fields_lenient(cls, value: Union[int, 'LocalDate']) -> Tuple[int, int, int]:
+        """
+        Convert LocalDate represented as int in yyyymmdd format to
+        the tuple (year, month, day).
+        """
+
+        year: int = value // 10_000
+        value -= year * 10_000
+        month: int = value // 100
+        value -= month * 100
+        day: int = value
+
+        return year, month, day

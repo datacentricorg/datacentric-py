@@ -13,8 +13,7 @@
 # limitations under the License.
 
 from abc import ABC, abstractmethod
-from typing import Union, Optional
-import locale
+from typing import Union, Optional, Tuple
 import datetime as dt
 
 
@@ -41,186 +40,142 @@ class LocalTime(int, ABC):
 
     # --- STATIC
 
-    def __init__(self,
-                 hour_or_value: Union[int, str, dt.time],
-                 minute: Optional[int] = None,
-                 second: Optional[int] = None,
-                 millisecond: Optional[int] = None):
+    @classmethod
+    def from_fields(cls, hour: int, minute: int, second: int,
+                    millisecond: Optional[int] = None) -> Union[int, 'LocalTime']:
         """
-        Creates LocalTime from the specified arguments. The options for the
-        arguments include:
-
-        * Integer hour, minute, second, and optional millisecond
-        * Integer to millisecond precision in ISO hhmmssfff format
-        * ISO string to millisecond precision in hh:mm:ss.fff format
-        * Python dt.time
+        Convert hour to millisecond fields to LocalTime represented in hhmmssfff format.
+        
+        Millisecond field is optional. Zero value will be assumed if not specified.
         """
 
-        __iso_int = None
-        """Local time to millisecond precision as int in ISO hhmmssfff format."""
+        # If millisecond is not specified, assume 0
+        if millisecond is None:
+            millisecond = 0
 
-        # Becuase Python has no method overloads, we have to use default ctor
-        # arguments and determine the type dynamically. This flag is true
-        # if first argument is used to pass the entire value, in which case
-        # all other arguments (month, etc.) must be None
-        remaining_args_must_be_none: bool = True
+        # Convert to LocalTime represented in hhmmssfff format
+        result: int = 10_000_000 * hour + 100_000 * minute + 1000 * second + millisecond
 
-        if hour_or_value is None:
-            raise Exception('In LocalTime constructor, first argument must not be None.')
+        # Validate and return
+        cls.validate(result)
+        return result
 
-        # Determine what is passed as first ctor argument
-        if isinstance(hour_or_value, int):
+    @classmethod
+    def to_fields(cls, value: Union[int, 'LocalTime']) -> Tuple[int, int, int, int]:
+        """
+        Convert LocalTime represented in hhmmssfff format to
+        the tuple (hour, minute, second, millisecond).
+        """
 
-            # Either hour, or the entite time in ISO hhmmssfff format
-            hour_or_iso_int: int = hour_or_value
+        # Perform fast validation to detect values out of range.
+        # This will not detect errors such as Feb 31
+        cls.validate(value)
 
-            if (minute is None) and (second is None) and (millisecond is None):
+        # Convert to tuple
+        hour, minute, second, millisecond = cls.__to_fields_lenient(value)
+        return hour, minute, second, millisecond
 
-                # The sole int argument must be time in ISO hhmmssfff format
-                if not (0 <= hour_or_iso_int <= 235959999):
-                    raise Exception(f'The sole argument of LocalTime constructor {hour_or_iso_int} is not '
-                                    f'integer in ISO hhmmssfff format.')
-                self.__iso_int = hour_or_iso_int
+    @classmethod
+    def from_str(cls, value: str) -> Union[int, 'LocalTime']:
+        """
+        Convert from string in ISO format without timezone suffix
+        and up to 7 digits after decimal points for seconds.
 
-            else:
+        This method rounds the result to whole milliseconds.
 
-                # If not the only argument, first argument is hour
-                hour: int = hour_or_iso_int
+        Examples:
 
-                if not (0 <= hour_or_iso_int <= 23):
-                    raise Exception(f'In LocalTime constructor, minute is specified but first '
-                                    f'argument {hour} is not an integer in the range from 0 to 23.')
-                if minute is None:
-                    raise Exception(f'In LocalTime constructor, minute is None.')
-                if not (0 <= minute <= 59):
-                    raise Exception(f'In LocalTime constructor, minute {minute} is specified but is '
-                                    f'not an integer in the range from 0 to 59.')
-                if second is None:
-                    raise Exception(f'In LocalTime constructor, second is None.')
-                if not (0 <= second <= 59):
-                    raise Exception(f'In LocalTime constructor, second {second} is specified but is '
-                                    f'not an integer in the range from 0 to 59.')
+        10:15:30
+        10:15:30.1
+        ...
+        10:15:30.1234567 (will be rounded to whole milliseconds)
+        """
 
-                # This is one type of input where remaning args are used
-                remaining_args_must_be_none = False
+        if not value[-1].isdigit():
+            raise Exception(f'String {value} passed to LocalTime.from_str(...) method '
+                            f'must not include timezone.')
 
-                if millisecond is None:
-                    # If millisecond is not specified, assume 0
-                    millisecond = 0
-                else:
-                    # Otherwise check the range
-                    if not (0 <= millisecond <= 9999):
-                        raise Exception(f'In LocalTime constructor, millisecond is specified but is '
-                                        f'not an integer in the range from 0 to 999.')
-
-                # Convert to int in ISO hhmmssfff format
-                self.__iso_int = 10_000_000 * hour + 100_000 * minute + 1000 * second + millisecond
-
-        elif isinstance(hour_or_value, str):
-
-            # If argument is a string, it must use ISO hh:mm:ss.fff format
-            iso_string: str = hour_or_value
-            if iso_string.endswith('Z'):
-                raise Exception(f'String {iso_string} passed to LocalTime ctor must not end with capital Z that '
-                                f'indicates UTC timezone because LocalTime does not include timezone.')
-
-            time_whole_seconds: dt.time
-            millisecond_int: int
-            if '.' in iso_string:
-
-                # Has milliseconds, onvert from string in hh:mm:ss.fff format
-                # by converting whole seconds first, then adding milliseconds
-                iso_string_tokens = iso_string.split('.', 2)
-                iso_string_whole_seconds: str = iso_string_tokens[0]
-                time_whole_seconds = dt.time.fromisoformat(iso_string_whole_seconds)
-
-                # Validate fractional seconds
-                fractional_second_str: str = '0.' + iso_string_tokens[1]
-                millisecond_int = round(1000.0 * locale.atof(fractional_second_str))
-                if not (0 <= millisecond_int <= 9999):
-                    raise Exception(f'In LocalTime constructor from string, fractional second {fractional_second_str} '
-                                    f'is specified but is not in the range from 0 (inclusive) to 1 (exclusive).')
-
-            else:
-
-                # Does not have milliseconds
-                time_whole_seconds = dt.time.fromisoformat(iso_string)
-                millisecond_int = 0
-
-            # Convert to int in ISO hhmmssfff format
-            self.__iso_int = 10_000_000 * time_whole_seconds.hour + 100_000 * time_whole_seconds.minute \
-                             + 1000 * time_whole_seconds.second + millisecond_int
-
-        elif isinstance(hour_or_value, dt.time):
-
-            # First argument is dt.datetime or pd.Timestamp
-            time_arg: dt.time = hour_or_value
-
-            # Convert to int in ISO hhmmssfff format
-            self.__iso_int = 10_000_000 * time_arg.hour + 100_000 * time_arg.minute \
-                             + 1000 * time_arg.second + round(time_arg.microsecond / 1000.0)
-
+        # Convert to datetime and set UTC timezone
+        time_from_str: dt.time
+        if '.' in value:
+            # Has milliseconds
+            time_from_str = dt.time.strptime(value, '%H:%M:%S.%f')
         else:
-            raise Exception(f'First argument of LocalTime constructor {hour_or_value} must be one of '
-                            f'(a) hour, (b) integer in ISO hhmmssfff format, (c) string in ISO hh:mm:ss.fff format, '
-                            f'or (d) dt.time.')
+            # Does not have milliseconds
+            time_from_str = dt.time.strptime(value, '%H:%M:%S')
 
-        # Depending on what is passed as the first argument, validate the remaining arguments
-        if remaining_args_must_be_none:
+        # Round the result to whole milliseconds
+        rounded_time: dt.time = cls.__round_lenient(time_from_str)
 
-            # If the first argument is not year, the remaining arguments must be None
-            if minute is not None:
-                raise Exception(f'In LocalTime constructor, first argument {hour_or_value} is the entire date '
-                                f'rather than year, in which case minute={minute} must be None.')
-            if second is not None:
-                raise Exception(f'In LocalTime constructor, first argument {hour_or_value} is the entire date '
-                                f'rather than year, in which case second={second} must be None.')
-            if millisecond is not None:
-                raise Exception(f'In LocalTime constructor, first argument {hour_or_value} is the entire date '
-                                f'rather than year, in which case millisecond={millisecond} must be None.')
+        # Convert to LocalTime represented as int in hhmmssfff format
+        result: cls.from_time(rounded_time)
+        return result
 
-    def __str__(self) -> str:
-        """Convert to string in ISO hh:mm:ss.fff format."""
-        # We could directly format the output to string, however
-        # this step will check that it is a valid time
-        t: dt.time = self.to_time()
-        result: str = t.isoformat()
-
+    @classmethod
+    def to_str(cls, value: Union[int, 'LocalTime']) -> str:
         """
-        Convert to string in ISO format to millisecond precision, for example:
+        Convert to string in ISO format without timezone, with
+        3 digits after decimal points for seconds, irrespective of
+        how many digits are actually required.
 
-        10:15:30.5
+        Example:
 
-        Fractional seconds are omitted if zero.
+        10:15:30.500Z
         """
-        value: int = self.__iso_int
-        hour: int = value // 10_000_000
-        value -= hour * 10_000_000
-        minute: int = value // 100_000
-        value -= minute * 100_000
-        second: int = value // 1_000
-        value -= second * 1_000
-        millisecond: int = value
 
-        # Convert whole seconds separately from milliseconds
-        time_whole_seconds: dt.time = dt.time(hour, minute, second)
-        time_whole_seconds_str: str = time_whole_seconds.isoformat()
-        if millisecond == 0:
-            # No milliseconds
-            return time_whole_seconds_str
-        else:
-            # Include milliseconds without the trailing zeroes
-            millis_str: str = str(millisecond / 1000.0).lstrip('0.')
-            local_time_str: str = time_whole_seconds_str + '.' + millis_str
-            return local_time_str
+        # Convert to tuple
+        hour, minute, second, millisecond = cls.__to_fields_lenient(value)
 
-    def to_iso_int(self) -> int:
-        """Convert to int in ISO hhmmssfff format."""
-        return self.__iso_int
+        # Convert to string in ISO format without timezone, with
+        # 3 digits after decimal points for seconds, irrespective of
+        # how many digits are actually required.
+        result_to_microseconds: str = value.strftime('%H:%M:%S.%f')
+        result: str = result_to_microseconds[:-3]
+        return result
 
-    def to_time(self) -> dt.time:
+
+    @classmethod
+    def to_time(cls, value: Union[int, 'LocalTime']) -> dt.time:
         """Convert to dt.time."""
-        value: int = self.__iso_int
+
+        # Convert to tuple
+        hour, minute, second, millisecond = cls.__to_fields_lenient(value)
+    
+        # The resulting dt.time must not have a timezone
+        result: dt.time = dt.time(hour, minute, second, 1000 * millisecond)
+        return result
+
+    @classmethod
+    def validate(cls, value: Union[int, 'LocalTime']) -> None:
+        """
+        Raise exception if the argument is not an int in ISO hhmmssfff format.
+        """
+
+        # Convert to tuple
+        hour, minute, second, millisecond = cls.__to_fields_lenient(value)
+
+        if not (0 <= hour <= 23):
+            raise Exception(f'LocalTime {value} is not in hhmmssfff format. '
+                            f'The hour {hour} should be in 0 to 23 range.')
+        if not (0 <= minute <= 59):
+            raise Exception(f'LocalTime {value} is not in hhmmssfff format. '
+                            f'The minute {minute} should be in 0 to 59 range.')
+        if not (0 <= second <= 59):
+            raise Exception(f'LocalTime {value} is not in hhmmssfff format. '
+                            f'The second {second} should be in 0 to 59 range.')
+        if not (0 <= millisecond <= 999):
+            raise Exception(f'LocalTime {value} is not in hhmmssfff format. '
+                            f'The millisecond {millisecond} should be in 0 to 999 range.')
+
+    @classmethod
+    def __to_fields_lenient(cls, value: Union[int, 'LocalTime']) -> Tuple[int, int, int, int]:
+        """
+        Convert LocalTime stored as int in ISO hhmmssfff format to
+        the tuple (hour, minute, second, millisecond).
+
+        This method does not perform validation of its argument.
+        """
+
         hour: int = value // 10_000_000
         value -= hour * 10_000_000
         minute: int = value // 100_000
@@ -228,5 +183,25 @@ class LocalTime(int, ABC):
         second: int = value // 1_000
         value -= second * 1_000
         millisecond: int = value
-        result: dt.time = dt.time(hour, minute, second, 1000 * millisecond)
+
+        return hour, minute, second, millisecond
+
+    @classmethod
+    def __round_lenient(cls, value: dt.time) -> dt.time:
+        """
+        Round the argument dt.time to whole milliseconds.
+
+        This method does not perform validation of its argument.
+        """
+
+        # Round to whole millisecond
+        rounded_microsecond: int = round(value.microsecond / 1000.0) * 1000
+
+        result: dt.time = dt.time(
+            value.hour,
+            value.minute,
+            value.second,
+            rounded_microsecond,
+            value.tzinfo
+        )
         return result

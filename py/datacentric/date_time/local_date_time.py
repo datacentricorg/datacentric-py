@@ -13,16 +13,21 @@
 # limitations under the License.
 
 from abc import ABC, abstractmethod
+from typing import Union, Optional, Tuple
 import datetime as dt
 
 
 class LocalDateTime(int, ABC):
     """
-    LocalDateTime is an immutable struct representing a date and time of day
-    within the calendar, with no reference to a particular time zone.
+    Represents datetime to millisecond precision, with no reference to a
+    particular time zone, and provides conversion to and from:
 
-    This class is inspired by NodaTime.LocalDateTime and follows the NodaTime
-    naming conventions.
+    * Integer year, month, day, hour, minute, second, and optional millisecond
+    * Integer to millisecond precision in yyyymmddhhmmssfff format
+    * ISO string to millisecond precision in yyyy-mm-ddThh:mm:ss.fff format;
+      seconds always have 3 digits after the decimal point, irrespective
+      of how many digits are actually required.
+    * Python dt.time without timezone
     """
 
     # --- METHODS
@@ -37,33 +42,81 @@ class LocalDateTime(int, ABC):
 
     # --- STATIC
 
-    def __init__(self, year: int, month: int, day: int, hour: int = 0,
-                 minute: int = 0, second: int = 0, millisecond: int = 0):
-        self._dt = dt.datetime(year, month, day, hour, minute, second, microsecond=millisecond * 1000)
+    @classmethod
+    def from_fields(cls, year: int, month: int, day: int, hour: int = 0,
+                    minute: int = 0, second: int = 0, millisecond: Optional[int] = None) -> Union[int, 'LocalDateTime']:
+        """
+        Convert hour to millisecond fields to LocalDateTime represented in yyyymmddhhmmssfff format.
 
-    def to_iso_int(self) -> int:
-        iso_date = self._dt.year * 10_000 + self._dt.month * 100 + self._dt.day
-        iso_time = self._dt.hour * 100_00_000 + self._dt.minute * 100_000 + \
-                   self._dt.second * 1000 + self._dt.microsecond // 1000
-        return iso_date * 100_00_00_000 + iso_time
+        Millisecond field is optional. Zero value will be assumed if not specified.
+        """
+
+        # If millisecond is not specified, assume 0
+        if millisecond is None:
+            millisecond = 0
+
+        # Convert to LocalDateTime represented in yyyymmddhhmmssfff format
+        result: int = 1_000_000_000_000_000 * year * + 100_000_000_000 * month * + 1_000_000_000 * day + \
+                      10_000_000 * hour + 100_000 * minute + 1000 * second + millisecond
+
+        # Validate and return
+        cls.validate(result)
+        return result
 
     @classmethod
-    def from_iso_int(cls, value: int) -> LocalDateTime:
-        iso_date = value // 100_00_00_000
-        iso_time = value - 100_00_00_000 * iso_date
+    def validate(cls, value: Union[int, 'LocalDateTime']) -> None:
+        """
+        Raise exception if the argument is not an int in yyyymmddhhmmssfff format.
 
-        year = iso_date // 100_00
-        iso_date -= year * 100_00
-        month = iso_date // 100
-        iso_date -= month * 100
-        day = iso_date
+        This fast validation method will not detect errors such as Feb 31.
+        """
 
-        hour = iso_time // 100_00_000
-        iso_time -= hour * 100_00_000
-        minute = iso_time // 100_000
-        iso_time -= minute * 100_000
-        second = iso_time // 1000
-        iso_time -= second * 1000
-        millisecond = iso_time
+        # Convert to tuple
+        year, month, day, hour, minute, second, millisecond = cls.__to_fields_lenient(value)
 
-        return cls(year, month, day, hour, minute, second, millisecond)
+        if not (1970 <= year <= 9999):
+            raise Exception(f'LocalDateTime {value} is not in yyyymmddhhmmssfff format. '
+                            f'The year {year} should be in 1970 to 9999 range.')
+        if not (1 <= month <= 12):
+            raise Exception(f'LocalDateTime {value} is not in yyyymmddhhmmssfff format. '
+                            f'The month {month} should be in 1 to 12 range.')
+        if not (1 <= day <= 31):
+            raise Exception(f'LocalDateTime {value} is not in yyyymmddhhmmssfff format. '
+                            f'The day {day} should be in 1 to 31 range.')
+        if not (0 <= hour <= 23):
+            raise Exception(f'LocalDateTime {value} is not in yyyymmddhhmmssfff format. '
+                            f'The hour {hour} should be in 0 to 23 range.')
+        if not (0 <= minute <= 59):
+            raise Exception(f'LocalDateTime {value} is not in yyyymmddhhmmssfff format. '
+                            f'The minute {minute} should be in 0 to 59 range.')
+        if not (0 <= second <= 59):
+            raise Exception(f'LocalDateTime {value} is not in yyyymmddhhmmssfff format. '
+                            f'The second {second} should be in 0 to 59 range.')
+        if not (0 <= millisecond <= 999):
+            raise Exception(f'LocalDateTime {value} is not in yyyymmddhhmmssfff format. '
+                            f'The millisecond {millisecond} should be in 0 to 999 range.')
+
+    @classmethod
+    def __to_fields_lenient(cls, value: Union[int, 'LocalDateTime']) -> Tuple[int, int, int, int, int, int, int]:
+        """
+        Convert LocalDateTime represented as int in yyyymmddhhmmssfff format to
+        the tuple (year, month, day, hour, minute, second, millisecond).
+
+        This method does not perform validation of its argument.
+        """
+
+        year: int = value // 1_000_00_00_00_00_0000
+        value -= year * 1_000_00_00_00_00_0000
+        month: int = value // 1_000_00_00_00_00
+        value -= month * 1_000_00_00_00_00
+        day: int = value // 1_000_00_00_00
+        value -= day * 1_000_00_00_00
+        hour: int = value // 1_000_00_00
+        value -= hour * 1_000_00_00
+        minute: int = value // 1_000_00
+        value -= minute * 1_000_00
+        second: int = value // 1_000
+        value -= second * 1_000
+        millisecond: int = value
+
+        return year, month, day, hour, minute, second, millisecond
