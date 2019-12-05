@@ -18,49 +18,61 @@ import datetime as dt
 from bson import ObjectId
 from datacentric.storage.record import Record
 from datacentric.storage.key import Key
-from datacentric.test.storage.composite_key_sample import CompositeKeySample, CompositeKeySampleKey
-from datacentric.test.storage.singleton_sample import SingletonSample, SingletonSampleKey
-from datacentric.test.storage.id_based_key_sample import IdBasedKeySample, IdBasedKeySampleKey
+from datacentric.test.storage.base_sample_key import BaseSampleKey
+from datacentric.test.storage.base_sample import BaseSample
+from datacentric.test.storage.composite_key_sample_key import CompositeKeySampleKey
+from datacentric.test.storage.composite_key_sample import CompositeKeySample
+from datacentric.test.storage.singleton_sample_key import SingletonSampleKey
+from datacentric.test.storage.singleton_sample import SingletonSample
+from datacentric.test.storage.id_based_key_sample_key import IdBasedKeySampleKey
+from datacentric.test.storage.id_based_key_sample import IdBasedKeySample
 from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 
 class TestMongoKey(unittest.TestCase, UnitTest):
+    """Test for key generation."""
+
     def test_composite_key(self):
+        """Test generation of composite key."""
+
+        # From record
         rec = CompositeKeySample()
         rec.key_element1 = 'abc'
-        rec.key_element2 = BaseSampleKey()
-        rec.key_element2.record_id = 'def'
-        rec.key_element2.record_index = 123
+        rec.key_element2 = BaseSample.create_key(record_id='def', record_index=123)
         rec.key_element3 = 'xyz'
-        key_value = rec.to_key().value
+        key1 = rec.to_key()
+        self.assertEqual(key1, 'CompositeKeySample=abc;def;123;xyz')
 
-        key = CompositeKeySampleKey()
-        key.populate_from_string(key_value)
-        self.assertEqual(key.key_element1, rec.key_element1)
-        self.assertEqual(key.key_element2.record_id, rec.key_element2.record_id)
-        self.assertEqual(key.key_element2.record_index, rec.key_element2.record_index)
-        self.assertEqual(key.key_element3, rec.key_element3)
+        # Using static method
+        key2 = CompositeKeySample.create_key(key_element1=rec.key_element1, key_element2=rec.key_element2, key_element3=rec.key_element3)
+        self.assertEqual(key2, 'CompositeKeySample=abc;def;123;xyz')
 
     def test_singleton_key(self):
+        """Test singleton key generation."""
+
+        # From record
         rec = SingletonSample()
         rec.string_element = 'abc'
+        key1 = rec.to_key()
+        self.assertEqual(key1, 'SingletonSample=')
 
-        key_value = rec.to_key().value
-        self.assertEqual(key_value, '')
-
-        key = SingletonSampleKey()
-        key.populate_from_string(key_value)
-        self.assertEqual(key.value, key_value)
+        # Using static method
+        key2 = SingletonSample.create_key()
+        self.assertEqual(key2, 'SingletonSample=')
 
     def test_id_based_key(self):
+        """Test ID-based key generation."""
+
+        # From record
         rec = IdBasedKeySample()
         rec.id_ = ObjectId.from_datetime(dt.datetime.fromtimestamp(123456789))
-        rec.string_element = 'abc'
+        key1 = rec.to_key()
+        self.assertEqual(key1, 'IdBasedKeySample=' + str(rec.id_))
 
-        key_value = rec.to_key().value
-        key = IdBasedKeySampleKey()
-        key.populate_from_string(key_value)
-        self.assertEqual(key_value, str(key))
+        # Using static method
+        key1 = rec.to_key()
+        key2 = IdBasedKeySample.create_key(id_=rec.id_)
+        self.assertEqual(key2, 'IdBasedKeySample=' + str(rec.id_))
 
 
 if __name__ == "__main__":

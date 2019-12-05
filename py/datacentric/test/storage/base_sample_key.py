@@ -18,5 +18,5 @@ from abc import ABC, abstractmethod
 from datacentric.storage.key import Key
 
 
-class BaseSampleKey(ABC):
+class BaseSampleKey(Key, ABC):
     """Base class sample."""

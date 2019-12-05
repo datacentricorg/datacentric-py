@@ -18,7 +18,7 @@ from abc import ABC, abstractmethod
 from datacentric.storage.key import Key
 
 
-class SingletonSampleKey(Key):
+class SingletonSampleKey(Key, ABC):
     """
     Sample for a class with key that has no elements.
 

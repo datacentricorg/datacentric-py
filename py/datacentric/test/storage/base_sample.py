@@ -82,4 +82,4 @@ class BaseSample(Record):
     @classmethod
     def create_key(cls, *, record_id: str, record_index: int) -> Union[str, BaseSampleKey]:
         """Create key string from key elements."""
-        return f'BaseSample={record_id};{record_index}'
+        return 'BaseSample=' + record_id + ';' + str(record_index)

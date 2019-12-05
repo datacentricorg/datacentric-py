@@ -16,7 +16,7 @@ import attr
 from abc import ABC, abstractmethod
 
 
-class Key(ABC):
+class Key(str, ABC):
     """
     Base class of a foreign key.
 

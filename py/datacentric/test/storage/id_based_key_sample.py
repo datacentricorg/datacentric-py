@@ -13,13 +13,13 @@
 # limitations under the License.
 
 import attr
-import unittest
+from typing import Union, Optional, List, Any
 import datetime as dt
 from bson import ObjectId
 from datacentric.storage.record import Record
 from datacentric.storage.key import Key
 from datacentric.test.storage.base_sample import BaseSampleKey
-from datacentric.testing.unit_test import UnitTestKey, UnitTest
+from datacentric.test.storage.id_based_key_sample_key import IdBasedKeySampleKey
 
 
 @attr.s(slots=True, auto_attribs=True)
@@ -28,3 +28,16 @@ class IdBasedKeySample(Record):
 
     string_element: str = attr.ib(default=None, kw_only=True)
     """Sample element."""
+
+    # --- METHODS
+
+    def to_key(self) -> Union[str, IdBasedKeySampleKey]:
+        """Create key string from the current record."""
+        return 'IdBasedKeySample=' + str(self.id_)
+
+    # --- STATIC
+
+    @classmethod
+    def create_key(cls, *, id_: ObjectId) -> Union[str, IdBasedKeySampleKey]:
+        """Create key string from key elements."""
+        return 'IdBasedKeySample=' + str(id_)

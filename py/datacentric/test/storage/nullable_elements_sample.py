@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import attr
+from typing import Union, Optional, List, Any
 from enum import IntEnum
 from typing import List, ClassVar, Tuple, Union
 from datacentric.date_time.local_date import LocalDate, LocalDateHint
@@ -23,6 +24,7 @@ from datacentric.storage.record import Record
 from datacentric.storage.key import Key
 from datacentric.storage.data import Data
 from datacentric.test.storage.enum_sample import EnumSample
+from datacentric.test.storage.nullable_elements_sample_key import NullableElementsSampleKey
 
 
 @attr.s(slots=True, auto_attribs=True)
@@ -55,3 +57,9 @@ class NullableElementsSample(Record):
 
     record_index: int = attr.ib(default=None, kw_only=True)
     """Sample element."""
+
+    # --- METHODS
+
+    def to_key(self) -> Union[str, NullableElementsSampleKey]:
+        """Create key string from the current record."""
+        return 'NullableElementsSample=' + self.string_token

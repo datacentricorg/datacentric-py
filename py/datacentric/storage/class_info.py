@@ -39,39 +39,6 @@ class ClassInfo:
         return ClassInfo.__data_types_map[name]
 
     @staticmethod
-    def get_key_from_record(type_: type) -> type:
-        """Extracts associated key from RootRecord and TypedRecord derived types."""
-        raise Exception
-
-    @staticmethod
-    def get_record_from_key(type_: type) -> type:
-        """Extracts associated record from TypedKey derived types."""
-        if not typing_inspect.is_generic_type(type_):
-            raise Exception(f'Cannot get associated key from not generic type {type_.__name__}')
-
-        from datacentric.storage.key import Key
-        from datacentric.storage.record import Record
-        from datacentric.storage.root_record import RootRecord
-        from typing import ForwardRef
-
-        generic_base = typing_inspect.get_generic_bases(type_)[0]
-
-        generic_origin = typing_inspect.get_origin(generic_base)
-        if generic_origin is not TypedKey:
-            raise Exception(f'Wrong generic origin: {generic_origin.__name__}. Expected TypedKey')
-
-        generic_arg = typing_inspect.get_args(generic_base)[0]  # Arg
-
-        # Generic parameter is forward ref
-        if type(generic_arg) is ForwardRef:
-            return ClassInfo.get_type(generic_arg.__forward_arg__)
-        # Generic parameter is type
-        elif issubclass(generic_arg, TypedRecord) or issubclass(generic_arg, RootRecord):
-            return generic_arg
-        else:
-            raise Exception(f'Cannot deduce key from type {type_.__name__}')
-
-    @staticmethod
     def get_ultimate_base(type_: type) -> type:
         """
         Returns the ultimate base class of the inheritance chain which

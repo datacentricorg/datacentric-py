@@ -13,13 +13,12 @@
 # limitations under the License.
 
 import attr
-import unittest
+from typing import Union, Optional, List, Any
 import datetime as dt
 from bson import ObjectId
 from datacentric.storage.record import Record
 from datacentric.test.storage.base_sample import BaseSampleKey
-from datacentric.testing.unit_test import UnitTestKey, UnitTest
-
+from datacentric.test.storage.singleton_sample_key import SingletonSampleKey
 
 @attr.s(slots=True, auto_attribs=True)
 class SingletonSample(Record):
@@ -30,3 +29,16 @@ class SingletonSample(Record):
     """
     string_element: str = attr.ib(default=None, kw_only=True)
     """Sample element."""
+
+    # --- METHODS
+
+    def to_key(self) -> Union[str, SingletonSampleKey]:
+        """Create key string from the current record."""
+        return 'SingletonSample='
+
+    # --- STATIC
+
+    @classmethod
+    def create_key(cls) -> Union[str, SingletonSampleKey]:
+        """Create key string from key elements."""
+        return 'SingletonSample='

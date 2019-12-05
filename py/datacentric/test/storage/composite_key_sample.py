@@ -13,12 +13,13 @@
 # limitations under the License.
 
 import attr
-import unittest
+from typing import Union, Optional, List, Any
 import datetime as dt
 from bson import ObjectId
 from datacentric.storage.record import Record
 from datacentric.storage.key import Key
-from datacentric.test.storage.base_sample import BaseSample, BaseSampleKey
+from datacentric.test.storage.base_sample_key import BaseSampleKey
+from datacentric.test.storage.composite_key_sample_key import CompositeKeySampleKey
 
 
 @attr.s(slots=True, auto_attribs=True)
@@ -28,16 +29,33 @@ class CompositeKeySample(Record):
     key_element1: str = attr.ib(default=None, kw_only=True)
     """Sample element."""
 
-    key_element2: BaseSampleKey = attr.ib(default=None, kw_only=True)
+    key_element2: Union[str, BaseSampleKey] = attr.ib(default=None, kw_only=True)
     """Sample element."""
 
     key_element3: str = attr.ib(default=None, kw_only=True)
     """Sample element."""
 
+    # --- METHODS
 
+    def to_key(self) -> Union[str, CompositeKeySampleKey]:
+        """Create key string from the current record."""
+        return 'CompositeKeySample=' + ';'.join(
+            [
+                self.key_element1,
+                self.key_element2.replace('BaseSample=', ''),
+                self.key_element3
+            ]
+        )
 
-@attr.s(slots=True, auto_attribs=True)
-class CompositeKeySampleKey(TypedKey['CompositeKeySample']):
-    key_element1: str = attr.ib(default=None, kw_only=True)
-    key_element2: BaseSampleKey = attr.ib(default=None, kw_only=True)
-    key_element3: str = attr.ib(default=None, kw_only=True)
+    # --- STATIC
+
+    @classmethod
+    def create_key(cls, *, key_element1: str, key_element2: Union[str, BaseSampleKey], key_element3: str) -> Union[str, BaseSampleKey]:
+        """Create key string from key elements."""
+        return 'CompositeKeySample=' + ';'.join(
+            [
+                key_element1,
+                key_element2.replace('BaseSample=', ''),
+                key_element3
+            ]
+        )
