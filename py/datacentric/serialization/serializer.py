@@ -33,9 +33,11 @@ from datacentric.storage.data import Data
 TRecord = TypeVar('TRecord', bound=Record)
 
 _local_hints_ = [LocalMinute, LocalDateTime, LocalDate, LocalTime]
+
+
 # Serialization: object -> dict
 
-
+# TODO: Refactor
 def serialize(obj: TRecord):
     type_: type = type(obj)
     dict_ = _serialize_class(obj, type_)
@@ -70,15 +72,18 @@ def _serialize_class(obj: TRecord, expected_: type):
 
     mro = cls_type.__mro__
     fields = attr.fields(cls_type)
+
     if Record in mro:
-        serializable_fields = fields[4:]
+        serializable_fields = [x for x in fields if x not in attr.fields(Record)]
     elif Data in mro:
-        serializable_fields = fields
+        serializable_fields = [x for x in fields if x not in attr.fields(Data)]
     else:
         raise Exception(f'Cannot serialize class {cls_name} not derived from Record or Data.')
 
+    non_private_fields = [x for x in serializable_fields if not x.name.startswith('_')]
+
     field: attr.Attribute
-    for field in serializable_fields:
+    for field in non_private_fields:
         value = getattr(obj, field.name)
         expected_type = field.type
 
@@ -98,8 +103,6 @@ def _serialize_class(obj: TRecord, expected_: type):
             expected_arg = get_args(expected_type)[0]
             serialized_value = _serialize_list(value, expected_arg, is_optional)
 
-        elif issubclass(expected_type, Key):
-            serialized_value = _serialize_key(value)
         elif issubclass(expected_type, Data):
             serialized_value = _serialize_class(value, expected_type)
         elif issubclass(expected_type, IntEnum):
@@ -137,8 +140,6 @@ def _serialize_list(list_, expected_, is_optional: bool) -> List[Any]:
 
     if is_union:
         return [_serialize_unions(expected_, x) for x in list_]
-    if issubclass(expected_, Key):
-        return [_serialize_key(x) for x in list_]
     elif issubclass(expected_, Data):
         return [_serialize_class(x, expected_) for x in list_]
     elif issubclass(expected_, IntEnum):
@@ -194,7 +195,7 @@ def _serialize_primitive(value, expected_):
 
 # Deserialization: dict -> object
 
-
+# TODO: Refactor
 def deserialize(dict_: Dict) -> TRecord:
     data_set = dict_.pop('_dataset')
     _key = dict_.pop('_key')
@@ -210,7 +211,6 @@ def deserialize(dict_: Dict) -> TRecord:
 
 
 def _deserialize_class(dict_: Dict[str, Any]) -> TRecord:
-
     type_name: str = dict_.pop('_t')[-1]
 
     type_info = ClassInfo.get_type(type_name)
