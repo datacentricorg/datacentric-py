@@ -13,31 +13,24 @@
 # limitations under the License.
 
 import attr
-from typing import Union, Optional, List, Any
-import datetime as dt
 from bson import ObjectId
+from typing import Union
 from datacentric.storage.record import Record
-from datacentric.storage.key import Key
-from datacentric.test.storage.base_sample import BaseSampleKey
 from datacentric.test.storage.id_based_key_sample_key import IdBasedKeySampleKey
 
 
 @attr.s(slots=True, auto_attribs=True)
 class IdBasedKeySample(Record):
-    """Sample class with key that includes Id."""
+    """A sample type where the only key element is the record's Id."""
 
-    string_element: str = attr.ib(default=None, kw_only=True)
+    string_element: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    # --- METHODS
-
-    def to_key(self) -> Union[str, IdBasedKeySampleKey]:
-        """Create key string from the current record."""
+    def to_key(self) -> str:
+        """Get IdBasedKeySample key."""
         return 'IdBasedKeySample=' + str(self.id_)
-
-    # --- STATIC
 
     @classmethod
     def create_key(cls, *, id_: ObjectId) -> Union[str, IdBasedKeySampleKey]:
-        """Create key string from key elements."""
+        """Create IdBasedKeySample key."""
         return 'IdBasedKeySample=' + str(id_)

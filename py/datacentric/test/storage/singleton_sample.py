@@ -13,30 +13,25 @@
 # limitations under the License.
 
 import attr
-from typing import Union, Optional, List, Any
-import datetime as dt
-from bson import ObjectId
+from typing import Union
 from datacentric.storage.record import Record
-from datacentric.test.storage.base_sample import BaseSampleKey
 from datacentric.test.storage.singleton_sample_key import SingletonSampleKey
+
 
 @attr.s(slots=True, auto_attribs=True)
 class SingletonSample(Record):
     """
-    Sample for a class with key that has no elements.
+    A sample data type with no key elements.
 
-    Only one such record can be stored per dataset.
+    Only one record of this type can be present in a given dataset.
     """
-    string_element: str = attr.ib(default=None, kw_only=True)
-    """Sample element."""
 
-    # --- METHODS
+    string_element: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
 
     def to_key(self) -> Union[str, SingletonSampleKey]:
         """Create key string from the current record."""
         return 'SingletonSample='
-
-    # --- STATIC
 
     @classmethod
     def create_key(cls) -> Union[str, SingletonSampleKey]:
