@@ -25,19 +25,39 @@ from datacentric.storage.typed_record import TypedRecord
 from datacentric.storage.typed_key import TypedKey
 from datacentric.storage.data_source import DataSource
 from datacentric.test.storage.enum_sample import EnumSample
+from datacentric.test.storage.base_sample_key import BaseSampleKey
 
 
 @attr.s(slots=True, auto_attribs=True)
 class BaseSample(TypedRecord):
+    """Base class sample."""
+
     record_id: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
     record_index: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
     double_element: float = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
     local_date_element: Union[int, LocalDateHint] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
     local_time_element: Union[int, LocalTimeHint] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
     local_minute_element: Union[int, LocalMinuteHint] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
     local_date_time_element: Union[int, LocalDateTimeHint] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
     enum_value: EnumSample = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
     version: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
 
     # --- STATIC
 
@@ -52,10 +72,6 @@ class BaseSample(TypedRecord):
                      data_set: ObjectId) -> Optional[BaseSample]:
         """Load record by key (return null if not found)."""
         return data_source.load_or_null_by_key(key, data_set)
-
-
-@attr.s(slots=True, auto_attribs=True)
-class BaseSampleKey(ABC):
 
     @classmethod
     def from_attribs(cls, *, record_id: str, record_index: int) -> Union[str, BaseSampleKey]:

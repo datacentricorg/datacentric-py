@@ -29,25 +29,31 @@ from datacentric.test.storage.element_sample import ElementSample
 
 @attr.s(slots=True, auto_attribs=True)
 class DerivedSample(BaseSample):
+    """Derived class sample."""
+
     double_element2: float = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
     string_element2: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
     list_of_string: List[str] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
     list_of_double: List[float] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
     list_of_nullable_double: List[float] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
     data_element: ElementSample = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
     data_element_list: List[ElementSample] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
     key_element: Union[str, BaseSampleKey] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Sample element."""
+
     key_element_list: List[Union[str, BaseSampleKey]] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
-
-
-@attr.s(slots=True, auto_attribs=True)
-class NullableElementsSample(TypedRecord):
-    string_token: str = attr.ib(default=None, kw_only=True)
-    bool_token: bool = attr.ib(default=None, kw_only=True)
-    int_token: int = attr.ib(default=None, kw_only=True)
-    local_date_token: Union[int, LocalDateHint] = attr.ib(default=None, kw_only=True)
-    local_time_token: Union[int, LocalTimeHint] = attr.ib(default=None, kw_only=True)
-    local_minute_token: Union[int, LocalMinuteHint] = attr.ib(default=None, kw_only=True)
-    local_date_time_token: Union[int, LocalDateTimeHint] = attr.ib(default=None, kw_only=True)
-    enum_token: EnumSample = attr.ib(default=None, kw_only=True)
-    record_index: int = attr.ib(default=None, kw_only=True)
+    """Sample element."""

@@ -27,17 +27,32 @@ from datacentric.test.storage.enum_sample import EnumSample
 
 @attr.s(slots=True, auto_attribs=True)
 class NullableElementsSample(TypedRecord):
+    """Sample class with every type of nullable element."""
+
     string_token: str = attr.ib(default=None, kw_only=True)
+    """Sample element."""
+
     bool_token: bool = attr.ib(default=None, kw_only=True)
+    """Sample element."""
+
     int_token: int = attr.ib(default=None, kw_only=True)
+    """Sample element."""
+
     local_date_token: Union[int, LocalDateHint] = attr.ib(default=None, kw_only=True)
+    """Sample element."""
+
     local_time_token: Union[int, LocalTimeHint] = attr.ib(default=None, kw_only=True)
+    """Sample element."""
+
     local_minute_token: Union[int, LocalMinuteHint] = attr.ib(default=None, kw_only=True)
+    """Sample element."""
+
     local_date_time_token: Union[int, LocalDateTimeHint] = attr.ib(default=None, kw_only=True)
+    """Sample element."""
+
     enum_token: EnumSample = attr.ib(default=None, kw_only=True)
+    """Sample element."""
+
     record_index: int = attr.ib(default=None, kw_only=True)
+    """Sample element."""
 
-
-@attr.s(slots=True, auto_attribs=True)
-class NullableElementsSampleKey(TypedKey[NullableElementsSample]):
-    pass

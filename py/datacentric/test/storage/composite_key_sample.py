@@ -23,9 +23,17 @@ from datacentric.test.storage.base_sample import BaseSample, BaseSampleKey
 
 @attr.s(slots=True, auto_attribs=True)
 class CompositeKeySample(TypedRecord):
+    """Sample for a class with composite key."""
+
     key_element1: str = attr.ib(default=None, kw_only=True)
+    """Sample element."""
+
     key_element2: BaseSampleKey = attr.ib(default=None, kw_only=True)
+    """Sample element."""
+
     key_element3: str = attr.ib(default=None, kw_only=True)
+    """Sample element."""
+
 
 
 @attr.s(slots=True, auto_attribs=True)

@@ -24,9 +24,7 @@ from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 @attr.s(slots=True, auto_attribs=True)
 class IdBasedKeySample(TypedRecord):
+    """Sample class with key that includes Id."""
+
     string_element: str = attr.ib(default=None, kw_only=True)
-
-
-@attr.s(slots=True, auto_attribs=True)
-class IdBasedKeySampleKey(TypedKey['IdBasedKeySample']):
-    id_: ObjectId = attr.ib(default=None, kw_only=True)
+    """Sample element."""

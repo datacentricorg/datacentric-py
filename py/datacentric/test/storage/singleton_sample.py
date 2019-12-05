@@ -16,17 +16,18 @@ import attr
 import unittest
 import datetime as dt
 from bson import ObjectId
-from datacentric.storage.typed_record import TypedRecord
-from datacentric.storage.typed_key import TypedKey
+from datacentric.storage.record import Record
 from datacentric.test.storage.base_sample import BaseSampleKey
 from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 
 @attr.s(slots=True, auto_attribs=True)
 class SingletonSample(TypedRecord):
+    """
+    Sample for a class with key that has no elements.
+
+    Only one such record can be stored per dataset.
+    """
     string_element: str = attr.ib(default=None, kw_only=True)
+    """Sample element."""
 
-
-@attr.s(slots=True, auto_attribs=True)
-class SingletonSampleKey(TypedKey['SingletonSample']):
-    pass

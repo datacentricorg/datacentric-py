@@ -13,19 +13,15 @@
 # limitations under the License.
 
 import attr
-from enum import IntEnum
-from typing import List, ClassVar, Tuple, Union
+from typing import Union, Optional, List, Any
+from abc import ABC, abstractmethod
+from datacentric.storage.key import Key
 
 
-class EnumSample(IntEnum):
-    """Enum sample."""
+class SingletonSampleKey(Key):
+    """
+    Sample for a class with key that has no elements.
 
-    Empty = 0
-    """Empty value."""
-
-    EnumValue1 = 1
-    """Sample value."""
-
-    EnumValue2 = 2
-    """Sample value."""
-
+    Only one such record can be stored per dataset.
+    """
+    pass

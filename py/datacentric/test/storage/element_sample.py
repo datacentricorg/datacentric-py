@@ -20,5 +20,10 @@ from datacentric.storage.data import Data
 
 @attr.s(slots=True, auto_attribs=True)
 class ElementSample(Data):
+    """Element type sample."""
     double_element3: float = attr.ib(default=None, kw_only=True)
+    """Sample element."""
+
     string_element3: str = attr.ib(default=None, kw_only=True)
+    """Sample element."""
+
