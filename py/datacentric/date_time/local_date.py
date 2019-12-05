@@ -12,140 +12,34 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import annotations
-from typing import Union, Optional
+from abc import ABC, abstractmethod
+from typing import Union
 import datetime as dt
 
 
-class LocalDateHint:
-    pass
-
-
-class LocalDate:
+class LocalDate(int, ABC):
     """
     Represents a date within the calendar, with no reference to a particular
     time zone or time of day, and provides conversion to and from:
 
     * Integer year, month, and day of month
-    * Integer in ISO yyyymmdd format
     * ISO string in yyyy-mm-dd format
     * Python dt.date
     """
 
-    __slots__ = ('__iso_int',)
-
-    __iso_int: int
-
-    def __init__(self,
-                 year_or_value: Union[int, str, dt.date],
-                 month: Optional[int] = None,
-                 day: Optional[int] = None):
-        """
-        Creates LocalDate from the specified arguments. The options for the
-        arguments include:
-
-        * Integer year, month, and day of month
-        * Integer in ISO yyyymmdd format
-        * ISO string in yyyy-mm-dd format
-        * Python dt.date
-        """
-
-        __iso_int = None
-        """Local date as int in ISO yyyymmdd format."""
-
-        # Becuase Python has no method overloads, we have to use default ctor
-        # arguments and determine the type dynamically. This flag is true
-        # if first argument is used to pass the entire value, in which case
-        # all other arguments (month, etc.) must be None
-        remaining_args_must_be_none: bool = True
-
-        # Determine what is passed as first ctor argument
-        if isinstance(year_or_value, int):
-
-            # If first argument is int, it may be year or ISO int for the entire date
-            year_or_iso_int: int = year_or_value
-
-            if 1970 <= year_or_iso_int <= 9999:
-
-                # First argument is year if in the range from 1970 to 9999 (inclusive)
-                year: int = year_or_iso_int
-
-                # This is one type of input where remaning args are used
-                remaining_args_must_be_none = False
-
-                # If the first argument is year, month and day are required
-                if month is None:
-                    raise Exception(f'In LocalDate constructor, first argument {year} is year '
-                                    f'in which case month must be specified.')
-                if day is None:
-                    raise Exception(f'In LocalDate constructor, first argument {year} is year '
-                                    f'in which case day must be specified.')
-
-                # Convert to int in ISO yyyymmdd format
-                self.__iso_int = 10_000 * year + 100 * month + day
-
-            elif 19700101 <= year_or_iso_int <= 99991231:
-
-                # First argument is year in ISO yyyymmdd format
-                self.__iso_int = year_or_iso_int
-
-            else:
-                raise Exception(f'First argument of LocalDate constructor {year_or_iso_int} is neither the year, '
-                                f'nor the entire date as int in ISO yyyymmdd format.')
-
-        elif isinstance(year_or_value, str):
-
-            # If argument is a string, it must use ISO yyyy-mm-dd format without timezone
-            iso_string: str = year_or_value
-            if iso_string.endswith('Z'):
-                raise Exception(f'String {iso_string} passed to LocalDate ctor must not end with capital Z that '
-                                f'indicates UTC timezone because LocalDate does not include timezone.')
-
-            # Convert from string in yyyy-mm-dd format
-            date_from_str: dt.date = dt.date.fromisoformat(iso_string)
-
-            # Convert to int in ISO yyyymmdd format
-            self.__iso_int = 10_000 * date_from_str.year + 100 * date_from_str.month + date_from_str.day
-
-        elif isinstance(year_or_value, dt.date):
-
-            # First argument is dt.datetime
-            date_arg: dt.date = year_or_value
-
-            # Convert to int in ISO yyyymmdd format
-            self.__iso_int = 10_000 * date_arg.year + 100 * date_arg.month + date_arg.day
-
-        else:
-            raise Exception(f'First argument of LocalDate constructor {year_or_value} must be one of '
-                            f'(a) year, (b) integer in ISO yyyymmdd format, (c) string in ISO yyyy-mm-dd format, '
-                            f'or (d) dt.date.')
-
-        # Depending on what is passed as the first argument, validate the remaining arguments
-        if remaining_args_must_be_none:
-
-            # If the first argument is not year, the remaining arguments must be None
-            if month is not None:
-                raise Exception(f'In LocalDate constructor, first argument {year_or_value} is the entire date '
-                                f'rather than year, in which case month={month} must be None.')
-            if day is not None:
-                raise Exception(f'In LocalDate constructor, first argument {year_or_value} is the entire date '
-                                f'rather than year, in which case day={day} must be None.')
-
-    def __str__(self) -> str:
+    @staticmethod
+    def to_iso_str(iso_int: int) -> str:
         """Convert to string in ISO yyyy-mm-dd format."""
         # We could directly format the output to string, however
         # this step will check that it is a valid date
-        d: dt.date = self.to_date()
+        d: dt.date = LocalDate.to_date(iso_int)
         result: str = d.isoformat()
         return result
 
-    def to_iso_int(self) -> int:
-        """Convert to int in ISO yyyymmdd format."""
-        return self.__iso_int
-
-    def to_date(self) -> dt.date:
+    @staticmethod
+    def to_date(iso_int: int) -> dt.date:
         """Convert to dt.date."""
-        value: int = self.__iso_int
+        value: int = iso_int
         year: int = value // 10_000
         value -= year * 10_000
         month: int = value // 100
@@ -154,44 +48,43 @@ class LocalDate:
         result: dt.date = dt.date(year, month, day)
         return result
 
-    def __eq__(self, other):
-        """
-        True if lhs and rhs represent the same moment in time.
+    @staticmethod
+    def from_date(date: dt.date) -> Union[int, 'LocalDate']:
+        """Convert to int in ISO yyyymmdd format."""
+        return 10_000 * date.year + 100 * date.month + date.day
 
-        Returns NotImplemented if rhs is None or not a LocalDate.
-        """
-        if isinstance(other, LocalDate):
-            return self.__iso_int == other.__iso_int
-        return NotImplemented
+    @staticmethod
+    def from_iso_str(iso_string: str) -> Union[int, 'LocalDate']:
+        """Convert from str in yyyy-mm-dd format to int in ISO yyyymmdd format."""
+        if iso_string.endswith('Z'):
+            raise Exception(f'String {iso_string} passed to LocalDate ctor must not end with capital Z that '
+                            f'indicates UTC timezone because LocalDate does not include timezone.')
 
-    def __lt__(self, other: LocalDate):
-        """
-        True if lhs is strictly earlier than rhs.
+        # Convert from string in yyyy-mm-dd format
+        date_from_str: dt.date = dt.date.fromisoformat(iso_string)
 
-        Error message if rhs is None.
-        """
-        return self.__iso_int < other.__iso_int
+        # Convert to int in ISO yyyymmdd format
+        return 10_000 * date_from_str.year + 100 * date_from_str.month + date_from_str.day
 
-    def __le__(self, other: LocalDate):
-        """
-        True if lhs is earlier than or equal to rhs.
+    @staticmethod
+    def from_ints(year: int, month: int, day: int) -> Union[int, 'LocalDate']:
+        """Convert int year, month and day to readable int format."""
 
-        Error message if rhs is None.
-        """
-        return self.__iso_int <= other.__iso_int
+        # TODO: improve check
+        if not (1970 <= year <= 9999):
+            raise Exception(f'year should be in 1970..9999 range.')
+        if not (1 <= month <= 12):
+            raise Exception(f'month should be in 1..12 range.')
+        if not (1 <= month <= 31):
+            raise Exception(f'day should be in 1..31 range.')
 
-    def __gt__(self, other: LocalDate):
-        """
-        True if lhs is strictly later than rhs.
+        # Convert to int in ISO yyyymmdd format
+        return 10_000 * year + 100 * month + day
 
-        Error message if rhs is None.
+    @abstractmethod
+    def abstract_class_guard(self) -> None:
         """
-        return self.__iso_int > other.__iso_int
-
-    def __ge__(self, other: LocalDate):
+        Guard method to prevent this abstract base class from
+        being instantiated.
         """
-        True if lhs is later than or equal to rhs.
-
-        Error message if rhs is None.
-        """
-        return self.__iso_int >= other.__iso_int
+        pass
