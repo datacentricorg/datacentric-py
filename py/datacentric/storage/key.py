@@ -16,13 +16,21 @@ import attr
 from abc import ABC, abstractmethod
 
 
-@attr.s(slots=True)
 class Key(ABC):
-    """Base class of a foreign key. Any slots defined in
-    type specific become key tokens. Property value and str(self)
-    consists of key tokens with semicolon delimiter.
+    """
+    Base class of a foreign key.
+
+    The sole purpose of foreign key classes derived from this class
+    is to provide type safety by servinv as annotations (hints).
+
+    To prevent this abstract base class from being instantiated, it
+    includes an guard method that should not be implemented.
     """
 
     @abstractmethod
-    def stub(self):
+    def abstract_class_guard(self) -> None:
+        """
+        Guard method to prevent this abstract base class from
+        being instantiated.
+        """
         pass
