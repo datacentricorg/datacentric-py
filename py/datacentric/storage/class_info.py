@@ -72,15 +72,17 @@ class ClassInfo:
             raise Exception(f'Cannot deduce key from type {type_.__name__}')
 
     @staticmethod
-    def get_root_type(type_: type) -> type:
+    def get_ultimate_base(type_: type) -> type:
         """
-        Returns type of the class at the root of the inheritance chain, one
-        before Data, TypedKey[TRecord], TypedRecord or RootRecord.
+        Returns the ultimate base class of the inheritance chain which
+        determines the collection name.
+
+        This is the class derived directly from Data, Record, or RootRecord.
         """
         from datacentric.storage.data import Data
         from datacentric.storage.record import Record
         from datacentric.storage.root_record import RootRecord
-        root_types = [RootRecord, Record, Data]
+        root_types = [Data, Record, RootRecord]
 
         if type_.mro()[0] in root_types:
             raise Exception(f'Cannot get root type from root type.')
@@ -89,7 +91,7 @@ class ClassInfo:
             if root_type in type_mro:
                 index = type_mro.index(root_type)
                 return type_mro[index - 1]
-        raise Exception(f'Type is not derived from Data.')
+        raise Exception(f'Type is not derived from Data, Record, or RootRecord.')
 
     @staticmethod
     def __get_runtime_imported_data(type_: type, children: List[type]) -> List[type]:

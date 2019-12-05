@@ -379,7 +379,7 @@ class TemporalMongoDataSource(MongoDataSource):
     def _get_or_create_collection(self, type_: type) -> Collection:
         if type_ in self.__collection_dict:
             return self.__collection_dict[type_]
-        root_type = ClassInfo.get_root_type(type_)
+        root_type = ClassInfo.get_ultimate_base(type_)
         collection_name = root_type.__name__
         collection = self.db.get_collection(collection_name)
         self.__collection_dict[type_] = collection

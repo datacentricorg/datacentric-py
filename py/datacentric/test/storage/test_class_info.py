@@ -18,39 +18,25 @@ from datacentric.storage.record import Record
 from datacentric.storage.key import Key
 from datacentric.storage.data import Data
 from datacentric.testing.unit_test import UnitTest
-
-
-class BaseRecord(Record):
-    pass
-
-
-class BaseKey(TypedKey[BaseRecord]):
-    pass
-
-
-class DerivedRecord(BaseRecord):
-    pass
-
-
-class ElementData(Data):
-    pass
+from datacentric.test.storage.base_sample import BaseSample
+from datacentric.test.storage.base_sample_key import BaseSampleKey
+from datacentric.test.storage.derived_sample import DerivedSample
+from datacentric.test.storage.element_sample import ElementSample
 
 
 class TestClassInfo(unittest.TestCase, UnitTest):
-    def test_root_type(self):
-        with self.assertRaises(Exception):
-            ClassInfo.get_root_type(TypedKey[BaseRecord])
-        with self.assertRaises(Exception):
-            ClassInfo.get_root_type(ClassInfo)
-        self.assertTrue(ClassInfo.get_root_type(BaseKey) == BaseKey)
-        self.assertTrue(ClassInfo.get_root_type(BaseRecord) == BaseRecord)
-        self.assertTrue(ClassInfo.get_root_type(DerivedRecord) == BaseRecord)
-        self.assertTrue(ClassInfo.get_root_type(ElementData) == ElementData)
+    """Tests for ClassInfo."""
 
-    @unittest.skip('Remove')
-    def test_key_type(self):
-        self.assertEqual(ClassInfo.get_key_from_record(BaseRecord), BaseKey)
-        self.assertEqual(ClassInfo.get_key_from_record(DerivedRecord), BaseKey)
+    def smoke(self):
+        """Smoke test."""
+
+        with self.assertRaises(Exception):
+            ClassInfo.get_ultimate_base(BaseSampleKey)
+        with self.assertRaises(Exception):
+            ClassInfo.get_ultimate_base(ClassInfo)
+        self.assertTrue(ClassInfo.get_ultimate_base(BaseSample) == BaseSample)
+        self.assertTrue(ClassInfo.get_ultimate_base(DerivedSample) == BaseSample)
+        self.assertTrue(ClassInfo.get_ultimate_base(ElementSample) == ElementSample)
 
 
 if __name__ == "__main__":

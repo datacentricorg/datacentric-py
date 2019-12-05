@@ -59,26 +59,27 @@ class BaseSample(Record):
     version: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
+    # --- METHODS
+
+    def to_key(self) -> Union[str, BaseSampleKey]:
+        """Create key string from the current record."""
+        return 'BaseSample=' + self.record_id + ';' + str(self.record_index)
+
     # --- STATIC
 
     @classmethod
     def load(cls, data_source: DataSource, key: Union[str, BaseSampleKey],
-             data_set: ObjectId) -> BaseSample:
+             data_set: ObjectId) -> 'BaseSample':
         """Load record by key (error message if not found)."""
         return data_source.load_by_key(key, data_set)
 
     @classmethod
     def load_or_null(cls, data_source: DataSource, key: Union[str, BaseSampleKey],
-                     data_set: ObjectId) -> Optional[BaseSample]:
+                     data_set: ObjectId) -> Optional['BaseSample']:
         """Load record by key (return null if not found)."""
         return data_source.load_or_null_by_key(key, data_set)
 
     @classmethod
-    def from_attribs(cls, *, record_id: str, record_index: int) -> Union[str, BaseSampleKey]:
-        """Create key string from key element params."""
+    def create_key(cls, *, record_id: str, record_index: int) -> Union[str, BaseSampleKey]:
+        """Create key string from key elements."""
         return f'BaseSample={record_id};{record_index}'
-
-    @classmethod
-    def from_record(cls, rec: BaseSample) -> Union[str, BaseSampleKey]:
-        """Create key string from key elements in the record."""
-        return f'BaseSample={rec.record_id};{rec.record_index}'
