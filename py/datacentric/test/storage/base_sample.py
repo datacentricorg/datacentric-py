@@ -17,10 +17,10 @@ from enum import IntEnum
 from typing import List, ClassVar, Tuple, Union, Optional
 from abc import ABC
 from bson import ObjectId
-from datacentric.date_time.local_date import LocalDate, LocalDateHint
-from datacentric.date_time.local_time import LocalTime, LocalTimeHint
-from datacentric.date_time.local_minute import LocalMinute, LocalMinuteHint
-from datacentric.date_time.local_date_time import LocalDateTime, LocalDateTimeHint
+from datacentric.date_time.local_date import LocalDate
+from datacentric.date_time.local_time import LocalTime
+from datacentric.date_time.local_minute import LocalMinute
+from datacentric.date_time.local_date_time import LocalDateTime
 from datacentric.storage.record import Record
 from datacentric.storage.key import Key
 from datacentric.storage.data_source import DataSource
@@ -41,16 +41,16 @@ class BaseSample(Record):
     double_element: float = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    local_date_element: Union[int, LocalDateHint] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_date_element: Union[int, LocalDate] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    local_time_element: Union[int, LocalTimeHint] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_time_element: Union[int, LocalTime] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    local_minute_element: Union[int, LocalMinuteHint] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_minute_element: Union[int, LocalMinute] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    local_date_time_element: Union[int, LocalDateTimeHint] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_date_time_element: Union[int, LocalDateTime] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
     enum_value: EnumSample = attr.ib(default=None, kw_only=True, metadata={'optional': True})

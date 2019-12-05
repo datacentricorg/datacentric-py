@@ -16,10 +16,10 @@ import attr
 from typing import Union, Optional, List, Any
 from enum import IntEnum
 from typing import List, ClassVar, Tuple, Union
-from datacentric.date_time.local_date import LocalDate, LocalDateHint
-from datacentric.date_time.local_time import LocalTime, LocalTimeHint
-from datacentric.date_time.local_minute import LocalMinute, LocalMinuteHint
-from datacentric.date_time.local_date_time import LocalDateTime, LocalDateTimeHint
+from datacentric.date_time.local_date import LocalDate
+from datacentric.date_time.local_time import LocalTime
+from datacentric.date_time.local_minute import LocalMinute
+from datacentric.date_time.local_date_time import LocalDateTime
 from datacentric.storage.record import Record
 from datacentric.storage.key import Key
 from datacentric.storage.data import Data
@@ -40,16 +40,16 @@ class NullableElementsSample(Record):
     int_token: int = attr.ib(default=None, kw_only=True)
     """Sample element."""
 
-    local_date_token: Union[int, LocalDateHint] = attr.ib(default=None, kw_only=True)
+    local_date_token: Union[int, LocalDate] = attr.ib(default=None, kw_only=True)
     """Sample element."""
 
-    local_time_token: Union[int, LocalTimeHint] = attr.ib(default=None, kw_only=True)
+    local_time_token: Union[int, LocalTime] = attr.ib(default=None, kw_only=True)
     """Sample element."""
 
-    local_minute_token: Union[int, LocalMinuteHint] = attr.ib(default=None, kw_only=True)
+    local_minute_token: Union[int, LocalMinute] = attr.ib(default=None, kw_only=True)
     """Sample element."""
 
-    local_date_time_token: Union[int, LocalDateTimeHint] = attr.ib(default=None, kw_only=True)
+    local_date_time_token: Union[int, LocalDateTime] = attr.ib(default=None, kw_only=True)
     """Sample element."""
 
     enum_token: EnumSample = attr.ib(default=None, kw_only=True)

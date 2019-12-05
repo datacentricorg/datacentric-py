@@ -18,11 +18,6 @@ import locale
 import datetime as dt
 
 
-# TODO - this is a placeholder, implement
-class LocalTimeHint:
-    pass
-
-
 class LocalTime:
     """
     Represents time of day to millisecond precision, with no reference to a

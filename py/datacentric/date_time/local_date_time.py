@@ -16,11 +16,6 @@ from __future__ import annotations
 import datetime as dt
 
 
-# TODO - this is a placeholder, implement
-class LocalDateTimeHint:
-    pass
-
-
 class LocalDateTime:
     """
     LocalDateTime is an immutable struct representing a date and time of day

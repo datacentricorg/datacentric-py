@@ -21,18 +21,18 @@ from typing import Dict, Any, get_type_hints, TypeVar, Union, List
 from typing_inspect import get_origin, get_args
 from datacentric.primitive.string_util import StringUtil
 from datacentric.storage.class_info import ClassInfo
-from datacentric.date_time.local_time import LocalTime, LocalTimeHint
-from datacentric.date_time.local_minute import LocalMinute, LocalMinuteHint
-from datacentric.date_time.local_date import LocalDate, LocalDateHint
-from datacentric.date_time.local_date_time import LocalDateTime, LocalDateTimeHint
-from datacentric.date_time.instant import Instant, InstantHint
+from datacentric.date_time.local_time import LocalTime
+from datacentric.date_time.local_minute import LocalMinute
+from datacentric.date_time.local_date import LocalDate
+from datacentric.date_time.local_date_time import LocalDateTime
+from datacentric.date_time.instant import Instant
 from datacentric.storage.key import Key
 from datacentric.storage.record import Record
 from datacentric.storage.data import Data
 
 TRecord = TypeVar('TRecord', bound=Record)
 
-_local_hints_ = [LocalMinuteHint, LocalDateTimeHint, LocalDateHint, LocalTimeHint]
+_local_hints_ = [LocalMinute, LocalDateTime, LocalDate, LocalTime]
 # Serialization: object -> dict
 
 
@@ -122,7 +122,7 @@ def _serialize_unions(type_hint, value_) -> Any:
         if type(value_) is not int:
             raise Exception(f'Expected int')  # TODO Improve comment to be specific about which date type is used
         return value_
-    if args[0] is dt.datetime and args[1] == InstantHint:
+    if args[0] is dt.datetime and args[1] == Instant:
         if type(value_) is not dt.datetime:
             raise Exception(f'Expected dt.datetime')
         return value_
