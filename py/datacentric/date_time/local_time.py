@@ -12,13 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import annotations
+from abc import ABC, abstractmethod
 from typing import Union, Optional
 import locale
 import datetime as dt
 
 
-class LocalTime:
+class LocalTime(int, ABC)
     """
     Represents time of day to millisecond precision, with no reference to a
     particular date or time zone, and provides conversion to and from:
@@ -28,10 +28,6 @@ class LocalTime:
     * ISO string to millisecond precision in hh:mm:ss.fff format
     * Python dt.time
     """
-
-    __slots__ = ('__iso_int',)
-
-    __iso_int: int
 
     def __init__(self,
                  hour_or_value: Union[int, str, dt.time],
@@ -223,44 +219,3 @@ class LocalTime:
         result: dt.time = dt.time(hour, minute, second, 1000 * millisecond)
         return result
 
-    def __eq__(self, other):
-        """
-        True if lhs and rhs represent the same moment in time.
-
-        Returns NotImplemented if rhs is None or not a LocalTime.
-        """
-        if isinstance(other, LocalTime):
-            return self.__iso_int == other.__iso_int
-        return NotImplemented
-
-    def __lt__(self, other: LocalTime):
-        """
-        True if lhs is strictly earlier than rhs.
-
-        Error message if rhs is None.
-        """
-        return self.__iso_int < other.__iso_int
-
-    def __le__(self, other: LocalTime):
-        """
-        True if lhs is earlier than or equal to rhs.
-
-        Error message if rhs is None.
-        """
-        return self.__iso_int <= other.__iso_int
-
-    def __gt__(self, other: LocalTime):
-        """
-        True if lhs is strictly later than rhs.
-
-        Error message if rhs is None.
-        """
-        return self.__iso_int > other.__iso_int
-
-    def __ge__(self, other: LocalTime):
-        """
-        True if lhs is later than or equal to rhs.
-
-        Error message if rhs is None.
-        """
-        return self.__iso_int >= other.__iso_int

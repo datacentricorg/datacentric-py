@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import annotations
+from abc import ABC, abstractmethod
 import datetime as dt
 import numpy as np
 
 # TODO - implementation is incomplete
 
 
-class LocalMinute:
+class LocalMinute(int, ABC)
     """
     LocalMinute is an immutable struct representing a time of day
     to one minute precision, with no reference to a particular calendar,
@@ -28,9 +28,6 @@ class LocalMinute:
     This class is not part of NodaTime but is inspired by NodaTime.LocalTime
     and follows the NodaTime naming conventions.
     """
-
-    hour: int
-    minute: int
 
     def __init__(self, hour: int, minute: int):
         """
@@ -61,43 +58,6 @@ class LocalMinute:
         value -= hour * 100
         minute = value
         return cls(hour, minute)
-
-    def __eq__(self, other):
-        """
-        Compares two local times for equality, by checking whether
-        they represent the exact same local time, down to the tick.
-        """
-        if isinstance(other, LocalMinute):
-            return self.minute_of_day == other.minute_of_day
-        return NotImplemented
-
-    def __lt__(self, other: LocalMinute):
-        """
-        Compares two LocalMinute values to see if the left one
-        is strictly earlier than the right one.
-        """
-        return self.minute_of_day < other.minute_of_day
-
-    def __le__(self, other: LocalMinute):
-        """
-        Compares two LocalMinute values to see if the left one
-        is earlier than or equal to the right one.
-        """
-        return self.minute_of_day <= other.minute_of_day
-
-    def __gt__(self, other: LocalMinute):
-        """
-        Compares two LocalMinute values to see if the left one
-        is strictly later than the right one.
-        """
-        return self.minute_of_day > other.minute_of_day
-
-    def __ge__(self, other: LocalMinute):
-        """
-        Compares two LocalMinute values to see if the left one
-        is later than or equal to the right one.
-        """
-        return self.minute_of_day >= other.minute_of_day
 
     def __str__(self):
         """

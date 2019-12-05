@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from __future__ import annotations
+from abc import ABC, abstractmethod
 import datetime as dt
 
 
-class LocalDateTime:
+class LocalDateTime(int, ABC)
     """
     LocalDateTime is an immutable struct representing a date and time of day
     within the calendar, with no reference to a particular time zone.
