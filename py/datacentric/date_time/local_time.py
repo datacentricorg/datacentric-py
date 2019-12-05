@@ -45,7 +45,7 @@ class LocalTime(int, ABC):
                     millisecond: Optional[int] = None) -> Union[int, 'LocalTime']:
         """
         Convert hour to millisecond fields to LocalTime represented in hhmmssfff format.
-        
+
         Millisecond field is optional. Zero value will be assumed if not specified.
         """
 
@@ -99,16 +99,16 @@ class LocalTime(int, ABC):
         time_from_str: dt.time
         if '.' in value:
             # Has milliseconds
-            time_from_str = dt.time.strptime(value, '%H:%M:%S.%f')
+            time_from_str = dt.datetime.strptime(value, '%H:%M:%S.%f').time()
         else:
             # Does not have milliseconds
-            time_from_str = dt.time.strptime(value, '%H:%M:%S')
+            time_from_str = dt.datetime.strptime(value, '%H:%M:%S').time()
 
         # Round the result to whole milliseconds
         rounded_time: dt.time = cls.__round_lenient(time_from_str)
 
         # Convert to LocalTime represented as int in hhmmssfff format
-        result: cls.from_time(rounded_time)
+        result: Union[int, LocalTime] = cls.from_time(rounded_time)
         return result
 
     @classmethod
@@ -129,10 +129,24 @@ class LocalTime(int, ABC):
         # Convert to string in ISO format without timezone, with
         # 3 digits after decimal points for seconds, irrespective of
         # how many digits are actually required.
-        result_to_microseconds: str = value.strftime('%H:%M:%S.%f')
+        result_to_microseconds: str = cls.to_time(value).strftime('%H:%M:%S.%f')
         result: str = result_to_microseconds[:-3]
         return result
 
+    @classmethod
+    def from_time(cls, value: dt.time) -> Union[int, 'LocalTime']:
+        """
+        Convert from dt.time.
+
+        The argument time must not specify a timezone and will
+        be rounded to whole milliseconds.
+        """
+
+        # Round the millisecond
+        millisecond: int = round(value.microsecond / 1000.0)
+
+        result: Union[int, 'LocalTime'] = LocalTime.from_fields(value.hour, value.minute, value.second, millisecond)
+        return result
 
     @classmethod
     def to_time(cls, value: Union[int, 'LocalTime']) -> dt.time:
@@ -140,7 +154,7 @@ class LocalTime(int, ABC):
 
         # Convert to tuple
         hour, minute, second, millisecond = cls.__to_fields_lenient(value)
-    
+
         # The resulting dt.time must not have a timezone
         result: dt.time = dt.time(hour, minute, second, 1000 * millisecond)
         return result
