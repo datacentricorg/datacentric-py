@@ -88,13 +88,16 @@ class ClassInfo:
             raise Exception(f'Cannot get inheritance chain for the Record class, '
                             f'only for classes derived from it.')
 
-        result: List[str] = []
-        for i in range(0, len(type_mro)):
-            result.append(type_mro[i].__name__)
-            if type_mro[i] is Record:
-                result.reverse()
-                return result
-        raise Exception(f'Type is not derived from Record')
+        if RootRecord in type_mro:
+            idx = type_mro.index(RootRecord)
+            return [x.__name__ for x in type_mro[:idx]]
+        elif Record in type_mro:
+            idx = type_mro.index(Record)
+            return [x.__name__ for x in type_mro[:idx]]
+        elif Data in type_mro:
+            idx = type_mro.index(Data)
+            return [x.__name__ for x in type_mro[:idx]]
+        raise Exception(f'Type is not derived from Data')
 
     @staticmethod
     def __get_runtime_imported_data(type_: type, children: List[type]) -> List[type]:

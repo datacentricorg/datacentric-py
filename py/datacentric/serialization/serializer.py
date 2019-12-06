@@ -68,7 +68,8 @@ def _serialize_class(obj: TRecord, expected_: type):
         raise Exception(f'Expected: {expected_.__name__}, actual: {cls_type.__name__}')
 
     cls_name = cls_type.__name__
-    dict_['_t'] = cls_name
+    # Field _t contains inheritance chain of the class, starting from Record
+    dict_['_t'] = ClassInfo.get_record_inheritance_chain(cls_type)
 
     mro = cls_type.__mro__
     fields = attr.fields(cls_type)
@@ -197,21 +198,22 @@ def _serialize_primitive(value, expected_):
 
 # TODO: Refactor
 def deserialize(dict_: Dict) -> TRecord:
+    # key_ is omitted and is calculated using records to_
+    dict_.pop('_key')
+
     data_set = dict_.pop('_dataset')
-    _key = dict_.pop('_key')
     id_ = dict_.pop('_id')
 
     new_obj: TRecord = _deserialize_class(dict_)
 
     new_obj.__setattr__('data_set', data_set)
-    # new_obj.__setattr__('_key', _key)
     new_obj.__setattr__('id_', id_)
 
     return new_obj
 
 
 def _deserialize_class(dict_: Dict[str, Any]) -> TRecord:
-    type_name: str = dict_.pop('_t')[-1]
+    type_name: str = dict_.pop('_t')[0]
 
     type_info = ClassInfo.get_type(type_name)
 
@@ -233,9 +235,6 @@ def _deserialize_class(dict_: Dict[str, Any]) -> TRecord:
             deserialized_value = _deserialize_list(member_type, dict_value)
         elif get_origin(member_type) is not None and get_origin(member_type) is Union:
             deserialized_value = dict_value
-        elif issubclass(member_type, Key):
-            deserialized_value = member_type()
-            deserialized_value.populate_from_string(dict_value)
         elif issubclass(member_type, Data):
             deserialized_value = _deserialize_class(dict_value)
         elif issubclass(member_type, IntEnum):
@@ -252,13 +251,6 @@ def _deserialize_list(type_: type, list_):
     origin = get_origin(expected_item_type)
     if origin is not None and origin is Union:
         return list_
-    if issubclass(expected_item_type, Key):
-        result = []
-        for item in list_:
-            deserialized_key = expected_item_type()
-            deserialized_key.populate_from_string(item)
-            result.append(deserialized_key)
-        return result
     elif issubclass(expected_item_type, Data):
         return [_deserialize_class(x) for x in list_]
     elif issubclass(expected_item_type, IntEnum):
@@ -276,14 +268,6 @@ def _deserialize_primitive(expected_type, value):
         return np.array(value)
     elif expected_type == bool:
         return value
-    elif expected_type == LocalMinute:
-        return LocalMinute.from_iso_int(value)
-    elif expected_type == LocalDateTime:
-        return LocalDateTime.from_iso_int(value)
-    elif expected_type == LocalDate:
-        return LocalDate.from_iso_int(value)
-    elif expected_type == LocalTime:
-        return LocalTime.from_iso_int(value)
     elif expected_type == int:
         return value
     elif expected_type == float:

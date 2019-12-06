@@ -121,7 +121,9 @@ class TemporalMongoDataSource(MongoDataSource):
         however an exception will be thrown if the record exists but
         is not derived from TRecord.
         """
-        base_pipe = [{"$match": {"_key": key_}}]
+        collection_name, key_value  = key_.split('=', 1)
+
+        base_pipe = [{"$match": {"_key": key_value}}]
         pipe_with_constraints = self.apply_final_constraints(base_pipe, load_from)
         ordered_pipe = pipe_with_constraints
         ordered_pipe.extend(
@@ -240,7 +242,7 @@ class TemporalMongoDataSource(MongoDataSource):
         if data_set_name in self.__data_set_dict:
             return self.__data_set_dict[data_set_name]
 
-        data_set_record = self.load_or_null_by_key(DataSet, data_set_name, load_from)
+        data_set_record = self.load_or_null_by_key(DataSet, DataSet.create_key(data_set_name=data_set_name), load_from)
 
         if data_set_record is None:
             return None
@@ -297,8 +299,8 @@ class TemporalMongoDataSource(MongoDataSource):
             return self.__data_set_detail_dict[detail_for]
 
         parent_id = self.__data_set_parent_dict[detail_for]
-
-        result = self.load_or_null_by_key(DataSetDetail, str(detail_for), parent_id)
+        dataset_detail_key = DataSetDetail.create_key(data_set_id=detail_for)
+        result = self.load_or_null_by_key(DataSetDetail, dataset_detail_key, parent_id)
         self.__data_set_detail_dict[detail_for] = result
         return result
 
