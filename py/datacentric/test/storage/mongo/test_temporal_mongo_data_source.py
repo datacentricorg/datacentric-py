@@ -33,10 +33,10 @@ def save_base_record(context: Context, data_set_id, record_id, record_index) -> 
     rec.record_name = record_id
     rec.record_index = record_index
     rec.double_element = 100.0
-    rec.local_date_element = LocalDate.from_ints(2003, 5, 1)
-    rec.local_time_element = LocalTime(10, 15, 30).to_iso_int()  # 10:15:30
-    rec.local_minute_element = LocalMinute(10, 15).to_iso_int()  # 10:15
-    rec.local_date_time_element = LocalDateTime(2003, 5, 1, 10, 15).to_iso_int()  # 2003-05-01T10:15:00
+    rec.local_date_element = LocalDate.from_fields(2003, 5, 1)
+    rec.local_time_element = LocalTime.from_fields(10, 15, 30)  # 10:15:30
+    rec.local_minute_element = LocalMinute.from_fields(10, 15)  # 10:15
+    rec.local_date_time_element = LocalDateTime.from_fields(2003, 5, 1, 10, 15)  # 2003-05-01T10:15:00
     rec.enum_value = EnumSample.EnumValue2
 
     data_set = context.data_source.get_data_set(data_set_id, context.data_set)
@@ -47,13 +47,13 @@ def save_base_record(context: Context, data_set_id, record_id, record_index) -> 
 
 def save_derived_record(context, data_set_id, record_id, record_index) -> ObjectId:
     rec = DerivedSample()
-    rec.record_id = record_id
+    rec.record_name = record_id
     rec.record_index = record_index
     rec.double_element = 300.
-    rec.local_date_element = LocalDate(2003, 5, 1).to_iso_int()
-    rec.local_time_element = LocalTime(10, 15, 30).to_iso_int()  # 10:15:30
-    rec.local_minute_element = LocalMinute(10, 15).to_iso_int()  # 10:15
-    rec.local_date_time_element = LocalDateTime(2003, 5, 1, 10, 15).to_iso_int()  # 2003-05-01T10:15:00
+    rec.local_date_element = LocalDate.from_fields(2003, 5, 1)
+    rec.local_time_element = LocalTime.from_fields(10, 15, 30)  # 10:15:30
+    rec.local_minute_element = LocalMinute.from_fields(10, 15)  # 10:15
+    rec.local_date_time_element = LocalDateTime.from_fields(2003, 5, 1, 10, 15)  # 2003-05-01T10:15:00
     rec.string_element2 = ''
     rec.double_element = 200.
     rec.list_of_string = ['A', 'B', 'C']
@@ -130,10 +130,10 @@ class TestTemporalMongoDataSource(unittest.TestCase, UnitTest):
             key_a0 = 'BaseSample=A;0'
             key_b0 = 'BaseSample=B;0'
 
-            self.assertEqual(verify_load(context, 'DataSet0', key_a0), 'Found. Type = BaseSample')
-            self.assertEqual(verify_load(context, 'DataSet1', key_a0), 'Found. Type = BaseSample')
-            self.assertEqual(verify_load(context, 'DataSet0', key_b0), 'Not found')
-            self.assertEqual(verify_load(context, 'DataSet1', key_b0), 'Found. Type = DerivedSample')
+            self.assertEqual('Found, type = BaseSample', verify_load(context, 'DataSet0', key_a0))
+            self.assertEqual('Found, type = BaseSample', verify_load(context, 'DataSet1', key_a0))
+            self.assertEqual('Not found', verify_load(context, 'DataSet0', key_b0))
+            self.assertEqual('Found, type = DerivedSample', verify_load(context, 'DataSet1', key_b0))
 
     def test_multiple_data_set_query(self):
         with TemporalMongoUnitTestContext(self) as context:
