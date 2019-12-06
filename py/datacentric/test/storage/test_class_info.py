@@ -14,9 +14,6 @@
 
 import unittest
 from datacentric.storage.class_info import ClassInfo
-from datacentric.storage.record import Record
-from datacentric.storage.key import Key
-from datacentric.storage.data import Data
 from datacentric.testing.unit_test import UnitTest
 from datacentric.test.storage.base_sample import BaseSample
 from datacentric.test.storage.base_sample_key import BaseSampleKey
@@ -28,7 +25,7 @@ from datacentric.test.storage.root_sample import RootSample
 class TestClassInfo(unittest.TestCase, UnitTest):
     """Tests for ClassInfo."""
 
-    def smoke(self):
+    def test_smoke(self):
         """Smoke test."""
 
         with self.assertRaises(Exception):
@@ -39,6 +36,13 @@ class TestClassInfo(unittest.TestCase, UnitTest):
         self.assertTrue(ClassInfo.get_ultimate_base(DerivedSample) == BaseSample)
         self.assertTrue(ClassInfo.get_ultimate_base(ElementSample) == ElementSample)
         self.assertTrue(ClassInfo.get_ultimate_base(RootSample) == RootSample)
+
+    def test_inheritance_chain(self):
+        """Check inheritance chain for different cases."""
+
+        self.assertEqual(['BaseSample'], ClassInfo.get_inheritance_chain(BaseSample))
+        self.assertEqual(['BaseSample', 'DerivedSample'], ClassInfo.get_inheritance_chain(DerivedSample))
+        self.assertEqual(['ElementSample'], ClassInfo.get_inheritance_chain(ElementSample))
 
 
 if __name__ == "__main__":

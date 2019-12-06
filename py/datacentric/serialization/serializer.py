@@ -43,7 +43,7 @@ def serialize(obj: TRecord):
     dict_ = _serialize_class(obj, type_)
 
     # Field _t contains inheritance chain of the class, starting from Record
-    dict_['_t'] = ClassInfo.get_record_inheritance_chain(type_)
+    dict_['_t'] = ClassInfo.get_inheritance_chain(type_)
 
     # ObjectId of the dataset
     dict_['_dataset'] = obj.data_set
@@ -69,7 +69,7 @@ def _serialize_class(obj: TRecord, expected_: type):
 
     cls_name = cls_type.__name__
     # Field _t contains inheritance chain of the class, starting from Record
-    dict_['_t'] = ClassInfo.get_record_inheritance_chain(cls_type)
+    dict_['_t'] = ClassInfo.get_inheritance_chain(cls_type)
 
     mro = cls_type.__mro__
     fields = attr.fields(cls_type)
@@ -213,7 +213,7 @@ def deserialize(dict_: Dict) -> TRecord:
 
 
 def _deserialize_class(dict_: Dict[str, Any]) -> TRecord:
-    type_name: str = dict_.pop('_t')[0]
+    type_name: str = dict_.pop('_t')[-1]
 
     type_info = ClassInfo.get_type(type_name)
 

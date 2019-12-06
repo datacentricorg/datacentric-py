@@ -68,13 +68,13 @@ class ClassInfo:
         raise Exception(f'Type is not derived from Data, Record, or RootRecord.')
 
     @staticmethod
-    def get_record_inheritance_chain(type_: type) -> List[str]:
+    def get_inheritance_chain(type_: type) -> List[str]:
         """
         Returns the inheritance chain of the class as a list of
-        class name strings, starting from Record and ending with
-        the class itself.
+        class name strings, starting from RootRecord or Record or Data
+        and ending with the class itself.
 
-        The class must be derived from Record, error message otherwise.
+        The class must be derived from Data, error message otherwise.
         """
 
         # TODO - cache ClassInfo in singleton dict so it is not recomputed every time
@@ -90,13 +90,13 @@ class ClassInfo:
 
         if RootRecord in type_mro:
             idx = type_mro.index(RootRecord)
-            return [x.__name__ for x in type_mro[:idx]]
+            return [x.__name__ for x in type_mro[idx-1::-1]]
         elif Record in type_mro:
             idx = type_mro.index(Record)
-            return [x.__name__ for x in type_mro[:idx]]
+            return [x.__name__ for x in type_mro[idx-1::-1]]
         elif Data in type_mro:
             idx = type_mro.index(Data)
-            return [x.__name__ for x in type_mro[:idx]]
+            return [x.__name__ for x in type_mro[idx-1::-1]]
         raise Exception(f'Type is not derived from Data')
 
     @staticmethod
