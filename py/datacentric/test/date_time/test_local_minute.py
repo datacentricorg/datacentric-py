@@ -14,9 +14,9 @@
 
 import unittest
 import datetime as dt
-from datacentric.testing.unit_test import UnitTest
+from typing import Union
 from datacentric.date_time.local_minute import LocalMinute
-from datacentric.testing.unit_test import UnitTestKey, UnitTest
+from datacentric.testing.unit_test import UnitTest
 
 
 class TestLocalMinute(unittest.TestCase, UnitTest):
@@ -32,43 +32,34 @@ class TestLocalMinute(unittest.TestCase, UnitTest):
     def test_smoke(self):
         """Smoke test"""
 
-        t = LocalMinute(12, 10)
-        self.assertEqual(t.hour, 12)
-        self.assertEqual(t.minute, 10)
-        self.assertEqual(t.minute_of_day, 730)
+        # Created minutes t1-t5 must match this value of string and/or Unix millis
+        time_str: str = '10:15'
+        iso_int: int = 1015
 
-        t1 = LocalMinute(12, 10)
-        t2 = LocalMinute(1, 15)
-        self.assertEqual(str(t1), '12:10')
-        self.assertEqual(str(t2), '01:15')
-        self.assertEqual(t1.to_time(), dt.time(12, 10))
-        self.assertEqual(t2.to_time(), dt.time(1, 15))
+        # Validate
+        t1: Union[int, LocalMinute] = iso_int
+        LocalMinute.validate(t1)
 
-        t = LocalMinute(12, 0)
-        t1 = LocalMinute(12, 0)
-        t2 = LocalMinute(13, 1)
-        t3 = LocalMinute(14, 2)
+        # Create from year, month, day
+        t2: Union[int, LocalMinute] = LocalMinute.from_fields(10, 15)
+        self.assertEqual(t2, iso_int)
 
-        self.assertTrue(t1 == t)
-        self.assertTrue(t1 != t2)
-        self.assertTrue(t2 != t3)
+        # Create from string
+        t3: Union[int, LocalMinute] = LocalMinute.from_str(time_str)
+        self.assertEqual(t3, iso_int)
 
-        self.assertTrue(t1 <= t1)
-        self.assertTrue(t1 <= t2)
-        self.assertTrue(t2 <= t3)
+        # Create from dt.time
+        t: dt.time = dt.time.fromisoformat('10:15')
+        t4: Union[int, LocalMinute] = LocalMinute.from_time(t)
+        self.assertEqual(t4, iso_int)
 
-        self.assertTrue(t1 < t2)
-        self.assertTrue(t1 < t3)
-        self.assertTrue(t2 < t3)
+        # Test conversion to dt.date
+        self.assertEqual(LocalMinute.to_time(t1), t)
 
-        self.assertTrue(t1 >= t1)
-        self.assertTrue(t2 >= t1)
-        self.assertTrue(t3 >= t2)
-
-        self.assertTrue(t2 > t1)
-        self.assertTrue(t3 > t1)
-        self.assertTrue(t3 > t2)
-
+        # Test string representation roundtrip
+        self.assertEqual(LocalMinute.to_str(t1), time_str)
+        t6_str = '10:15'
+        self.assertEqual(LocalMinute.to_str(LocalMinute.from_str(t6_str)), t6_str)
 
 if __name__ == "__main__":
     unittest.main()
