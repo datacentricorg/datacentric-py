@@ -56,7 +56,7 @@ class LocalDateTime(int, ABC):
             millisecond = 0
 
         # Convert to LocalDateTime represented in yyyymmddhhmmssfff format
-        result: int = 1_000_000_000_000_000 * year * + 100_000_000_000 * month * + 1_000_000_000 * day + \
+        result: int = 1_000_000_000_000_000 * year + 100_000_000_000 * month + 1_000_000_000 * day + \
                       10_000_000 * hour + 100_000 * minute + 1000 * second + millisecond
 
         # Validate and return
