@@ -13,6 +13,8 @@
 # limitations under the License.
 
 import sys
+import os
+from typing import Optional
 from datacentric.storage.context import Context
 from datacentric.log.log_verbosity import LogVerbosity
 from datacentric.log.file_log import FileLog
@@ -27,26 +29,54 @@ class UnitTestContext(Context):
     This class extends Context with approval test functionality.
     """
 
+    __slots__ = ('test_method_name', 'test_module_name', 'test_folder_path')
+
+    test_method_name: Optional[str]
+    test_module_name: Optional[str]
+    test_folder_path: Optional[str]
+
     def __init__(self):
+        """Inspect call stack to set properties."""
         super().__init__()
-        # Inspect stack to get filename and method name of the source
-        # code location where UnitTestContext constructor is called.
+
+        self.test_method_name = None
+        """
+        Name of the unit test method obtained by inspecting call stack.
+        """
+
+        self.test_module_name = None
+        """
+        Test module name obtained by inspecting call stack.
+        """
+
+        self.test_folder_path = None
+        """
+        Test folder name obtained by inspecting call stack.
+        """
+
+        # Inspect call stack to get filename and method name of the
+        # source code location where UnitTestContext constructor is called.
         # If called from create_method_context, take the method that
         # called create_method_context instead.
         stack_frame_index: int = 1
         while True:
             caller_frame = sys._getframe(stack_frame_index)
-            if caller_frame.f_code.co_name != 'create_method_context':
+            if caller_frame.f_code.co_name != '__init__':
                 break
             stack_frame_index = stack_frame_index + 1
 
+        # Get method name from call stack
+        self.test_method_name = caller_frame.f_code.co_name
+
+        # Use right split (rsplit) to get folder path and module name
         test_file_path: str = caller_frame.f_code.co_filename
-        method_name: str = caller_frame.f_code.co_name
+        self.test_folder_path, test_module_name_with_extension = os.path.split(test_file_path)
+        self.test_module_name = test_module_name_with_extension.replace('.py', '')
 
         # Use log file name format class_name.method_name.approved.txt from
         # the ApprovalTests.Python package
-        test_file_path_without_extension: str = test_file_path.replace('.py', '')
-        log_file_path: str = f'{test_file_path_without_extension}.{method_name}.approved.txt'
+        log_file_path: str = os.path.join(self.test_folder_path,
+                                          f'{self.test_module_name}.{self.test_method_name}.approved.txt')
 
         # Create file log for log_file_path
         # Do not call init(...) here as it

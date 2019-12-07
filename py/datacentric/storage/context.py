@@ -33,39 +33,71 @@ class Context:
     * Filesystem access (if available)
     """
 
+    __slots__ = ('__log', '__data_source', '__data_set')
+
     __log: Optional['Log']
-    data_source: Optional['DataSource']
-    data_set: Optional[ObjectId]
+    __data_source: Optional['DataSource']
+    __data_set: Optional[ObjectId]
 
     def __init__(self):
 
         self.__log = None
-        """Logging interface."""
+        """Logging interface of the context."""
 
-        self.data_source = None
+        self.__data_source = None
         """Default data source of the context."""
 
-        self.data_set = None
+        self.__data_set = None
         """Default dataset of the context."""
 
     # --- PROPERTIES
 
     @property
     def log(self) -> 'Log':
-        """Logging interface."""
+        """Return log property, error message if not set."""
 
-        # Define log
+        # Define log here to avoid a cyclic reference
         from datacentric.log.log import Log
 
         if not self.__log:
-            raise Exception('fLog property is not set in {GetType().Name}.')
+            raise Exception('Log property is not set in Context.')
         return self.__log
 
     @log.setter
     def log(self, value: 'Log'):
-        """Logging interface."""
+        """Set log property and pass self to its init method."""
         self.__log = value
         self.__log.init(self)
+
+    @property
+    def data_source(self) -> 'DataSource':
+        """Return data_source property, error message if not set."""
+
+        # Define data source here to avoid a cyclic reference
+        from datacentric.storage.data_source import DataSource
+
+        if not self.__data_source:
+            raise Exception('Data source property is not set in Context.')
+        return self.__data_source
+
+    @data_source.setter
+    def data_source(self, value: 'DataSource'):
+        """Set data_source property and pass self to its init method."""
+        self.__data_source = value
+        self.__data_source.init(self)
+
+    @property
+    def data_set(self) -> ObjectId:
+        """Return data_set property, error message if not set."""
+
+        if not self.__data_set:
+            raise Exception('Dataset property is not set in Context.')
+        return self.__data_set
+
+    @data_set.setter
+    def data_set(self, value: ObjectId):
+        """Set data_set property."""
+        self.__data_set = value
 
     # --- METHODS
 
