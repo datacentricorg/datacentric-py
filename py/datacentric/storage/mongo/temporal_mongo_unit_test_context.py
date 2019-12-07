@@ -12,16 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from datacentric.storage.mongo.mongo_unit_test_context import MongoUnitTestContext
+from datacentric.storage.unit_test_context import UnitTestContext
 from datacentric.storage.mongo.temporal_mongo_data_source import TemporalMongoDataSource
+from datacentric.storage.env_type import EnvType
 
 
-class TemporalMongoUnitTestContext(MongoUnitTestContext[TemporalMongoDataSource]):
+class TemporalMongoUnitTestContext(UnitTestContext):
     """
-    Specialization of MongoUnitTestContext for TemporalMongoDataSource.
+    TemporalMongoUnitTestContext is the context for use in test fixtures
+    that require a temporal Mongo data source.
 
-    MongoUnitTestContext is the context for use in test fixtures that
-    require a data source, parameterized by data source type.
     It extends UnitTestContext by creating an empty test
     database specific to the test method, and deleting
     it after the test exits. The context creates Common
@@ -40,3 +40,21 @@ class TemporalMongoUnitTestContext(MongoUnitTestContext[TemporalMongoDataSource]
     def __init__(self):
         """Inspect call stack to set properties."""
         super().__init__()
+
+        # Create and initialize data source with TEST environment type.
+        #
+        # This does not create the database until the data source
+        # is actually used to access data.
+
+        # Create data source specified as generic argument
+        self.data_source = TemporalMongoDataSource(
+            env_type=EnvType.Test,
+            env_group=self.test_module_name,
+            env_name=self.test_method_name
+        )
+
+        # Delete (drop) the database to clear the existing data
+        self.data_source.delete_db()
+
+        # Create Common dataset and assign it to data_set property of this context
+        self.data_set = self.data_source.create_common()
