@@ -130,7 +130,15 @@ class MongoDataSource(DataSource, ABC):
                             f'where ReadOnly flag is set.')
         if self.__client is not None and self.__db is not None:
             if self.__env_type in [EnvType.Dev, EnvType.User, EnvType.Test]:
-                self.__client.drop_database(self.__db)
+                # Normally we would not use exceptions in normal code flow,
+                # however with the current version of the MongoDB Python
+                # driver, the only way to check if a database exists is to
+                # get the list of database names on the server, and this
+                # method may not be available depending on user permissions.
+                try:
+                    self.__client.drop_database(self.__db)
+                finally:
+                    pass
             else:
                 raise Exception(f'As an extra safety measure, database {self.__db_name} cannot be '
                                 f'dropped because this operation is not permitted for database '
