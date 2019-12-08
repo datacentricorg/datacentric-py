@@ -21,13 +21,6 @@ from datacentric.date_time.local_date import LocalDate
 class TestLocalDate(unittest.TestCase):
     """Unit tests for LocalDate."""
 
-    def setUp(self):
-        """
-        Must call UnitTest constructor from setUp() method
-        to avoid exception in properties of the base class.
-        """
-        UnitTest.__init__(self)
-
     def test_smoke(self):
         """Smoke test"""
 

@@ -23,13 +23,6 @@ class TestPyMongo(unittest.TestCase):
     to write a record that follows DataCentric conventions.
     """
 
-    def setUp(self):
-        """
-        Must call UnitTest constructor from setUp() method
-        to avoid exception in properties of the base class.
-        """
-        UnitTest.__init__(self)
-
     def test_smoke(self):
         """Smoke test"""
 

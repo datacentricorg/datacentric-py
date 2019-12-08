@@ -20,13 +20,6 @@ from datacentric.file_system.file_writer import FileWriter
 class TestFileWriter(unittest.TestCase):
     """Tests for FileWriter."""
 
-    def setUp(self):
-        """
-        Must call UnitTest constructor from setUp() method
-        to avoid exception in properties of the base class.
-        """
-        UnitTest.__init__(self)
-
     def test_smoke(self):
         """Smoke test"""
         file_path: str = __file__.replace(".py", ".test_smoke.approved.txt")
