@@ -22,6 +22,7 @@ from datacentric.storage.record import Record
 from datacentric.storage.data_set import DataSet
 from datacentric.storage.env_type import EnvType
 from datacentric.storage.data_source_key import DataSourceKey
+from datacentric.storage.context import Context
 
 TRecord = TypeVar('TRecord', bound=Record)
 
@@ -43,8 +44,8 @@ class DataSource(Record, ABC):
     """
 
     # Class variables
-    _empty_id: ClassVar[ObjectId] = ObjectId('000000000000000000000000')
-    common_id: ClassVar[str] = 'Common'
+    _empty_id: ClassVar[ObjectId] = ObjectId('000000000000000000000000')  # TODO - move to temporal_id module
+    common_id: ClassVar[str] = 'Common'  # TODO - move to data_set module
 
     data_source_name: str = attr.ib(default=None, kw_only=True)
     """Unique data source name."""
@@ -105,9 +106,36 @@ class DataSource(Record, ABC):
     Data source may also be readonly because CutoffTime is set.
     """
 
+    # --- METHODS
+
+    def init(self, context: Context) -> None:
+        """
+        Set Context property and perform validation of the record's data,
+        then initialize any fields or properties that depend on that data.
+
+        This method may be called multiple times for the same instance,
+        possibly with a different context parameter for each subsequent call.
+
+        IMPORTANT - Every override of this method must call base.Init()
+        first, and only then execute the rest of the override method's code.
+        """
+
+        # Initialize base before executing the rest of the code in this method
+        super().init(context)
+
+        # Perform database name validation
+        if not self.env_type or self.env_type == EnvType.Empty:
+            raise Exception('Data source environment type is not specified.')
+        if not self.env_group:
+            raise Exception('Data source environment group is not specified.')
+        if not self.env_name:
+            raise Exception('Data source environment name is not specified.')
+
     def to_key(self) -> str:
         """Get DataSource key."""
         return 'DataSource=' + self.data_source_name
+
+    # --- STATIC
 
     @classmethod
     def create_key(cls, *, data_source_name: str) -> Union[str, DataSourceKey]:
