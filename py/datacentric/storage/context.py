@@ -40,6 +40,11 @@ class Context:
     __data_set: Optional[ObjectId]
 
     def __init__(self):
+        """
+        Set instant variables to None here. They will be
+        set and then initialized by the respective
+        property setter.
+        """
 
         self.__log = None
         """Logging interface of the context."""
@@ -49,6 +54,23 @@ class Context:
 
         self.__data_set = None
         """Default dataset of the context."""
+
+    def __enter__(self):
+        """
+        Supports with syntax for resource disposal.
+        """
+        return self
+
+    def __exit__(self, type, value, traceback):
+        """
+        Supports with syntax for resource disposal.
+        """
+
+        # Dispose method releases resources such as file handles
+        self.dispose()
+
+        # Return False to propagate exception to the caller
+        return False
 
     # --- PROPERTIES
 
@@ -100,6 +122,17 @@ class Context:
         self.__data_set = value
 
     # --- METHODS
+
+    def dispose(self) -> None:
+        """
+        Releases resources and calls base.dispose().
+
+        IMPORTANT - Every override of this method must call base.dispose()
+        after executing its own code.
+        """
+        # TODO - implement
+        pass
+
 
     def configure(self, module) -> None:
         """
