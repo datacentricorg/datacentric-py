@@ -27,7 +27,7 @@ from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 class TestQuery(unittest.TestCase, UnitTest):
     def test_nullable_elements(self):
-        with TemporalMongoUnitTestContext(self) as context:
+        with TemporalMongoUnitTestContext() as context:
 
             for record_index in range(8):
                 record_index_mod2 = record_index % 2
