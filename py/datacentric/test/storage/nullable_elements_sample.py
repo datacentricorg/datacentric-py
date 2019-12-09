@@ -17,7 +17,7 @@ import datetime as dt
 from typing import Union
 from datacentric.storage.record import Record
 from datacentric.test.storage.nullable_elements_sample_key import NullableElementsSampleKey
-from datacentric.test.storage.sample_enum import SampleEnum
+from datacentric.test.storage.sample_enum import EnumSample
 from datacentric.date_time.local_date_time import LocalDateTime
 from datacentric.date_time.local_date import LocalDate
 from datacentric.date_time.local_time import LocalTime
@@ -56,7 +56,7 @@ class NullableElementsSample(Record):
     instant_token: Union[dt.datetime, Instant] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    enum_token: SampleEnum = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    enum_token: EnumSample = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
     record_index: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
@@ -85,7 +85,7 @@ class NullableElementsSample(Record):
                    local_minute_token: Union[int, LocalMinute],
                    local_date_time_token: Union[int, LocalDateTime],
                    instant_token: Union[dt.datetime, Instant],
-                   enum_token: SampleEnum) -> Union[str, NullableElementsSampleKey]:
+                   enum_token: EnumSample) -> Union[str, NullableElementsSampleKey]:
         """Create NullableElementsSample key."""
         return 'NullableElementsSample=' + ';'.join([string_token,
                                                      str(bool_token).lower(),

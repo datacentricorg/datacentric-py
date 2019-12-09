@@ -17,7 +17,7 @@ import datetime as dt
 from typing import Union
 from datacentric.storage.record import Record
 from datacentric.test.storage.base_sample_key import BaseSampleKey
-from datacentric.test.storage.sample_enum import SampleEnum
+from datacentric.test.storage.enum_sample import EnumSample
 from datacentric.date_time.local_date_time import LocalDateTime
 from datacentric.date_time.local_date import LocalDate
 from datacentric.date_time.local_time import LocalTime
@@ -35,7 +35,7 @@ class BaseSample(Record):
     local_date_element: Union[int, LocalDate] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    enum_value: SampleEnum = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    enum_value: EnumSample = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
     record_name: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
