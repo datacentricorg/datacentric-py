@@ -26,10 +26,9 @@ from datacentric.test.storage.singleton_sample_key import SingletonSampleKey
 from datacentric.test.storage.singleton_sample import SingletonSample
 from datacentric.test.storage.id_based_key_sample_key import IdBasedKeySampleKey
 from datacentric.test.storage.id_based_key_sample import IdBasedKeySample
-from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 
-class TestMongoKey(unittest.TestCase, UnitTest):
+class TestMongoKey(unittest.TestCase):
     """Test for key generation."""
 
     def test_composite_key(self):

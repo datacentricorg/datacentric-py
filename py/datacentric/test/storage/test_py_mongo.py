@@ -15,10 +15,9 @@
 import unittest
 import datetime as dt
 from pymongo import MongoClient
-from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 
-class TestPyMongo(unittest.TestCase, UnitTest):
+class TestPyMongo(unittest.TestCase):
     """
     Test demonstrating how to use PyMongo driver API directly
     to write a record that follows DataCentric conventions.

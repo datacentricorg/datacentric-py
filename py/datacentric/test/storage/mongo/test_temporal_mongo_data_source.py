@@ -25,7 +25,6 @@ from datacentric.test.storage.element_sample import ElementSample
 from datacentric.test.storage.base_sample import BaseSample, BaseSampleKey
 from datacentric.test.storage.derived_sample import DerivedSample
 from datacentric.storage.mongo.temporal_mongo_unit_test_context import TemporalMongoUnitTestContext
-from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 
 def save_base_record(context: Context, data_set_id, record_id, record_index) -> ObjectId:
@@ -118,7 +117,7 @@ def save_minimal_record(context, data_set_id, record_id, record_index, version):
     return rec.id_
 
 
-class TestTemporalMongoDataSource(unittest.TestCase, UnitTest):
+class TestTemporalMongoDataSource(unittest.TestCase):
     """Tests for the temporal data source."""
 
     def test_smoke(self):

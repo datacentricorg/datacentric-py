@@ -15,10 +15,9 @@
 import unittest
 from datacentric.storage.data_set import DataSet
 from datacentric.storage.record import Record
-from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 
-class TestDataSet(unittest.TestCase, UnitTest):
+class TestDataSet(unittest.TestCase):
     @unittest.skip
     def test_key_instantiation(self):
         key = DataSet.create_key('key_id')

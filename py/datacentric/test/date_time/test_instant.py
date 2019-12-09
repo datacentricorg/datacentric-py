@@ -14,14 +14,14 @@
 
 import unittest
 from typing import Union
+import attr
 import datetime as dt
 import pandas as pd
 import dateutil
 from datacentric.date_time.instant import Instant
-from datacentric.testing.unit_test import UnitTest
 
 
-class TestInstant(unittest.TestCase, UnitTest):
+class TestInstant(unittest.TestCase):
     """Unit tests for Instant."""
 
     def setUp(self):

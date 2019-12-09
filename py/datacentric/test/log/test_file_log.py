@@ -14,14 +14,12 @@
 
 import unittest
 import sys
-from datacentric.testing.unit_test import UnitTest
 from datacentric.log.log_verbosity import LogVerbosity
 from datacentric.log.file_log import FileLog
 from datacentric.storage.context import Context
-from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 
-class TestFileLog(unittest.TestCase, UnitTest):
+class TestFileLog(unittest.TestCase):
     def test_smoke(self):
         """Smoke test"""
 

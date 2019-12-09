@@ -16,10 +16,9 @@ import unittest
 import datetime as dt
 from typing import Union
 from datacentric.date_time.local_minute import LocalMinute
-from datacentric.testing.unit_test import UnitTest
 
 
-class TestLocalMinute(unittest.TestCase, UnitTest):
+class TestLocalMinute(unittest.TestCase):
     """Unit tests for LocalMinute."""
 
     def setUp(self):

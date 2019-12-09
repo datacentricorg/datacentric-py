@@ -14,12 +14,10 @@
 
 import unittest
 from datacentric.storage.context import Context
-from datacentric.testing.unit_test import UnitTest
 from datacentric.primitive.string_util import StringUtil
-from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 
-class TestStringUtil(unittest.TestCase, UnitTest):
+class TestStringUtil(unittest.TestCase):
     """Unit tests for StringUtil."""
 
     def setUp(self):

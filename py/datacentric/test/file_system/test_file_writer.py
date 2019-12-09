@@ -13,13 +13,11 @@
 # limitations under the License.
 
 import unittest
-from datacentric.testing.unit_test import UnitTest
 from datacentric.file_system.text_writer import TextWriter
 from datacentric.file_system.file_writer import FileWriter
-from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 
-class TestFileWriter(unittest.TestCase, UnitTest):
+class TestFileWriter(unittest.TestCase):
     """Tests for FileWriter."""
 
     def setUp(self):

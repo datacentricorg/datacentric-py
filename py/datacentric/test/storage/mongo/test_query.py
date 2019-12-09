@@ -22,10 +22,9 @@ from datacentric.date_time.local_date_time import LocalDateTime
 from datacentric.test.storage.enum_sample import EnumSample
 from datacentric.test.storage.nullable_elements_sample import NullableElementsSample, NullableElementsSampleKey
 from datacentric.storage.mongo.temporal_mongo_unit_test_context import TemporalMongoUnitTestContext
-from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
 
-class TestQuery(unittest.TestCase, UnitTest):
+class TestQuery(unittest.TestCase):
     def test_nullable_elements(self):
         with TemporalMongoUnitTestContext() as context:
 
