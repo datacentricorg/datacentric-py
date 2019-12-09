@@ -53,5 +53,6 @@ class TestLocalMinute(unittest.TestCase):
         t6_str = '10:15'
         self.assertEqual(LocalMinute.to_str(LocalMinute.from_str(t6_str)), t6_str)
 
+
 if __name__ == "__main__":
     unittest.main()

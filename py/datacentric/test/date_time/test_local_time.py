@@ -68,5 +68,6 @@ class TestLocalTime(unittest.TestCase):
         t10_str_rounded = '10:15:30.123'
         self.assertEqual(LocalTime.to_str(LocalTime.from_str(t10_str)), t10_str_rounded)
 
+
 if __name__ == "__main__":
     unittest.main()
