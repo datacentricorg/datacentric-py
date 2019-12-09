@@ -173,13 +173,13 @@ def _serialize_primitive(value, expected_):
         raise Exception(f'Expected {expected_.__name__}, got {value_type.__name__}')
 
     if value_type == LocalMinute:
-        return value.to_iso_int()
+        return value
     if value_type == LocalTime:
-        return value.to_iso_int()
+        return value
     if value_type == LocalDate:
-        return value.to_iso_int()
+        return value
     if value_type == LocalDateTime:
-        return value.to_iso_int()
+        return value
     elif value_type == str:
         return value
     elif value_type == bool:

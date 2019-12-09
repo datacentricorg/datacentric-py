@@ -118,7 +118,7 @@ class TemporalMongoQuery:
         """Serializes elements to bson valid objects."""
         value_type = type(value)
         if value_type in [LocalMinute, LocalDate, LocalDateTime, LocalTime]:
-            return value.to_iso_int()
+            return value
         elif value_type == np.ndarray:
             return value.tolist()
         elif issubclass(value_type, IntEnum):
