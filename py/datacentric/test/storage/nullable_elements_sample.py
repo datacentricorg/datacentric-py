@@ -17,7 +17,7 @@ import datetime as dt
 from typing import Union
 from datacentric.storage.record import Record
 from datacentric.test.storage.nullable_elements_sample_key import NullableElementsSampleKey
-from datacentric.test.storage.sample_enum import EnumSample
+from datacentric.test.storage.enum_sample import EnumSample
 from datacentric.date_time.local_date_time import LocalDateTime
 from datacentric.date_time.local_date import LocalDate
 from datacentric.date_time.local_time import LocalTime
