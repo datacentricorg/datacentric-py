@@ -93,3 +93,18 @@ class UnitTestContext(Context):
         # as it will get reset when log.init(...)
         # is called by Context.log setter.
         self.log.verbosity = LogVerbosity.Verify
+
+    def __exit__(self, type_: type, value, traceback):
+        """
+        Reports that the test completed successfully, or outputs an exception.
+        """
+
+        if type_ is None:
+            # Log that the test completed successfully
+            self.log.verify("Test completed successfully.")
+        else:
+            # Log exception type and message
+            self.log.error(f'Exception {type_.__name__} has occurred with message {str(value)}.')
+
+        # Call superclass method
+        return super().__exit__(type_, value, traceback)
