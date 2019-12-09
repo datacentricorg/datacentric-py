@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import unittest
-from datacentric.storage.data_set import DataSetKey
+from datacentric.storage.data_set import DataSet
 from datacentric.storage.record import Record
 from datacentric.testing.unit_test import UnitTestKey, UnitTest
 
@@ -21,10 +21,7 @@ from datacentric.testing.unit_test import UnitTestKey, UnitTest
 class TestDataSet(unittest.TestCase, UnitTest):
     @unittest.skip
     def test_key_instantiation(self):
-        null_key = DataSetKey()
-        key = DataSetKey()
-        key.data_set_name = 'key_id'
-        self.assertTrue(null_key.data_set_name is None)
+        key = DataSet.create_key('key_id')
         self.assertTrue(key.data_set_name == 'key_id')
 
     def test_abstract_fail(self):
