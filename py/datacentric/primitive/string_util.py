@@ -19,6 +19,8 @@ from typing import Pattern
 class StringUtil:
     """
     Static helper class for str.
+
+    TODO - use stringcase package instead of regex
     """
 
     __first_cap_re: Pattern = re.compile('(.)([A-Z][a-z]+)')

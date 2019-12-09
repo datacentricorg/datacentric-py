@@ -68,31 +68,4 @@ class UnitTest(Record):
         This method will run each of the test methods using its own instance
         of the test class in parallel.
         """
-        pass
-
-    def create_method_context(self):
-        """"
-        Create a new context for the test method. The way the context
-        is created depends on how the test is invoked.
-
-        When invoked inside xUnit test runner, Context will be null
-        and a new copy of unit test runner will be created.
-
-        When invoked inside DataCentric, Init(context) will be called
-        before this method and will set Context. This method will then
-        create a new dataset inside this Context for each test method.
-
-        This method may be used by the unit tests in this class or as
-        part of the test data set up by other classes.
-        """
-
-        if not self.context:
-            # If Context is null, the class is invoked via xUnit
-            # runner and we should create a unit test context
-            result: Context = UnitTestContext()
-            return result
-        else:
-            # If Context is not null, this means Init(context) method was previously
-            # called by DataCentric. We will then create a new dataset for each
-            # unit test method
-            raise NotImplementedError()
+        raise NotImplementedError

@@ -118,12 +118,13 @@ def save_minimal_record(context, data_set_id, record_id, record_index, version):
 
 
 class TestTemporalMongoDataSource(unittest.TestCase):
-    """Tests for the temporal data source."""
+    """Tests for TemporalMongoDataSource."""
 
     def test_smoke(self):
-        """Smoke test."""
+        """Smoke test for TemporalMongoDataSource."""
 
         with TemporalMongoUnitTestContext() as context:
+
             save_basic_data(context)
 
             key_a0 = 'BaseSample=A;0'
@@ -135,7 +136,10 @@ class TestTemporalMongoDataSource(unittest.TestCase):
             self.assertEqual('Found, type = DerivedSample', verify_load(context, 'DataSet1', key_b0))
 
     def test_multiple_data_set_query(self):
+        """Test working with multiple datasets."""
+
         with TemporalMongoUnitTestContext() as context:
+
             # Begin from DataSet0
             data_set0 = context.data_source.create_data_set('DataSet0', context.data_set)
 
@@ -203,7 +207,9 @@ class TestTemporalMongoDataSource(unittest.TestCase):
 
     def test_create_ordered_id(self):
         """Stress tests to check ObjectIds are created in increasing order."""
+
         with TemporalMongoUnitTestContext() as context:
+
             for i in range(10_000):
                 context.data_source.create_ordered_object_id()
 

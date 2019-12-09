@@ -15,22 +15,24 @@
 import unittest
 from datacentric.storage.context import Context
 from datacentric.primitive.string_util import StringUtil
+from datacentric.storage.unit_test_context import UnitTestContext
 
 
 class TestStringUtil(unittest.TestCase):
     """Unit tests for StringUtil."""
 
     def test_smoke(self):
-        """Smoke test"""
-        context: Context = self.create_method_context()
+        """Smoke test for StringUtil."""
 
-        # Does not remove space TODO - check that Humanizer does in C#
-        context.log.verify(StringUtil.to_pascal_case('abc def'))
-        context.log.verify(StringUtil.to_pascal_case('abc_def'))
+        with UnitTestContext() as context:
 
-        # Does not remove space TODO - check that Humanizer does in C#
-        context.log.verify(StringUtil.to_snake_case('Abc Def'))
-        context.log.verify(StringUtil.to_snake_case('AbcDef'))
+            # Does not remove space TODO - check that Humanizer does in C#
+            context.log.verify(StringUtil.to_pascal_case('abc def'))
+            context.log.verify(StringUtil.to_pascal_case('abc_def'))
+
+            # Does not remove space TODO - check that Humanizer does in C#
+            context.log.verify(StringUtil.to_snake_case('Abc Def'))
+            context.log.verify(StringUtil.to_snake_case('AbcDef'))
 
 
 if __name__ == "__main__":

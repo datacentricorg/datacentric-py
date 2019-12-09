@@ -16,32 +16,36 @@ import unittest
 import sys
 from datacentric.log.log_verbosity import LogVerbosity
 from datacentric.log.file_log import FileLog
-from datacentric.storage.context import Context
+from datacentric.storage.unit_test_context import UnitTestContext
 
 
 class TestFileLog(unittest.TestCase):
+    """Unit tests for FileLog."""
+
     def test_smoke(self):
-        """Smoke test"""
+        """Smoke test for FileLog."""
 
-        # File name for log output
-        file_path: str = __file__.replace(".py", "test_smoke.approved.txt")
+        with UnitTestContext() as context:
 
-        # Initialize FileLog object with Verify verbosity
-        # to ensure all messages are displayed, because default
-        # verbosity is Error
-        file_log: FileLog = FileLog()
-        file_log.verbosity = LogVerbosity.Verify
-        file_log.log_file_path = file_path
-        file_log.init(Context())  # TODO - provide actual context
+            # File name for log output
+            file_path: str = __file__.replace(".py", "test_smoke.approved.txt")
 
-        # Test logging
-        file_log.error('Title for error', 'Description for error')
-        file_log.warning('Title for warning', 'Description for warning')
-        file_log.info('Title for info', 'Description for info')
-        file_log.assert_(True, 'Title for true assert', 'Description for true assert')
-        file_log.assert_(False, 'Title for false assert', 'Description for false assert')
-        file_log.info('Multi-line title\nSecond line of title',
-                      'Multi-line description\nSecond line of description')
+            # Initialize FileLog object with Verify verbosity
+            # to ensure all messages are displayed, because default
+            # verbosity is Error
+            file_log: FileLog = FileLog()
+            file_log.verbosity = LogVerbosity.Verify
+            file_log.log_file_path = file_path
+            file_log.init(context)
+
+            # Test logging
+            file_log.error('Title for error', 'Description for error')
+            file_log.warning('Title for warning', 'Description for warning')
+            file_log.info('Title for info', 'Description for info')
+            file_log.assert_(True, 'Title for true assert', 'Description for true assert')
+            file_log.assert_(False, 'Title for false assert', 'Description for false assert')
+            file_log.info('Multi-line title\nSecond line of title',
+                          'Multi-line description\nSecond line of description')
 
 
 if __name__ == "__main__":

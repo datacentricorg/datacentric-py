@@ -56,8 +56,8 @@ class UnitTestContext(Context):
 
         # Inspect call stack to get filename and method name of the
         # source code location where UnitTestContext constructor is called.
-        # If called from create_method_context, take the method that
-        # called create_method_context instead.
+        # The location we are looking for is the first one that is
+        # not inside an __init__ method.
         stack_frame_index: int = 1
         while True:
             caller_frame = sys._getframe(stack_frame_index)
