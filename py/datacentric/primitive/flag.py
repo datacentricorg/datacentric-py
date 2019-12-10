@@ -29,7 +29,7 @@ class Flag(IntEnum):
     value is true.
     """
 
-    True = 0,
+    True_ = 0,
     """
     The sole value of this enum representing true.
 
