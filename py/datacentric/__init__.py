@@ -8,6 +8,7 @@ from datacentric.date_time.local_date import LocalDate
 from datacentric.date_time.local_time import LocalTime
 from datacentric.date_time.local_date_time import LocalDateTime
 from datacentric.date_time.instant import Instant
+from datacentric.date_time.iso_day_of_week import IsoDayOfWeek
 from datacentric.storage.env_type import EnvType
 from datacentric.storage.context import Context
 from datacentric.storage.key import Key
