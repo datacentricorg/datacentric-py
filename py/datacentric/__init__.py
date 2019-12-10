@@ -21,3 +21,16 @@ from datacentric.storage.mongo.temporal_mongo_unit_test_context import TemporalM
 from datacentric.storage.unit_test_context import UnitTestContext
 from datacentric.testing.unit_test_key import UnitTestKey
 from datacentric.testing.unit_test_complexity import UnitTestComplexity
+from datacentric.schema.declaration.element_decl import ElementDecl
+from datacentric.schema.declaration.enum_decl import EnumDecl, EnumDeclKey
+from datacentric.schema.declaration.enum_item import EnumItem
+from datacentric.schema.declaration.handler_declare_block import HandlerDeclareBlock
+from datacentric.schema.declaration.handler_declare_item import HandlerDeclareItem
+from datacentric.schema.declaration.handler_implement_block import HandlerImplementBlock
+from datacentric.schema.declaration.handler_implement_item import HandlerImplementItem
+from datacentric.schema.declaration.index_element import IndexElement
+from datacentric.schema.declaration.index_elements import IndexElements
+from datacentric.schema.declaration.language import Language
+from datacentric.schema.declaration.module import Module, ModuleKey
+from datacentric.schema.declaration.param_decl import ParamDecl
+from datacentric.schema.declaration.type_decl import TypeDecl, TypeDeclKey
