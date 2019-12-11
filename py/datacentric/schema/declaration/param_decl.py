@@ -15,6 +15,7 @@
 import attr
 from typing import Union
 from datacentric.storage.data import Data
+from datacentric.schema.declaration.value_decl import ValueDecl
 from datacentric.schema.declaration.enum_decl_key import EnumDeclKey
 from datacentric.schema.declaration.type_decl_key import TypeDeclKey
 from datacentric.schema.declaration.yes_no import YesNo
@@ -39,6 +40,9 @@ class ParamDecl(Data):
 
     comment: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Detailed description of the element."""
+
+    value: ValueDecl = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    """Parameters specific to the value element."""
 
     enum: Union[str, EnumDeclKey] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """
