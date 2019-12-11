@@ -39,9 +39,9 @@ class TestClassInfo(unittest.TestCase):
     def test_inheritance_chain(self):
         """Check inheritance chain for different cases."""
 
-        self.assertEqual(['BaseSample'], ClassInfo.get_inheritance_chain(BaseSample))
-        self.assertEqual(['BaseSample', 'DerivedSample'], ClassInfo.get_inheritance_chain(DerivedSample))
-        self.assertEqual(['ElementSample'], ClassInfo.get_inheritance_chain(ElementSample))
+        self.assertEqual(['Record', 'BaseSample'], ClassInfo.get_inheritance_chain(BaseSample))
+        self.assertEqual(['Record', 'BaseSample', 'DerivedSample'], ClassInfo.get_inheritance_chain(DerivedSample))
+        self.assertEqual(['Data', 'ElementSample'], ClassInfo.get_inheritance_chain(ElementSample))
 
 
 if __name__ == "__main__":

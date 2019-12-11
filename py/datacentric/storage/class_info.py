@@ -90,13 +90,13 @@ class ClassInfo:
 
         if RootRecord in type_mro:
             idx = type_mro.index(RootRecord)
-            return [x.__name__ for x in type_mro[idx-1::-1]]
+            return [x.__name__ for x in type_mro[idx::-1]]
         elif Record in type_mro:
             idx = type_mro.index(Record)
-            return [x.__name__ for x in type_mro[idx-1::-1]]
+            return [x.__name__ for x in type_mro[idx::-1]]
         elif Data in type_mro:
             idx = type_mro.index(Data)
-            return [x.__name__ for x in type_mro[idx-1::-1]]
+            return [x.__name__ for x in type_mro[idx::-1]]
         raise Exception(f'Type is not derived from Data')
 
     @staticmethod
