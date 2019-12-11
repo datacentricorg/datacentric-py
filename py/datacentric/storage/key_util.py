@@ -34,8 +34,6 @@ class KeyUtil:
             raise Exception(f'Key {key} contains more than one occurrence of =.')
         if tokens[0] != key_type:
             raise Exception(f'Key {key} does not start from {key_type}=.')
-        if tokens[1].count(';') != 2:
-            raise Exception(f'Key {key} must have 3 semicolon delimited tokens after =.')
         return tokens[1]
 
     @classmethod
@@ -48,7 +46,7 @@ class KeyUtil:
         This method verifies that the second part does not contain = and how many semicolon
         delimiters it has.
         """
-        second_part: str = cls.remove_prefix(key_type, key)
+        second_part: str = cls.remove_prefix(key, key_type)
         tokens: List[str] = second_part.split(';')
         if len(tokens) != token_count:
             raise Exception(f'Key {key} must have exactly {token_count} semicolon delimited tokens after =.')
