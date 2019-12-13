@@ -16,16 +16,13 @@ import attr
 import unittest
 import datetime as dt
 from bson import ObjectId
-from datacentric.storage.record import Record
-from datacentric.storage.key import Key
-from datacentric.test.storage.base_sample_key import BaseSampleKey
+import datacentric as dc
+from datacentric.test.storage.enum_sample import EnumSample
 from datacentric.test.storage.base_sample import BaseSample
-from datacentric.test.storage.composite_key_sample_key import CompositeKeySampleKey
 from datacentric.test.storage.composite_key_sample import CompositeKeySample
-from datacentric.test.storage.singleton_sample_key import SingletonSampleKey
 from datacentric.test.storage.singleton_sample import SingletonSample
-from datacentric.test.storage.id_based_key_sample_key import IdBasedKeySampleKey
 from datacentric.test.storage.id_based_key_sample import IdBasedKeySample
+from datacentric.test.storage.nullable_elements_sample import NullableElementsSample
 
 
 class TestMongoKey(unittest.TestCase):
@@ -73,6 +70,23 @@ class TestMongoKey(unittest.TestCase):
         key2 = IdBasedKeySample.create_key(id_=rec.id_)
         self.assertEqual(key2, 'IdBasedKeySample=' + str(rec.id_))
 
+    def test_nullable_elements_key(self):
+        """Test generation of key consisting of nullable elements."""
+
+        # Create key from nullable elements
+        key = NullableElementsSample.create_key(
+            string_token='ABC',
+            bool_token=True,
+            int_token=123,
+            long_token=1234567890,
+            local_date_token=dc.LocalDate.from_fields(2017, 7, 14),
+            local_time_token=dc.LocalTime.from_fields(10, 15, 30, 500),
+            local_minute_token=dc.LocalMinute.from_fields(10, 15),
+            local_date_time_token=dc.LocalDateTime.from_fields(2017, 7, 14, 10, 15, 30, 500),
+            instant_token=dc.Instant.from_fields(2017, 7, 14, 10, 15, 30, 500),
+            enum_token=EnumSample.EnumValue1)
+        self.assertEqual(key, 'NullableElementsSample=ABC;true;123;1234567890;20170714;101530500;1015;'
+                              '20170714101530500;2017-07-14T10:15:30.500Z;EnumValue1')
 
 if __name__ == "__main__":
     unittest.main()

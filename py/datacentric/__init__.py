@@ -6,6 +6,7 @@ from datacentric.file_system.string_writer import StringWriter
 from datacentric.file_system.file_writer import FileWriter
 from datacentric.date_time.local_date import LocalDate
 from datacentric.date_time.local_time import LocalTime
+from datacentric.date_time.local_minute import LocalMinute
 from datacentric.date_time.local_date_time import LocalDateTime
 from datacentric.date_time.instant import Instant
 from datacentric.date_time.iso_day_of_week import IsoDayOfWeek
