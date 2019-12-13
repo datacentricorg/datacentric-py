@@ -56,8 +56,8 @@ class LocalDateTime(int, ABC):
             millisecond = 0
 
         # Convert to LocalDateTime represented in yyyymmddhhmmssfff format
-        result: int = 1_000_000_000_000_000 * year + 100_000_000_000 * month + 1_000_000_000 * day + \
-                      10_000_000 * hour + 100_000 * minute + 1000 * second + millisecond
+        result: int = 1000_00_00_00_00_00 * year + 1000_00_00_00_00 * month + 1000_00_00_00 * day + \
+                      1000_00_00 * hour + 1000_00 * minute + 1000 * second + millisecond
 
         # Validate and return
         cls.validate(result)
@@ -105,18 +105,18 @@ class LocalDateTime(int, ABC):
         This method does not perform validation of its argument.
         """
 
-        year: int = value // 1_000_00_00_00_00_0000
-        value -= year * 1_000_00_00_00_00_0000
-        month: int = value // 1_000_00_00_00_00
-        value -= month * 1_000_00_00_00_00
-        day: int = value // 1_000_00_00_00
-        value -= day * 1_000_00_00_00
-        hour: int = value // 1_000_00_00
-        value -= hour * 1_000_00_00
-        minute: int = value // 1_000_00
-        value -= minute * 1_000_00
-        second: int = value // 1_000
-        value -= second * 1_000
+        year: int = value // 1000_00_00_00_00_00
+        value -= year * 1000_00_00_00_00_00
+        month: int = value // 1000_00_00_00_00
+        value -= month * 1000_00_00_00_00
+        day: int = value // 1000_00_00_00
+        value -= day * 1000_00_00_00
+        hour: int = value // 1000_00_00
+        value -= hour * 1000_00_00
+        minute: int = value // 1000_00
+        value -= minute * 1000_00
+        second: int = value // 1000
+        value -= second * 1000
         millisecond: int = value
 
         return year, month, day, hour, minute, second, millisecond
