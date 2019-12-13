@@ -85,8 +85,7 @@ class TestMongoKey(unittest.TestCase):
             local_date_time_token=dc.LocalDateTime.from_fields(2017, 7, 14, 10, 15, 30, 500),
             instant_token=dc.Instant.from_fields(2017, 7, 14, 10, 15, 30, 500),
             enum_token=EnumSample.EnumValue1)
-        self.assertEqual(key, 'NullableElementsSample=ABC;true;123;1234567890;20170714;101530500;1015;'
-                              '20170714101530500;2017-07-14T10:15:30.500Z;EnumValue1')
+        self.assertEqual(key, 'NullableElementsSample=ABC;true;123;1234567890;20170714;101530500;1015;20170714101530500;2017-07-14T10:15:30.500Z;EnumValue1')
 
 if __name__ == "__main__":
     unittest.main()
