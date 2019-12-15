@@ -199,12 +199,8 @@ class Instant(dt.datetime, ABC):
         This method checks that the argument is in UTC.
         """
 
-        if not cls.is_in_utc(value):
-            raise Exception(f'Instant {cls.__to_str_lenient(value)} is not in UTC. Valid '
-                            f'To avoid timezone uncertainty, Instant values must have '
-                            f'tzinfo=pytz.UTC, or any other that resolves to zero offset '
-                            f'to UTC to avoid timezone conversion uncertainty.')
-
+        # Check that Instant is in UTC before rounding
+        cls.check_in_utc(value)
         rounded_microsecond: int = round(value.microsecond / 1000.0) * 1000
 
         result: dt.datetime = dt.datetime(
@@ -224,29 +220,36 @@ class Instant(dt.datetime, ABC):
         """
         Raise exception if one of the following is true:
 
-        * Instant has timezone other than UTC
-        * Instant has no timezone
-        * Instant has fractional milliseconds (use Instant.round(...) to remove)
+        * Instant is not None and has timezone other than UTC
+        * Instant is not None and has no timezone
+        * Instant is not None and has fractional milliseconds
+          (use Instant.round(...) to remove)
         """
-        if not cls.is_in_utc(value):
-            raise Exception(f'Instant {cls.__to_str_lenient(value)} is not in UTC. Valid '
-                            f'To avoid timezone uncertainty, Instant values must have '
-                            f'tzinfo=pytz.UTC, or any other that resolves to zero offset '
-                            f'to UTC to avoid timezone conversion uncertainty.')
 
-        if not cls.is_whole_millis(value):
-            raise Exception(f'Instant {cls.__to_str_lenient(value)} has fractional milliseconds. Valid'
-                            f'Instant values must have whole milliseconds to ensure that no loss of precision '
-                            f'occurs during serialization roundtrip. Use Instant.round(...) to remove.')
+        # Check that either value is None, or timezone is UTC
+        cls.check_in_utc(value)
+
+        # Check that either value is None, or Instant has no fractional milliseconds
+        cls.check_whole_millis(value)
 
     @classmethod
-    def is_in_utc(cls, value: Union[dt.datetime, 'Instant']) -> bool:
+    def check_in_utc(cls, value: Union[dt.datetime, 'Instant']) -> None:
         """
-        Return true if timezone is specified and has zero offset to UTC.
+        Raise exception if value is not None, and is not in UTC timezone.
 
         This method does not check if the argument has fractional Unix
         milliseconds.
         """
+
+        # If None, return before doing other checks
+        if value is None:
+            return
+
+        # Check that tzinfo is not None
+        if value.tzinfo is None:
+            raise Exception(f'Instant {cls.__to_str_lenient(value)} has tzinfo=None. '
+                            f'Instant values must have tzinfo that has zero offset '
+                            f'to UTC, such as pytz.UTC')
 
         # Because:
         #
@@ -255,17 +258,22 @@ class Instant(dt.datetime, ABC):
         # * Comparison will will fail if different instances are passed,
         #
         # we must use UTC offset instead of comparing timezone value.
-        result: bool = value.utcoffset().microseconds == 0
-        return result
+        if value.utcoffset().microseconds != 0:
+            raise Exception(f'Instant {cls.__to_str_lenient(value)} is not in UTC. '
+                            f'Instant values must have tzinfo that has zero offset '
+                            f'to UTC, such as pytz.UTC')
 
     @classmethod
-    def is_whole_millis(cls, value: Union[dt.datetime, 'Instant']) -> bool:
+    def check_whole_millis(cls, value: Union[dt.datetime, 'Instant']) -> None:
         """
-        Return true if Instant stored as dt.datetime in UTC timezone
-        does not have fractional milliseconds.
+        Return true if value is either None, or has no fractional milliseconds.
 
         This method does not check if the argument is in UTC.
         """
+
+        # If None, return before doing other checks
+        if value is None:
+            return
 
         # Convert to milliseconds since Unix epoch and round to whole
         # milliseconds
@@ -274,8 +282,10 @@ class Instant(dt.datetime, ABC):
         rounded_unix_millis: int = round(unix_millis)
 
         # Return false if more than roundoff tolerance
-        result: bool = abs(unix_millis - rounded_unix_millis) < 1e-10
-        return result
+        if abs(unix_millis - rounded_unix_millis) >= 1e-10:
+            raise Exception(f'Instant {cls.__to_str_lenient(value)} has fractional milliseconds. Valid '
+                f'Instant values must have whole milliseconds to ensure that no loss of precision '
+                f'occurs during serialization roundtrip. Use Instant.round(...) to remove.')
 
     @classmethod
     def __to_str_lenient(cls, value: Union[dt.datetime, 'Instant']) -> str:
@@ -287,5 +297,5 @@ class Instant(dt.datetime, ABC):
         # Lenient conversion to string without controlling
         # for timezone or precision. Use for error messages
         # only.
-        result: str = value.strftime('%Y-%m-%dT%H:%M:%S.%f%Z')
+        result: str = value.strftime('%Y-%m-%dT%H:%M:%S.%f')
         return result

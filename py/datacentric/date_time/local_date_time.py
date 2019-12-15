@@ -66,10 +66,15 @@ class LocalDateTime(int, ABC):
     @classmethod
     def validate(cls, value: Union[int, 'LocalDateTime']) -> None:
         """
-        Raise exception if the argument is not an int in yyyymmddhhmmssfff format.
+        Raise exception if the argument is not None, and is not an
+        int in yyyymmddhhmmssfff format.
 
         This fast validation method will not detect errors such as Feb 31.
         """
+
+        # If None, return before doing other checks
+        if value is None:
+            return
 
         # Convert to tuple
         year, month, day, hour, minute, second, millisecond = cls.__to_fields_lenient(value)

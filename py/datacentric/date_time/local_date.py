@@ -88,7 +88,7 @@ class LocalDate(int, ABC):
     @classmethod
     def to_str(cls, value: Union[int, 'LocalDate']) -> str:
         """
-        Convert LocalDate represented as int in yyyymmdd format 
+        Convert LocalDate represented as int in yyyymmdd format
         to string in ISO yyyy-mm-dd format.
         """
 
@@ -125,10 +125,15 @@ class LocalDate(int, ABC):
     @classmethod
     def validate(cls, value: Union[int, 'LocalDate']) -> None:
         """
-        Raise exception if the argument is not an int in yyyymmdd format.
+        Raise exception if the argument is not None and is not an int
+        in yyyymmdd format.
 
         This fast validation method will not detect errors such as Feb 31.
         """
+
+        # If None, return before doing other checks
+        if value is None:
+            return
 
         # Convert to tuple
         year, month, day = cls.__to_fields_lenient(value)

@@ -162,8 +162,13 @@ class LocalTime(int, ABC):
     @classmethod
     def validate(cls, value: Union[int, 'LocalTime']) -> None:
         """
-        Raise exception if the argument is not an int in ISO hhmmssfff format.
+        Raise exception if the argument is not None and is not an int
+        in ISO hhmmssfff format.
         """
+
+        # If None, return before doing other checks
+        if value is None:
+            return
 
         # Convert to tuple
         hour, minute, second, millisecond = cls.__to_fields_lenient(value)

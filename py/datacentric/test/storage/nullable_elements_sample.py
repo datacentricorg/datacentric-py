@@ -72,7 +72,7 @@ class NullableElementsSample(Record):
                                                      str(self.local_time_token),
                                                      str(self.local_minute_token),
                                                      str(self.local_date_time_token),
-                                                     dc.Instant.to_str(self.instant_token),
+                                                     Instant.to_str(self.instant_token),
                                                      self.enum_token.name])
 
     @classmethod
@@ -95,5 +95,5 @@ class NullableElementsSample(Record):
                                                      str(local_time_token),
                                                      str(local_minute_token),
                                                      str(local_date_time_token),
-                                                     dc.Instant.to_str(instant_token),
+                                                     Instant.to_str(instant_token),
                                                      enum_token.name])
