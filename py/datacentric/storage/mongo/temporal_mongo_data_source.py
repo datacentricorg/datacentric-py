@@ -16,7 +16,6 @@ import attr
 from typing import Dict, Optional, TypeVar, Set, Iterable, Type
 from bson import ObjectId
 from pymongo.collection import Collection
-
 from datacentric.storage.data_set_detail import DataSetDetail
 from datacentric.storage.mongo.temporal_mongo_query import TemporalMongoQuery
 from datacentric.storage.record import Record
@@ -26,6 +25,7 @@ from datacentric.storage.data_source import DataSource
 from datacentric.storage.mongo.mongo_data_source import MongoDataSource
 from datacentric.storage.class_info import ClassInfo
 from datacentric.serialization.serializer import serialize, deserialize
+from bson.codec_options import DEFAULT_CODEC_OPTIONS
 
 TRecord = TypeVar('TRecord', bound=Record)
 
@@ -63,6 +63,13 @@ class TemporalMongoDataSource(MongoDataSource):
     __data_set_parent_dict: Dict[ObjectId, ObjectId] = attr.ib(factory=dict, init=False)
     __data_set_detail_dict: Dict[ObjectId, DataSetDetail] = attr.ib(factory=dict, init=False)
     __import_dict: Dict[ObjectId, Set[ObjectId]] = attr.ib(factory=dict, init=False)
+
+    __codec_options = DEFAULT_CODEC_OPTIONS.with_options(tz_aware=True)
+    """
+    By default, UTC datetime is imported by PyMongo as timezone naive.
+    This setting changes that. This variable is used as argument for
+    get_collection(...).
+    """
 
     def load_or_null(self, record_type: Type[TRecord], id_: ObjectId) -> Optional[TRecord]:
         """Load record by its ObjectId.
@@ -383,7 +390,7 @@ class TemporalMongoDataSource(MongoDataSource):
             return self.__collection_dict[type_]
         root_type = ClassInfo.get_ultimate_base(type_)
         collection_name = root_type.__name__
-        collection = self.db.get_collection(collection_name)
+        collection = self.db.get_collection(collection_name, self.__codec_options)
         self.__collection_dict[type_] = collection
         return collection
 

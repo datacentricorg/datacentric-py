@@ -55,10 +55,10 @@ class TestQuery(unittest.TestCase):
             for obj in query.as_iterable():
                 unconstrained_results.append((obj.to_key().split('=', 1)[1], obj.record_index))
 
-            expected = [('A0;true;0;0;20030501;101530000;1000;2003000501101500000;2003-05-01 10:15:00;EnumValue1', 4),
-                        ('A1;false;1;1;20030502;101531000;1001;2003000502101500000;2003-05-02 10:15:00;EnumValue2', 5),
-                        ('A2;true;2;2;20030503;101532000;1002;2003000503101500000;2003-05-03 10:15:00;EnumValue1', 6),
-                        ('A3;false;3;3;20030504;101533000;1003;2003000504101500000;2003-05-04 10:15:00;EnumValue2', 7)]
+            expected = [('A0;true;0;0;20030501;101530000;1000;20030501101500000;2003-05-01T10:15:00.000Z;EnumValue1', 4),
+                        ('A1;false;1;1;20030502;101531000;1001;20030502101500000;2003-05-02T10:15:00.000Z;EnumValue2', 5),
+                        ('A2;true;2;2;20030503;101532000;1002;20030503101500000;2003-05-03T10:15:00.000Z;EnumValue1', 6),
+                        ('A3;false;3;3;20030504;101533000;1003;20030504101500000;2003-05-04T10:15:00.000Z;EnumValue2', 7)]
 
             for expected_sample in expected:
                 self.assertTrue(expected_sample in unconstrained_results)
@@ -77,7 +77,7 @@ class TestQuery(unittest.TestCase):
                 constrained_results.append((obj.to_key().split('=', 1)[1], obj.record_index))
 
             expected_constrained = ('A1;false;1;1;20030502;101531000;1001;'
-                                    '2003000502101500000;2003-05-02 10:15:00;EnumValue2', 5)
+                                    '20030502101500000;2003-05-02T10:15:00.000Z;EnumValue2', 5)
             self.assertTrue(expected_constrained in constrained_results)
 
 
