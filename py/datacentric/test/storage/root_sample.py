@@ -44,7 +44,7 @@ class RootSample(Record):
         """Create key string from the current record."""
         return 'RootSample=' + self.record_name
 
-    # --- STATIC
+    # --- CLASS
 
     @classmethod
     def create_key(cls, *, record_name: str) -> Union[str, RootSampleKey]:

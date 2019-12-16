@@ -37,7 +37,7 @@ class LocalDate(int, ABC):
         """
         pass
 
-    # --- STATIC
+    # --- CLASS
 
     @classmethod
     def from_fields(cls, year: int, month: int, day: int) -> Union[int, 'LocalDate']:

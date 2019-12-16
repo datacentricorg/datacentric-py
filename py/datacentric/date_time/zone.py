@@ -75,7 +75,7 @@ class Zone(Record):
         """Create Zone key."""
         return 'Zone=' + zone_name
 
-    # --- STATIC
+    # --- CLASS
 
     @classmethod
     def get_zone_name_from_key(cls, key: Union[str, ZoneKey]) -> str:

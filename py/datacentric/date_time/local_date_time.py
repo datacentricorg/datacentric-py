@@ -40,7 +40,7 @@ class LocalDateTime(int, ABC):
         """
         pass
 
-    # --- STATIC
+    # --- CLASS
 
     @classmethod
     def from_fields(cls, year: int, month: int, day: int, hour: int = 0,

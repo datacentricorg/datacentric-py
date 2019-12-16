@@ -38,7 +38,7 @@ class LocalMinute(int, ABC):
         """
         pass
 
-    # --- STATIC
+    # --- CLASS
 
     @classmethod
     def from_fields(cls, hour: int, minute: int) -> Union[int, 'LocalMinute']:

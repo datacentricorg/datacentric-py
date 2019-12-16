@@ -42,7 +42,7 @@ class Instant(dt.datetime, ABC):
         """
         pass
 
-    # --- STATIC
+    # --- CLASS
 
     @classmethod
     def from_fields(cls,

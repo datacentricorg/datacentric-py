@@ -135,7 +135,7 @@ class DataSource(Record, ABC):
         """Get DataSource key."""
         return 'DataSource=' + self.data_source_name
 
-    # --- STATIC
+    # --- CLASS
 
     @classmethod
     def create_key(cls, *, data_source_name: str) -> Union[str, DataSourceKey]:
