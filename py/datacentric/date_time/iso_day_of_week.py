@@ -21,7 +21,7 @@ class IsoDayOfWeek(IntEnum):
     ISO-8601.
     """
 
-    None_ = 0,
+    Empty = 0,
     """
     Value indicating no day of the week; this will never be returned
     by any IsoDayOfWeek property, and is not valid as an argument to
