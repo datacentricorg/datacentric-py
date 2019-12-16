@@ -54,24 +54,24 @@ class TestInstant(unittest.TestCase):
         self.assertEqual(Instant.to_unix_millis(t5), unix_millis)
 
         # Test string representation conversion
-        self.assertEqual(Instant.to_str(t1), date_str)
+        self.assertEqual(dc.Instant.to_str(t1), date_str)
         t6_str = '2003-05-01T10:15:30Z'
         t6_str_result = '2003-05-01T10:15:30.000Z'
-        self.assertEqual(Instant.to_str(Instant.from_str(t6_str)), t6_str_result)
+        self.assertEqual(dc.Instant.to_str(Instant.from_str(t6_str)), t6_str_result)
         t7_str = '2003-05-01T10:15:30.1Z'
         t7_str_result = '2003-05-01T10:15:30.100Z'
-        self.assertEqual(Instant.to_str(Instant.from_str(t7_str)), t7_str_result)
+        self.assertEqual(dc.Instant.to_str(Instant.from_str(t7_str)), t7_str_result)
         t8_str = '2003-05-01T10:15:30.12Z'
         t8_str_result = '2003-05-01T10:15:30.120Z'
-        self.assertEqual(Instant.to_str(Instant.from_str(t8_str)), t8_str_result)
+        self.assertEqual(dc.Instant.to_str(Instant.from_str(t8_str)), t8_str_result)
         t9_str = '2003-05-01T10:15:30.123Z'
         t9_str_result = '2003-05-01T10:15:30.123Z'
-        self.assertEqual(Instant.to_str(Instant.from_str(t9_str)), t9_str_result)
+        self.assertEqual(dc.Instant.to_str(Instant.from_str(t9_str)), t9_str_result)
 
         # Test rounding to the whole millisecond
         t10_str = '2003-05-01T10:15:30.1234Z'
         t10_str_rounded = '2003-05-01T10:15:30.123Z'
-        self.assertEqual(Instant.to_str(Instant.from_str(t10_str)), t10_str_rounded)
+        self.assertEqual(dc.Instant.to_str(Instant.from_str(t10_str)), t10_str_rounded)
 
 
 if __name__ == "__main__":
