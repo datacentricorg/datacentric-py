@@ -12,9 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import timeit
+import random
 import unittest
-from typing import Union
 import datetime as dt
+
+from typing import Union
 from datacentric.date_time.local_date import LocalDate
 
 
@@ -50,6 +53,52 @@ class TestLocalDate(unittest.TestCase):
 
         # Test string representation roundtrip
         self.assertEqual(LocalDate.to_str(d1), date_str)
+
+    @unittest.skip('Performance')
+    def test_perf(self):
+        count = 1000
+        repeat = 1000
+
+        def gen_datetime(min_year=1970, max_year=dt.datetime.now().year):
+            start = dt.datetime(min_year, 1, 1, 00, 00, 00)
+            years = max_year - min_year + 1
+            end = start + dt.timedelta(days=365 * years)
+            return start + (end - start) * random.random()
+
+        as_dates = [x.date() for x in [gen_datetime() for i in range(count)]]
+
+        as_ints = [LocalDate.from_date(x) for x in as_dates]
+        as_fields = [LocalDate.to_fields(x) for x in as_ints]
+        as_str = [LocalDate.to_str(x) for x in as_ints]
+
+        t = timeit.timeit('[LocalDate.to_date(x) for x in as_ints]',
+                          globals={'LocalDate': LocalDate, 'as_ints': as_ints}, number=repeat)
+        print(f'{t:.4f}: int->dt.date')
+
+        t = timeit.timeit('[LocalDate.from_date(x) for x in as_dates]',
+                          globals={'LocalDate': LocalDate, 'as_dates': as_dates}, number=repeat)
+        print(f'{t:.4f}: date->int')
+        print('===================')
+
+        t = timeit.timeit('[LocalDate.to_fields(x) for x in as_ints]',
+                          globals={'LocalDate': LocalDate, 'as_ints': as_ints}, number=repeat)
+        print(f'{t:.4f}: int->Tuple[int, int, int]')
+        t = timeit.timeit('[LocalDate.from_fields(x[0], x[1], x[2]) for x in as_fields]',
+                          globals={'LocalDate': LocalDate, 'as_fields': as_fields}, number=repeat)
+        print(f'{t:.4f}: Tuple[int, int, int]->int')
+        print('===================')
+
+        t = timeit.timeit('[LocalDate.to_str(x) for x in as_ints]',
+                          globals={'LocalDate': LocalDate, 'as_ints': as_ints}, number=repeat)
+        print(f'{t:.4f}: int->str')
+        t = timeit.timeit('[LocalDate.from_str(x) for x in as_str]',
+                          globals={'LocalDate': LocalDate, 'as_str': as_str}, number=repeat)
+        print(f'{t:.4f}: str->int')
+        print('===================')
+
+        t = timeit.timeit('[LocalDate.validate(x) for x in as_ints]',
+                          globals={'LocalDate': LocalDate, 'as_ints': as_ints}, number=repeat)
+        print(f'{t:.4f}: validate')
 
 
 if __name__ == "__main__":
