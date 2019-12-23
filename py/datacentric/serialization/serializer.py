@@ -172,13 +172,7 @@ def _serialize_primitive(value, expected_):
     if value_type != expected_:
         raise Exception(f'Expected {expected_.__name__}, got {value_type.__name__}')
 
-    if value_type == LocalMinute:
-        return value
-    if value_type == LocalTime:
-        return value
-    if value_type == LocalDate:
-        return value
-    if value_type == LocalDateTime:
+    if value_type == dt.datetime:
         return value
     elif value_type == str:
         return value
@@ -273,6 +267,8 @@ def _deserialize_primitive(expected_type, value):
     elif expected_type == float:
         return value
     elif expected_type == ObjectId:
+        return value
+    elif expected_type == dt.datetime:
         return value
     else:
         raise Exception(f'Cannot deduce type {expected_type}')
