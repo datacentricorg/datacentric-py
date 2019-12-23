@@ -32,25 +32,25 @@ class TestInstant(unittest.TestCase):
         unix_millis: int = 1051784130500
 
         # Create from milliseconds since Unix epoch
-        t1: Union[dt.datetime, Instant] = Instant.from_unix_millis(unix_millis)
+        t1: dt.datetime = Instant.from_unix_millis(unix_millis)
         self.assertEqual(Instant.to_unix_millis(t1), unix_millis)
 
         # Create from year, month, etc.
-        t2: Union[dt.datetime, Instant] = Instant.from_fields(2003, 5, 1, 10, 15, 30, 500)
+        t2: dt.datetime = Instant.from_fields(2003, 5, 1, 10, 15, 30, 500)
         self.assertEqual(Instant.to_unix_millis(t2), unix_millis)
 
         # Create from string
-        t3: Union[dt.datetime, Instant] = Instant.from_str(date_str)
+        t3: dt.datetime = Instant.from_str(date_str)
         self.assertEqual(Instant.to_unix_millis(t3), unix_millis)
 
         # Create from dt.datetime constructed externally
         dtime: dt.datetime = dateutil.parser.parse(date_str)
-        t4: Union[dt.datetime, Instant] = dtime
+        t4: dt.datetime = dtime
         self.assertEqual(Instant.to_unix_millis(t4), unix_millis)
 
         # Create from pd.timestamp constructed externally
         tstamp: pd.Timestamp = pd.Timestamp(date_str)
-        t5: Union[dt.datetime, Instant] = tstamp.to_pydatetime()
+        t5: dt.datetime = tstamp.to_pydatetime()
         self.assertEqual(Instant.to_unix_millis(t5), unix_millis)
 
         # Test string representation conversion

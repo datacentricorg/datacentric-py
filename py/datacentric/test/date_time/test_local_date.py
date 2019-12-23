@@ -32,20 +32,20 @@ class TestLocalDate(unittest.TestCase):
         iso_int: int = 20030501
 
         # Validation
-        d1: Union[int, LocalDate] = LocalDate(iso_int)
+        d1: int = LocalDate(iso_int)
         LocalDate.validate(d1)
 
         # Create from year, month, day
-        d2: Union[int, LocalDate] = LocalDate.from_fields(2003, 5, 1)
+        d2: int = LocalDate.from_fields(2003, 5, 1)
         self.assertEqual(d2, iso_int)
 
         # Create from string
-        d3: Union[int, LocalDate] = LocalDate.from_str(date_str)
+        d3: int = LocalDate.from_str(date_str)
         self.assertEqual(d3, iso_int)
 
         # Create from dt.date
         d: dt.date = dt.date.fromisoformat(date_str)
-        d4: Union[int, LocalDate] = LocalDate.from_date(d)
+        d4: int = LocalDate.from_date(d)
         self.assertEqual(d4, iso_int)
 
         # Test conversion to dt.date

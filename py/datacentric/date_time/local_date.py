@@ -40,7 +40,7 @@ class LocalDate(int, ABC):
     # --- CLASS
 
     @classmethod
-    def from_fields(cls, year: int, month: int, day: int) -> Union[int, 'LocalDate']:
+    def from_fields(cls, year: int, month: int, day: int) -> int:
         """
         Convert year, month and day fields to LocalDate represented
         as int in yyyymmdd format.
@@ -54,7 +54,7 @@ class LocalDate(int, ABC):
         return result
 
     @classmethod
-    def to_fields(cls, value: Union[int, 'LocalDate']) -> Tuple[int, int, int]:
+    def to_fields(cls, value: int) -> Tuple[int, int, int]:
         """
         Convert LocalDate represented as int in yyyymmdd format.
         the tuple (year, month, day).
@@ -69,7 +69,7 @@ class LocalDate(int, ABC):
         return year, month, day
 
     @classmethod
-    def from_str(cls, iso_string: str) -> Union[int, 'LocalDate']:
+    def from_str(cls, iso_string: str) -> int:
         """
         Convert str in yyyy-mm-dd format to LocalDate represented
         as int in yyyymmdd format.
@@ -86,7 +86,7 @@ class LocalDate(int, ABC):
         return 10_000 * date_from_str.year + 100 * date_from_str.month + date_from_str.day
 
     @classmethod
-    def to_str(cls, value: Union[int, 'LocalDate']) -> str:
+    def to_str(cls, value: int) -> str:
         """
         Convert LocalDate represented as int in yyyymmdd format
         to string in ISO yyyy-mm-dd format.
@@ -103,12 +103,12 @@ class LocalDate(int, ABC):
         return result
 
     @classmethod
-    def from_date(cls, date: dt.date) -> Union[int, 'LocalDate']:
+    def from_date(cls, date: dt.date) -> int:
         """Convert dt.date to LocalDate represented as int in yyyymmdd format."""
         return 10_000 * date.year + 100 * date.month + date.day
 
     @classmethod
-    def to_date(cls, value: Union[int, 'LocalDate']) -> dt.date:
+    def to_date(cls, value: int) -> dt.date:
         """Convert LocalDate represented as int in yyyymmdd format to dt.date."""
 
         # Perform fast validation to detect values out of range.
@@ -123,7 +123,7 @@ class LocalDate(int, ABC):
         return result
 
     @classmethod
-    def validate(cls, value: Union[int, 'LocalDate']) -> None:
+    def validate(cls, value: int) -> None:
         """
         Raise exception if the argument is not None and is not an int
         in yyyymmdd format.
@@ -149,7 +149,7 @@ class LocalDate(int, ABC):
                             f'The day {day} should be in 1 to 31 range.')
 
     @classmethod
-    def __to_fields_lenient(cls, value: Union[int, 'LocalDate']) -> Tuple[int, int, int]:
+    def __to_fields_lenient(cls, value: int) -> Tuple[int, int, int]:
         """
         Convert LocalDate represented as int in yyyymmdd format to
         the tuple (year, month, day).

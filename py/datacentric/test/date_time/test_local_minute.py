@@ -29,20 +29,20 @@ class TestLocalMinute(unittest.TestCase):
         iso_int: int = 1015
 
         # Validate
-        t1: Union[int, LocalMinute] = iso_int
+        t1: int = iso_int
         LocalMinute.validate(t1)
 
         # Create from year, month, day
-        t2: Union[int, LocalMinute] = LocalMinute.from_fields(10, 15)
+        t2: int = LocalMinute.from_fields(10, 15)
         self.assertEqual(t2, iso_int)
 
         # Create from string
-        t3: Union[int, LocalMinute] = LocalMinute.from_str(time_str)
+        t3: int = LocalMinute.from_str(time_str)
         self.assertEqual(t3, iso_int)
 
         # Create from dt.time
         t: dt.time = dt.time.fromisoformat('10:15')
-        t4: Union[int, LocalMinute] = LocalMinute.from_time(t)
+        t4: int = LocalMinute.from_time(t)
         self.assertEqual(t4, iso_int)
 
         # Test conversion to dt.date

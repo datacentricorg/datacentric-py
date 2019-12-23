@@ -41,19 +41,19 @@ class NullableElementsSample(Record):
     long_token: int = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'type': 'long'})
     """Sample element."""
 
-    local_date_token: Union[int, LocalDate] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_date_token: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    local_time_token: Union[int, LocalTime] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_time_token: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    local_minute_token: Union[int, LocalMinute] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_minute_token: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    local_date_time_token: Union[int, LocalDateTime] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_date_time_token: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    instant_token: Union[dt.datetime, Instant] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    instant_token: dt.datetime = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
     enum_token: EnumSample = attr.ib(default=None, kw_only=True, metadata={'optional': True})
@@ -80,11 +80,11 @@ class NullableElementsSample(Record):
                    bool_token: bool,
                    int_token: int,
                    long_token: int,
-                   local_date_token: Union[int, LocalDate],
-                   local_time_token: Union[int, LocalTime],
-                   local_minute_token: Union[int, LocalMinute],
-                   local_date_time_token: Union[int, LocalDateTime],
-                   instant_token: Union[dt.datetime, Instant],
+                   local_date_token: int,
+                   local_time_token: int,
+                   local_minute_token: int,
+                   local_date_time_token: int,
+                   instant_token: dt.datetime,
                    enum_token: EnumSample) -> Union[str, NullableElementsSampleKey]:
         """Create NullableElementsSample key."""
         return 'NullableElementsSample=' + ';'.join([string_token,

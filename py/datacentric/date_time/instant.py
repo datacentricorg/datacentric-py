@@ -52,7 +52,7 @@ class Instant(dt.datetime, ABC):
                     hour: int,
                     minute: int,
                     second: int,
-                    millisecond: Optional[int] = None) -> Union[dt.datetime, 'Instant']:
+                    millisecond: Optional[int] = None) -> dt.datetime:
         """
         Creates Instant represented as dt.datetime to millisecond precision from
         the the fields from year to millisecond.
@@ -78,7 +78,7 @@ class Instant(dt.datetime, ABC):
         return result
 
     @classmethod
-    def to_fields(cls, value: Union[dt.datetime, 'Instant']) -> Tuple[int, int, int, int, int, int, int]:
+    def to_fields(cls, value: dt.datetime) -> Tuple[int, int, int, int, int, int, int]:
         """
         Convert Instant to millisecond precision
         the tuple (hour, minute, second, millisecond).
@@ -95,7 +95,7 @@ class Instant(dt.datetime, ABC):
         return value.year, value.month, value.day, value.hour, value.minute, value.second, millisecond
 
     @classmethod
-    def from_str(cls, value: str) -> Union[dt.datetime, 'Instant']:
+    def from_str(cls, value: str) -> dt.datetime:
         """
         Convert from string in ISO format with UTC (Z) timezone suffix
         and up to 7 digits after decimal points for seconds.
@@ -132,7 +132,7 @@ class Instant(dt.datetime, ABC):
         return result
 
     @classmethod
-    def to_str(cls, value: Union[dt.datetime, 'Instant']) -> str:
+    def to_str(cls, value: dt.datetime) -> str:
         """
         Convert to string in ISO format with UTC (Z) timezone suffix
         and 3 digits after decimal points for seconds, irrespective of
@@ -156,7 +156,7 @@ class Instant(dt.datetime, ABC):
 
     @classmethod
     def from_unix_millis(
-            cls, unix_millis: int) -> Union[dt.datetime, 'Instant']:
+            cls, unix_millis: int) -> dt.datetime:
         """
         Convert milliseconds since Unix epoch Instant stored as dt.datetime
         in UTC timezone.
@@ -167,7 +167,7 @@ class Instant(dt.datetime, ABC):
             unix_millis / 1000.0).replace(tzinfo=pytz.UTC)
 
     @classmethod
-    def to_unix_millis(cls, value: Union[dt.datetime, 'Instant']) -> int:
+    def to_unix_millis(cls, value: dt.datetime) -> int:
         """
         Convert Instant stored as dt.datetime in UTC timezone to
         milliseconds since Unix epoch, rounding the value to
@@ -191,8 +191,8 @@ class Instant(dt.datetime, ABC):
         return result
 
     @classmethod
-    def round(cls, value: Union[dt.datetime, 'Instant']
-              ) -> Union[dt.datetime, 'Instant']:
+    def round(cls, value: dt.datetime
+              ) -> dt.datetime:
         """
         Round the argument to whole milliseconds.
 
@@ -216,7 +216,7 @@ class Instant(dt.datetime, ABC):
         return result
 
     @classmethod
-    def validate(cls, value: Union[dt.datetime, 'Instant']) -> None:
+    def validate(cls, value: dt.datetime) -> None:
         """
         Raise exception if one of the following is true:
 
@@ -233,7 +233,7 @@ class Instant(dt.datetime, ABC):
         cls.check_whole_millis(value)
 
     @classmethod
-    def check_in_utc(cls, value: Union[dt.datetime, 'Instant']) -> None:
+    def check_in_utc(cls, value: dt.datetime) -> None:
         """
         Raise exception if value is not None, and is not in UTC timezone.
 
@@ -264,7 +264,7 @@ class Instant(dt.datetime, ABC):
                             f'to UTC, such as pytz.UTC')
 
     @classmethod
-    def check_whole_millis(cls, value: Union[dt.datetime, 'Instant']) -> None:
+    def check_whole_millis(cls, value: dt.datetime) -> None:
         """
         Return true if value is either None, or has no fractional milliseconds.
 
@@ -288,7 +288,7 @@ class Instant(dt.datetime, ABC):
                 f'occurs during serialization roundtrip. Use Instant.round(...) to remove.')
 
     @classmethod
-    def __to_str_lenient(cls, value: Union[dt.datetime, 'Instant']) -> str:
+    def __to_str_lenient(cls, value: dt.datetime) -> str:
         """
         This method performs no validation before converting to string.
         It should be used for error messages only.

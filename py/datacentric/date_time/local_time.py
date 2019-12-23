@@ -42,7 +42,7 @@ class LocalTime(int, ABC):
 
     @classmethod
     def from_fields(cls, hour: int, minute: int, second: int,
-                    millisecond: Optional[int] = None) -> Union[int, 'LocalTime']:
+                    millisecond: Optional[int] = None) -> int:
         """
         Convert hour to millisecond fields to LocalTime represented in hhmmssfff format.
 
@@ -61,7 +61,7 @@ class LocalTime(int, ABC):
         return result
 
     @classmethod
-    def to_fields(cls, value: Union[int, 'LocalTime']) -> Tuple[int, int, int, int]:
+    def to_fields(cls, value: int) -> Tuple[int, int, int, int]:
         """
         Convert LocalTime represented in hhmmssfff format to
         the tuple (hour, minute, second, millisecond).
@@ -76,7 +76,7 @@ class LocalTime(int, ABC):
         return hour, minute, second, millisecond
 
     @classmethod
-    def from_str(cls, value: str) -> Union[int, 'LocalTime']:
+    def from_str(cls, value: str) -> int:
         """
         Convert from string in ISO format without timezone suffix
         and up to 7 digits after decimal points for seconds.
@@ -108,11 +108,11 @@ class LocalTime(int, ABC):
         rounded_time: dt.time = cls.__round_lenient(time_from_str)
 
         # Convert to LocalTime represented as int in hhmmssfff format
-        result: Union[int, LocalTime] = cls.from_time(rounded_time)
+        result: int = cls.from_time(rounded_time)
         return result
 
     @classmethod
-    def to_str(cls, value: Union[int, 'LocalTime']) -> str:
+    def to_str(cls, value: int) -> str:
         """
         Convert to string in ISO format without timezone, with
         3 digits after decimal points for seconds, irrespective of
@@ -134,7 +134,7 @@ class LocalTime(int, ABC):
         return result
 
     @classmethod
-    def from_time(cls, value: dt.time) -> Union[int, 'LocalTime']:
+    def from_time(cls, value: dt.time) -> int:
         """
         Convert from dt.time.
 
@@ -145,11 +145,11 @@ class LocalTime(int, ABC):
         # Round the millisecond
         millisecond: int = round(value.microsecond / 1000.0)
 
-        result: Union[int, 'LocalTime'] = LocalTime.from_fields(value.hour, value.minute, value.second, millisecond)
+        result: int = LocalTime.from_fields(value.hour, value.minute, value.second, millisecond)
         return result
 
     @classmethod
-    def to_time(cls, value: Union[int, 'LocalTime']) -> dt.time:
+    def to_time(cls, value: int) -> dt.time:
         """Convert to dt.time."""
 
         # Convert to tuple
@@ -160,7 +160,7 @@ class LocalTime(int, ABC):
         return result
 
     @classmethod
-    def validate(cls, value: Union[int, 'LocalTime']) -> None:
+    def validate(cls, value: int) -> None:
         """
         Raise exception if the argument is not None and is not an int
         in ISO hhmmssfff format.
@@ -187,7 +187,7 @@ class LocalTime(int, ABC):
                             f'The millisecond {millisecond} should be in 0 to 999 range.')
 
     @classmethod
-    def __to_fields_lenient(cls, value: Union[int, 'LocalTime']) -> Tuple[int, int, int, int]:
+    def __to_fields_lenient(cls, value: int) -> Tuple[int, int, int, int]:
         """
         Convert LocalTime stored as int in ISO hhmmssfff format to
         the tuple (hour, minute, second, millisecond).

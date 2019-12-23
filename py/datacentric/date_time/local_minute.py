@@ -41,7 +41,7 @@ class LocalMinute(int, ABC):
     # --- CLASS
 
     @classmethod
-    def from_fields(cls, hour: int, minute: int) -> Union[int, 'LocalMinute']:
+    def from_fields(cls, hour: int, minute: int) -> int:
         """
         Convert hour and minute fields to LocalMinute represented as int in hhmm format.
         """
@@ -55,7 +55,7 @@ class LocalMinute(int, ABC):
         return result
 
     @classmethod
-    def to_fields(cls, value: Union[int, 'LocalMinute']) -> Tuple[int, int]:
+    def to_fields(cls, value: int) -> Tuple[int, int]:
         """
         Convert LocalMinute represented as int in hhmm format to
         the tuple (hour, minute).
@@ -69,7 +69,7 @@ class LocalMinute(int, ABC):
         return hour, minute
 
     @classmethod
-    def from_str(cls, value: str) -> Union[int, 'LocalMinute']:
+    def from_str(cls, value: str) -> int:
         """
         Convert from string in hh:mm without timezone suffix.
 
@@ -83,11 +83,11 @@ class LocalMinute(int, ABC):
         time_from_str = dt.datetime.strptime(value, '%H:%M').time()
 
         # Convert to LocalMinute represented as int in hhmmssfff format
-        result: Union[int, LocalMinute] = cls.from_time(time_from_str)
+        result: int = cls.from_time(time_from_str)
         return result
 
     @classmethod
-    def to_str(cls, value: Union[int, 'LocalMinute']) -> str:
+    def to_str(cls, value: int) -> str:
         """
         Convert to string in hh:mm format without timezone.
 
@@ -102,7 +102,7 @@ class LocalMinute(int, ABC):
         return result
 
     @classmethod
-    def from_time(cls, value: dt.time) -> Union[int, 'LocalMinute']:
+    def from_time(cls, value: dt.time) -> int:
         """
         Convert from dt.time.
 
@@ -114,11 +114,11 @@ class LocalMinute(int, ABC):
         if value.second != 0 or value.microsecond != 0:
             raise Exception(f'Value {value} does not fall exactly on the minute.')
 
-        result: Union[int, 'LocalMinute'] = LocalMinute.from_fields(value.hour, value.minute)
+        result: int = LocalMinute.from_fields(value.hour, value.minute)
         return result
 
     @classmethod
-    def to_time(cls, value: Union[int, 'LocalMinute']) -> dt.time:
+    def to_time(cls, value: int) -> dt.time:
         """Convert to dt.time."""
 
         # Convert to tuple
@@ -129,7 +129,7 @@ class LocalMinute(int, ABC):
         return result
 
     @classmethod
-    def validate(cls, value: Union[int, 'LocalMinute']) -> None:
+    def validate(cls, value: int) -> None:
         """
         Raise exception if the argument is not None and is not an int
         in hhmm format.
@@ -150,7 +150,7 @@ class LocalMinute(int, ABC):
                             f'The minute {minute} should be in 0 to 59 range.')
 
     @classmethod
-    def __to_fields_lenient(cls, value: Union[int, 'LocalMinute']) -> Tuple[int, int]:
+    def __to_fields_lenient(cls, value: int) -> Tuple[int, int]:
         """
         Convert LocalMinute stored as int in hhmm format to
         the tuple (hour, minute).

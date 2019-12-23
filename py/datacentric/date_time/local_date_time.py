@@ -44,7 +44,7 @@ class LocalDateTime(int, ABC):
 
     @classmethod
     def from_fields(cls, year: int, month: int, day: int, hour: int = 0,
-                    minute: int = 0, second: int = 0, millisecond: Optional[int] = None) -> Union[int, 'LocalDateTime']:
+                    minute: int = 0, second: int = 0, millisecond: Optional[int] = None) -> int:
         """
         Convert hour to millisecond fields to LocalDateTime represented in yyyymmddhhmmssfff format.
 
@@ -64,7 +64,7 @@ class LocalDateTime(int, ABC):
         return result
 
     @classmethod
-    def validate(cls, value: Union[int, 'LocalDateTime']) -> None:
+    def validate(cls, value: int) -> None:
         """
         Raise exception if the argument is not None, and is not an
         int in yyyymmddhhmmssfff format.
@@ -102,7 +102,7 @@ class LocalDateTime(int, ABC):
                             f'The millisecond {millisecond} should be in 0 to 999 range.')
 
     @classmethod
-    def __to_fields_lenient(cls, value: Union[int, 'LocalDateTime']) -> Tuple[int, int, int, int, int, int, int]:
+    def __to_fields_lenient(cls, value: int) -> Tuple[int, int, int, int, int, int, int]:
         """
         Convert LocalDateTime represented as int in yyyymmddhhmmssfff format to
         the tuple (year, month, day, hour, minute, second, millisecond).

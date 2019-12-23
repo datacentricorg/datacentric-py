@@ -32,7 +32,7 @@ class BaseSample(Record):
     double_element: float = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    local_date_element: Union[int, LocalDate] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_date_element: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
     enum_value: EnumSample = attr.ib(default=None, kw_only=True, metadata={'optional': True})
@@ -47,16 +47,16 @@ class BaseSample(Record):
     record_index: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    local_time_element: Union[int, LocalTime] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_time_element: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    local_minute_element: Union[int, LocalMinute] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_minute_element: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    local_date_time_element: Union[int, LocalDateTime] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_date_time_element: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    instant_element: Union[dt.datetime, Instant] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    instant_element: dt.datetime = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
     def to_key(self) -> str:
