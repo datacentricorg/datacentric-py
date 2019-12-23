@@ -40,6 +40,6 @@ class MongoServer(Record):
         return 'MongoServer=' + self.mongo_server_uri
 
     @classmethod
-    def create_key(cls, *, mongo_server_uri: str) -> Union[str, MongoServerKey]:
+    def create_key(cls, *, mongo_server_uri: str) -> str:
         """Create MongoServer key."""
         return 'MongoServer=' + mongo_server_uri

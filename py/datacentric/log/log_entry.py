@@ -49,7 +49,7 @@ class LogEntry(Record):
     timestamp that matches update time.
     """
 
-    log: Union[str, LogKey] = attr.ib(default=None, kw_only=True)
+    log: str = attr.ib(default=None, kw_only=True)
     """
     Log for which the entry is recorded.
 
@@ -106,18 +106,18 @@ class LogEntry(Record):
         # TODO - provide correct format
         return self.title
 
-    def to_key(self) -> Union[str, LogEntryKey]:
+    def to_key(self) -> str:
         """Get LogEntryKey string for the current record."""
         return 'LogEntry=' + KeyUtil.remove_prefix(self.log, 'Log')
 
     # --- CLASS
 
     @classmethod
-    def create_key(cls, *, log: Union[str, LogKey]) -> Union[str, LogEntryKey]:
+    def create_key(cls, *, log: str) -> str:
         """Create LogEntryKey string from fields."""
         return 'LogEntry=' + KeyUtil.remove_prefix(log, 'TickerGroup')
 
     @classmethod
-    def get_log_from_key(cls, key: Union[str, LogEntryKey]) -> Union[str, LogKey]:
+    def get_log_from_key(cls, key: str) -> str:
         """Get log field by parsing LogEntryKey string."""
         return 'Log=' + KeyUtil.get_token(key, 'LogEntry', 1, 0)

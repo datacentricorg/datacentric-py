@@ -29,11 +29,11 @@ class SingletonSample(Record):
     string_element: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    def to_key(self) -> Union[str, SingletonSampleKey]:
+    def to_key(self) -> str:
         """Create key string from the current record."""
         return 'SingletonSample='
 
     @classmethod
-    def create_key(cls) -> Union[str, SingletonSampleKey]:
+    def create_key(cls) -> str:
         """Create key string from key elements."""
         return 'SingletonSample='

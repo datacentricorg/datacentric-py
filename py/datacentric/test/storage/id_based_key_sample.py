@@ -31,6 +31,6 @@ class IdBasedKeySample(Record):
         return 'IdBasedKeySample=' + str(self.id_)
 
     @classmethod
-    def create_key(cls, *, id_: ObjectId) -> Union[str, IdBasedKeySampleKey]:
+    def create_key(cls, *, id_: ObjectId) -> str:
         """Create IdBasedKeySample key."""
         return 'IdBasedKeySample=' + str(id_)

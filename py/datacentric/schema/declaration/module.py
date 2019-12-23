@@ -35,6 +35,6 @@ class Module(Record):
         return 'Module=' + self.module_name
 
     @classmethod
-    def create_key(cls, *, module_name: str) -> Union[str, ModuleKey]:
+    def create_key(cls, *, module_name: str) -> str:
         """Create Module key."""
         return 'Module=' + module_name

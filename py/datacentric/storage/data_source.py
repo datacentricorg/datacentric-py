@@ -138,7 +138,7 @@ class DataSource(Record, ABC):
     # --- CLASS
 
     @classmethod
-    def create_key(cls, *, data_source_name: str) -> Union[str, DataSourceKey]:
+    def create_key(cls, *, data_source_name: str) -> str:
         """Create DataSource key."""
         return 'DataSource=' + data_source_name
 

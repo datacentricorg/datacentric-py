@@ -64,7 +64,7 @@ class BaseSample(Record):
         return 'BaseSample=' + ';'.join([self.record_name, str(self.record_index)])
 
     @classmethod
-    def create_key(cls, *, record_name: str, record_index: int) -> Union[str, BaseSampleKey]:
+    def create_key(cls, *, record_name: str, record_index: int) -> str:
         """Create BaseSample key."""
         return 'BaseSample=' + ';'.join([record_name, str(record_index)])
 

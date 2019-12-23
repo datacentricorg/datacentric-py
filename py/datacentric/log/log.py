@@ -46,7 +46,7 @@ class Log(Record, ABC):
         return 'Log=' + self.log_name
 
     @classmethod
-    def create_key(cls, *, log_name: str) -> Union[str, LogKey]:
+    def create_key(cls, *, log_name: str) -> str:
         """Create Log key."""
         return 'Log=' + log_name
 

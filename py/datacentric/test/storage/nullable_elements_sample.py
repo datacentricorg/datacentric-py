@@ -85,7 +85,7 @@ class NullableElementsSample(Record):
                    local_minute_token: int,
                    local_date_time_token: int,
                    instant_token: dt.datetime,
-                   enum_token: EnumSample) -> Union[str, NullableElementsSampleKey]:
+                   enum_token: EnumSample) -> str:
         """Create NullableElementsSample key."""
         return 'NullableElementsSample=' + ';'.join([string_token,
                                                      str(bool_token).lower(),

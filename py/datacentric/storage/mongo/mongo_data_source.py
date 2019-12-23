@@ -33,7 +33,7 @@ class MongoDataSource(DataSource, ABC):
     This class provides functionality shared by all MongoDB data source types.
     """
 
-    mongo_server: Union[str, MongoServerKey] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    mongo_server: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """
     Specifies Mongo server for this data source.
 

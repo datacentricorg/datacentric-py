@@ -44,13 +44,13 @@ class ParamDecl(Data):
     value: ValueDecl = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Parameters specific to the value element."""
 
-    enum: Union[str, EnumDeclKey] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    enum: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """
     Reference the declaration of enum contained
     by the current element.
     """
 
-    data: Union[str, TypeDeclKey] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    data: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """
     Reference to declaration of the data type
     contained by the current element.
@@ -58,7 +58,7 @@ class ParamDecl(Data):
     The referenced type must have TypeKind=Element.
     """
 
-    key: Union[str, TypeDeclKey] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    key: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """
     Reference to declaration of the data type for
     which the key is contained by the current element.

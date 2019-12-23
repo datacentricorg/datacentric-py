@@ -24,7 +24,7 @@ from datacentric.schema.declaration.module_key import ModuleKey
 class EnumDecl(Record):
     """Language neutral description of an enumeration."""
 
-    module: Union[str, ModuleKey] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    module: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Module reference."""
 
     name: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
@@ -51,6 +51,6 @@ class EnumDecl(Record):
         return 'EnumDecl=' + ';'.join([self.module.split('=', 1)[1], self.name])
 
     @classmethod
-    def create_key(cls, *, module: Union[str, ModuleKey], name: str) -> Union[str, EnumDeclKey]:
+    def create_key(cls, *, module: str, name: str) -> str:
         """Create EnumDecl key."""
         return 'EnumDecl=' + ';'.join([module.split('=', 1)[1], name])

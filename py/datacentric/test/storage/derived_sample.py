@@ -53,10 +53,10 @@ class DerivedSample(BaseSample):
     data_element_list: List[ElementSample] = attr.ib(default=None, kw_only=True, repr=False, metadata={'optional': True})
     """Sample element."""
 
-    key_element: Union[str, BaseSampleKey] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    key_element: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    key_element_list: List[Union[str, BaseSampleKey]] = attr.ib(default=None, kw_only=True, repr=False, metadata={'optional': True})
+    key_element_list: List[str] = attr.ib(default=None, kw_only=True, repr=False, metadata={'optional': True})
     """Sample element."""
 
     def non_virtual_derived_handler(self):

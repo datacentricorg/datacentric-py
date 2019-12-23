@@ -26,13 +26,13 @@ class CompositeKeySample(Record):
     key_element1: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """String key element."""
 
-    key_element2: Union[str, BaseSampleKey] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    key_element2: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Another key."""
 
     key_element3: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """String key element."""
 
-    element4: Union[str, CompositeKeySampleKey] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    element4: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Key to the same type."""
 
     def to_key(self) -> str:
@@ -42,7 +42,7 @@ class CompositeKeySample(Record):
                                                  self.key_element3])
 
     @classmethod
-    def create_key(cls, *, key_element1: str, key_element2: Union[str, BaseSampleKey], key_element3: str) -> Union[str, CompositeKeySampleKey]:
+    def create_key(cls, *, key_element1: str, key_element2: str, key_element3: str) -> str:
         """Create CompositeKeySample key."""
         return 'CompositeKeySample=' + ';'.join([key_element1,
                                                  key_element2.split('=', 1)[1],

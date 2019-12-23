@@ -83,6 +83,6 @@ class DataSet(Record):
         return 'DataSet=' + self.data_set_name
 
     @classmethod
-    def create_key(cls, *, data_set_name: str) -> Union[str, DataSetKey]:
+    def create_key(cls, *, data_set_name: str) -> str:
         """Create DataSet key."""
         return 'DataSet=' + data_set_name

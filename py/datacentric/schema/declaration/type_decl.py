@@ -29,7 +29,7 @@ from datacentric.schema.declaration.yes_no import YesNo
 class TypeDecl(Record):
     """Language neutral description of a data class."""
 
-    module: Union[str, ModuleKey] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    module: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Module reference."""
 
     name: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
@@ -64,7 +64,7 @@ class TypeDecl(Record):
     TODO - overlaps with Kind, consolidate?
     """
 
-    inherit: Union[str, TypeDeclKey] = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    inherit: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """
     Reference to the parent type.
 
@@ -113,6 +113,6 @@ class TypeDecl(Record):
         return 'TypeDecl=' + ';'.join([self.module.split('=', 1)[1], self.name])
 
     @classmethod
-    def create_key(cls, *, module: Union[str, ModuleKey], name: str) -> Union[str, TypeDeclKey]:
+    def create_key(cls, *, module: str, name: str) -> str:
         """Create TypeDecl key."""
         return 'TypeDecl=' + ';'.join([module.split('=', 1)[1], name])

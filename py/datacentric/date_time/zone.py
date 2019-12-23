@@ -71,19 +71,19 @@ class Zone(Record):
         return 'Zone=' + self.zone_name
 
     @classmethod
-    def create_key(cls, *, zone_name: str) -> Union[str, ZoneKey]:
+    def create_key(cls, *, zone_name: str) -> str:
         """Create Zone key."""
         return 'Zone=' + zone_name
 
     # --- CLASS
 
     @classmethod
-    def get_zone_name_from_key(cls, key: Union[str, ZoneKey]) -> str:
+    def get_zone_name_from_key(cls, key: str) -> str:
         """Get zone_name by parsing key."""
         return key.split('=', 1)[1].split(';')[0]
 
     @classmethod
-    def get_tzinfo_from_key(cls, key: Union[str, ZoneKey]) -> dt.tzinfo:
+    def get_tzinfo_from_key(cls, key: str) -> dt.tzinfo:
         """Get tzinfo object by parsing key, without loading the zone record."""
         zone_name: str = cls.get_zone_name_from_key(key)
         return pytz.timezone(zone_name)

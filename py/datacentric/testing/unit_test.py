@@ -56,7 +56,7 @@ class UnitTest(Record):
         return 'UnitTest=' + self.unit_test_name
 
     @classmethod
-    def create_key(cls, *, unit_test_name: str) -> Union[str, UnitTestKey]:
+    def create_key(cls, *, unit_test_name: str) -> str:
         """Create UnitTest key."""
         return 'UnitTest=' + unit_test_name
 
