@@ -21,29 +21,21 @@ from typing import Dict, Any, get_type_hints, TypeVar, Union, List
 from typing_inspect import get_origin, get_args
 from datacentric.primitive.string_util import StringUtil
 from datacentric.storage.class_info import ClassInfo
-from datacentric.date_time.local_time import LocalTime
-from datacentric.date_time.local_minute import LocalMinute
-from datacentric.date_time.local_date import LocalDate
-from datacentric.date_time.local_date_time import LocalDateTime
-from datacentric.date_time.instant import Instant
-from datacentric.storage.key import Key
 from datacentric.storage.record import Record
 from datacentric.storage.data import Data
 
 TRecord = TypeVar('TRecord', bound=Record)
 
-_local_hints_ = [LocalMinute, LocalDateTime, LocalDate, LocalTime]
-
 
 # Serialization: object -> dict
 
 # TODO: Refactor
-def serialize(obj: TRecord):
-    type_: type = type(obj)
-    dict_ = _serialize_class(obj, type_)
+def serialize(obj: TRecord) -> Dict[str, Any]:
+    dict_: Dict[str, Any] = dict()
+    cls_type = type(obj)
 
     # Field _t contains inheritance chain of the class, starting from Record
-    dict_['_t'] = ClassInfo.get_inheritance_chain(type_)
+    dict_['_t'] = ClassInfo.get_inheritance_chain(cls_type)
 
     # ObjectId of the dataset
     dict_['_dataset'] = obj.data_set
@@ -56,10 +48,47 @@ def serialize(obj: TRecord):
     # Unique object id
     dict_['_id'] = obj.id_
 
+    fields = attr.fields(cls_type)
+
+    mro = cls_type.__mro__
+    if Record in mro:
+        serializable_fields = [x for x in fields if x not in attr.fields(Record)]
+    else:
+        raise Exception(f'Cannot serialize class {cls_type.__name__} not derived from Record.')
+
+    non_private_fields = [x for x in serializable_fields if not x.name.startswith('_')]
+
+    for field in non_private_fields:  # type: attr.Attribute
+        value = getattr(obj, field.name)
+
+        expected_type = field.type
+
+        is_optional = field.metadata.get('optional', False)
+        is_list = get_origin(expected_type) is not None and get_origin(expected_type) is list
+
+        if value is None:
+            if not is_optional and not is_list:
+                raise Exception(f'Missing required field: {field.name} in type: {cls_type.__name__}')
+            continue
+
+        if is_list:
+            expected_arg = get_args(expected_type)[0]
+            serialized_value = _serialize_list(value, expected_arg, is_optional)
+
+        elif issubclass(expected_type, Data):
+            serialized_value = _serialize_class(value, expected_type)
+
+        elif issubclass(expected_type, IntEnum):
+            serialized_value = _serialize_enum(value)
+
+        else:
+            serialized_value = _serialize_primitive(value, expected_type)
+
+        dict_[StringUtil.to_pascal_case(field.name)] = serialized_value
     return dict_
 
 
-def _serialize_class(obj: TRecord, expected_: type):
+def _serialize_class(obj: TRecord, expected_: type) -> Dict[str, Any]:
     dict_: Dict[str, Any] = dict()
 
     cls_type = type(obj)
@@ -67,40 +96,35 @@ def _serialize_class(obj: TRecord, expected_: type):
     if cls_type != expected_:
         raise Exception(f'Expected: {expected_.__name__}, actual: {cls_type.__name__}')
 
-    cls_name = cls_type.__name__
     # Field _t contains inheritance chain of the class, starting from Record
     dict_['_t'] = ClassInfo.get_inheritance_chain(cls_type)
 
-    mro = cls_type.__mro__
     fields = attr.fields(cls_type)
 
+    mro = cls_type.__mro__
     if Record in mro:
         serializable_fields = [x for x in fields if x not in attr.fields(Record)]
     elif Data in mro:
         serializable_fields = [x for x in fields if x not in attr.fields(Data)]
     else:
-        raise Exception(f'Cannot serialize class {cls_name} not derived from Record or Data.')
+        raise Exception(f'Cannot serialize class {cls_type.__name__} not derived from Record or Data.')
 
     non_private_fields = [x for x in serializable_fields if not x.name.startswith('_')]
 
-    field: attr.Attribute
-    for field in non_private_fields:
+    for field in non_private_fields:  # type: attr.Attribute
         value = getattr(obj, field.name)
+
         expected_type = field.type
 
         is_optional = field.metadata.get('optional', False)
         is_list = get_origin(expected_type) is not None and get_origin(expected_type) is list
-        is_union = get_origin(expected_type) is not None and get_origin(expected_type) is Union
 
         if value is None:
             if not is_optional and not is_list:
-                raise Exception(f'Missing required field: {field.name} in type: {cls_name}')
+                raise Exception(f'Missing required field: {field.name} in type: {cls_type.__name__}')
             continue
 
-        if is_union:
-            serialized_value = _serialize_unions(expected_type, value)
-
-        elif is_list:
+        if is_list:
             expected_arg = get_args(expected_type)[0]
             serialized_value = _serialize_list(value, expected_arg, is_optional)
 
@@ -115,33 +139,12 @@ def _serialize_class(obj: TRecord, expected_: type):
     return dict_
 
 
-def _serialize_unions(type_hint, value_) -> Any:
-    args = get_args(type_hint)
-
-    if args[0] is str and issubclass(args[1], Key):
-        if type(value_) is not str:
-            raise Exception(f'Expected str')
-        return value_
-    if args[0] is int and args[1] in _local_hints_:
-        if type(value_) is not int:
-            raise Exception(f'Expected int')  # TODO Improve comment to be specific about which date type is used
-        return value_
-    if args[0] is dt.datetime and args[1] == Instant:
-        if type(value_) is not dt.datetime:
-            raise Exception(f'Expected dt.datetime')
-        return value_
-    raise Exception(f'Unexpected Union arguments: {args}')
-
-
 def _serialize_list(list_, expected_, is_optional: bool) -> List[Any]:
     is_required = not is_optional
     if is_required and None in list_:
         Exception('Lists not marked as optional cannot contain None elements.')
-    is_union = get_origin(expected_) is not None and get_origin(expected_) is Union
 
-    if is_union:
-        return [_serialize_unions(expected_, x) for x in list_]
-    elif issubclass(expected_, Data):
+    if issubclass(expected_, Data):
         return [_serialize_class(x, expected_) for x in list_]
     elif issubclass(expected_, IntEnum):
         return [_serialize_enum(x) for x in list_]
@@ -154,13 +157,6 @@ def _serialize_enum(value_: IntEnum):
         return value_.name
     else:
         raise Exception(f'Expected subclass of IntEnum, got {type(value_)}')
-
-
-def _serialize_key(value_: Key):
-    if issubclass(type(value_), Key):
-        return value_.value
-    else:
-        raise Exception(f'Expected subclass of Key, got {type(value_)}')
 
 
 def _serialize_primitive(value, expected_):
@@ -191,7 +187,7 @@ def _serialize_primitive(value, expected_):
 # Deserialization: dict -> object
 
 # TODO: Refactor
-def deserialize(dict_: Dict) -> TRecord:
+def deserialize(dict_: Dict[str, Any]) -> TRecord:
     # key_ is omitted and is calculated using records to_
     dict_.pop('_key')
 
@@ -218,12 +214,6 @@ def _deserialize_class(dict_: Dict[str, Any]) -> TRecord:
         slot = StringUtil.to_snake_case(dict_key)
 
         member_type = hints[slot]
-
-        # Resolve Optional[Type] case
-        if get_origin(member_type) is not None and get_origin(member_type) is Union:
-            union_args = get_args(member_type)
-            if union_args[1] is type(None):
-                member_type = union_args[0]
 
         if get_origin(member_type) is not None and get_origin(member_type) is list:
             deserialized_value = _deserialize_list(member_type, dict_value)
