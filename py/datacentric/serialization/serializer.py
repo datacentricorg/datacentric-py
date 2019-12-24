@@ -194,10 +194,31 @@ def deserialize(dict_: Dict[str, Any]) -> TRecord:
     data_set = dict_.pop('_dataset')
     id_ = dict_.pop('_id')
 
-    new_obj: TRecord = _deserialize_class(dict_)
+    # Despite code is the same as in _deserialize_class, reducing nesting improves speed
+    type_name: str = dict_.pop('_t')[-1]
+    type_info = ClassInfo.get_type(type_name)
 
-    new_obj.__setattr__('data_set', data_set)
-    new_obj.__setattr__('id_', id_)
+    hints = get_type_hints(type_info)
+    new_obj = type_info()
+
+    for dict_key, dict_value in dict_.items():
+        slot = StringUtil.to_snake_case(dict_key)
+
+        member_type = hints[slot]
+
+        if get_origin(member_type) is not None and get_origin(member_type) is list:
+            deserialized_value = _deserialize_list(member_type, dict_value)
+        elif issubclass(member_type, Data):
+            deserialized_value = _deserialize_class(dict_value)
+        elif issubclass(member_type, IntEnum):
+            deserialized_value = member_type[dict_value]
+        else:
+            deserialized_value = _deserialize_primitive(member_type, dict_value)
+
+        setattr(new_obj, slot, deserialized_value)
+
+    setattr(new_obj, 'data_set', data_set)
+    setattr(new_obj, 'id_', id_)
 
     return new_obj
 
@@ -217,8 +238,6 @@ def _deserialize_class(dict_: Dict[str, Any]) -> TRecord:
 
         if get_origin(member_type) is not None and get_origin(member_type) is list:
             deserialized_value = _deserialize_list(member_type, dict_value)
-        elif get_origin(member_type) is not None and get_origin(member_type) is Union:
-            deserialized_value = dict_value
         elif issubclass(member_type, Data):
             deserialized_value = _deserialize_class(dict_value)
         elif issubclass(member_type, IntEnum):
@@ -226,16 +245,14 @@ def _deserialize_class(dict_: Dict[str, Any]) -> TRecord:
         else:
             deserialized_value = _deserialize_primitive(member_type, dict_value)
 
-        new_obj.__setattr__(slot, deserialized_value)
+        setattr(new_obj, slot, deserialized_value)
     return new_obj
 
 
-def _deserialize_list(type_: type, list_):
+def _deserialize_list(type_: type, list_) -> List[Any]:
     expected_item_type = get_args(type_)[0]
-    origin = get_origin(expected_item_type)
-    if origin is not None and origin is Union:
-        return list_
-    elif issubclass(expected_item_type, Data):
+
+    if issubclass(expected_item_type, Data):
         return [_deserialize_class(x) for x in list_]
     elif issubclass(expected_item_type, IntEnum):
         return [expected_item_type[x] for x in list_]
@@ -248,8 +265,6 @@ def _deserialize_list(type_: type, list_):
 def _deserialize_primitive(expected_type, value):
     if expected_type == str:
         return value
-    elif expected_type == np.ndarray:
-        return np.array(value)
     elif expected_type == bool:
         return value
     elif expected_type == int:
