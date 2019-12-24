@@ -15,6 +15,7 @@
 import unittest
 from modulefinder import ModuleFinder
 import inspect
+import datacentric
 
 
 class TestInspect(unittest.TestCase):
