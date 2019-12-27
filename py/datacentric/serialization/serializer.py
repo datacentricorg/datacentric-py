@@ -13,11 +13,10 @@
 # limitations under the License.
 
 import attr
-import numpy as np
 import datetime as dt
 from bson import ObjectId
 from enum import IntEnum
-from typing import Dict, Any, get_type_hints, TypeVar, Union, List
+from typing import Dict, Any, get_type_hints, TypeVar, List
 from typing_inspect import get_origin, get_args
 from datacentric.primitive.string_util import StringUtil
 from datacentric.storage.class_info import ClassInfo
@@ -31,11 +30,11 @@ TRecord = TypeVar('TRecord', bound=Record)
 
 # TODO: Refactor
 def serialize(obj: TRecord) -> Dict[str, Any]:
-    dict_: Dict[str, Any] = dict()
-    cls_type = type(obj)
+    type_: type = type(obj)
+    dict_ = _serialize_class(obj, type_)
 
     # Field _t contains inheritance chain of the class, starting from Record
-    dict_['_t'] = ClassInfo.get_inheritance_chain(cls_type)
+    dict_['_t'] = ClassInfo.get_inheritance_chain(type_)
 
     # ObjectId of the dataset
     dict_['_dataset'] = obj.data_set
@@ -48,43 +47,6 @@ def serialize(obj: TRecord) -> Dict[str, Any]:
     # Unique object id
     dict_['_id'] = obj.id_
 
-    fields = attr.fields(cls_type)
-
-    mro = cls_type.__mro__
-    if Record in mro:
-        serializable_fields = [x for x in fields if x not in attr.fields(Record)]
-    else:
-        raise Exception(f'Cannot serialize class {cls_type.__name__} not derived from Record.')
-
-    non_private_fields = [x for x in serializable_fields if not x.name.startswith('_')]
-
-    for field in non_private_fields:  # type: attr.Attribute
-        value = getattr(obj, field.name)
-
-        expected_type = field.type
-
-        is_optional = field.metadata.get('optional', False)
-        is_list = get_origin(expected_type) is not None and get_origin(expected_type) is list
-
-        if value is None:
-            if not is_optional and not is_list:
-                raise Exception(f'Missing required field: {field.name} in type: {cls_type.__name__}')
-            continue
-
-        if is_list:
-            expected_arg = get_args(expected_type)[0]
-            serialized_value = _serialize_list(value, expected_arg, is_optional)
-
-        elif issubclass(expected_type, Data):
-            serialized_value = _serialize_class(value, expected_type)
-
-        elif issubclass(expected_type, IntEnum):
-            serialized_value = _serialize_enum(value)
-
-        else:
-            serialized_value = _serialize_primitive(value, expected_type)
-
-        dict_[StringUtil.to_pascal_case(field.name)] = serialized_value
     return dict_
 
 
@@ -194,28 +156,7 @@ def deserialize(dict_: Dict[str, Any]) -> TRecord:
     data_set = dict_.pop('_dataset')
     id_ = dict_.pop('_id')
 
-    # Despite code is the same as in _deserialize_class, reducing nesting improves speed
-    type_name: str = dict_.pop('_t')[-1]
-    type_info = ClassInfo.get_type(type_name)
-
-    hints = get_type_hints(type_info)
-    new_obj = type_info()
-
-    for dict_key, dict_value in dict_.items():
-        slot = StringUtil.to_snake_case(dict_key)
-
-        member_type = hints[slot]
-
-        if get_origin(member_type) is not None and get_origin(member_type) is list:
-            deserialized_value = _deserialize_list(member_type, dict_value)
-        elif issubclass(member_type, Data):
-            deserialized_value = _deserialize_class(dict_value)
-        elif issubclass(member_type, IntEnum):
-            deserialized_value = member_type[dict_value]
-        else:
-            deserialized_value = _deserialize_primitive(member_type, dict_value)
-
-        setattr(new_obj, slot, deserialized_value)
+    new_obj: TRecord = _deserialize_class(dict_)
 
     setattr(new_obj, 'data_set', data_set)
     setattr(new_obj, 'id_', id_)
