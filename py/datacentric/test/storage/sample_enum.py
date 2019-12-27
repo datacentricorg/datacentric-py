@@ -12,19 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import attr
 from enum import IntEnum
-from typing import List, ClassVar, Tuple, Union
 
 
-class EnumSample(IntEnum):
+class SampleEnum(IntEnum):
     """Enum sample."""
 
-    Empty = 0
+    Empty = 0,
     """Empty value."""
 
-    EnumValue1 = 1
+    EnumValue1 = 1,
     """Sample value."""
 
-    EnumValue2 = 2
+    EnumValue2 = 2,
     """Sample value."""

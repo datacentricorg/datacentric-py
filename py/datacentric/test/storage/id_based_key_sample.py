@@ -14,9 +14,7 @@
 
 import attr
 from bson import ObjectId
-from typing import Union
 from datacentric.storage.record import Record
-from datacentric.test.storage.id_based_key_sample_key import IdBasedKeySampleKey
 
 
 @attr.s(slots=True, auto_attribs=True)

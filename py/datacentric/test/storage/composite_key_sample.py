@@ -13,10 +13,7 @@
 # limitations under the License.
 
 import attr
-from typing import Union
 from datacentric.storage.record import Record
-from datacentric.test.storage.composite_key_sample_key import CompositeKeySampleKey
-from datacentric.test.storage.base_sample_key import BaseSampleKey
 
 
 @attr.s(slots=True, auto_attribs=True)
@@ -26,13 +23,13 @@ class CompositeKeySample(Record):
     key_element1: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """String key element."""
 
-    key_element2: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    key_element2: str = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'key': 'BaseSample'})
     """Another key."""
 
     key_element3: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """String key element."""
 
-    element4: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    element4: str = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'key': 'CompositeKeySample'})
     """Key to the same type."""
 
     def to_key(self) -> str:

@@ -14,15 +14,10 @@
 
 import attr
 import datetime as dt
-from typing import Union
-from datacentric.storage.record import Record
-from datacentric.test.storage.nullable_elements_sample_key import NullableElementsSampleKey
-from datacentric.test.storage.enum_sample import EnumSample
-from datacentric.date_time.local_date_time import LocalDateTime
-from datacentric.date_time.local_date import LocalDate
-from datacentric.date_time.local_time import LocalTime
-from datacentric.date_time.local_minute import LocalMinute
+
 from datacentric.date_time.instant import Instant
+from datacentric.storage.record import Record
+from datacentric.test.storage.sample_enum import SampleEnum
 
 
 @attr.s(slots=True, auto_attribs=True)
@@ -41,22 +36,22 @@ class NullableElementsSample(Record):
     long_token: int = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'type': 'long'})
     """Sample element."""
 
-    local_date_token: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_date_token: int = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'type': 'LocalDate'})
     """Sample element."""
 
-    local_time_token: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_time_token: int = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'type': 'LocalTime'})
     """Sample element."""
 
-    local_minute_token: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_minute_token: int = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'type': 'LocalMinute'})
     """Sample element."""
 
-    local_date_time_token: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_date_time_token: int = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'type': 'LocalDateTime'})
     """Sample element."""
 
-    instant_token: dt.datetime = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    instant_token: dt.datetime = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'type': 'Instant'})
     """Sample element."""
 
-    enum_token: EnumSample = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    enum_token: SampleEnum = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
     record_index: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
@@ -85,7 +80,7 @@ class NullableElementsSample(Record):
                    local_minute_token: int,
                    local_date_time_token: int,
                    instant_token: dt.datetime,
-                   enum_token: EnumSample) -> str:
+                   enum_token: SampleEnum) -> str:
         """Create NullableElementsSample key."""
         return 'NullableElementsSample=' + ';'.join([string_token,
                                                      str(bool_token).lower(),

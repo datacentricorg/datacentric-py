@@ -13,9 +13,7 @@
 # limitations under the License.
 
 import attr
-from typing import Union
 from datacentric.storage.record import Record
-from datacentric.test.storage.singleton_sample_key import SingletonSampleKey
 
 
 @attr.s(slots=True, auto_attribs=True)

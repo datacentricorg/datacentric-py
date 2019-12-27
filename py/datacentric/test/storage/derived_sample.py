@@ -13,10 +13,9 @@
 # limitations under the License.
 
 import attr
-from typing import List, Union
+from typing import List
 from datacentric.test.storage.base_sample import BaseSample
 from datacentric.test.storage.element_sample import ElementSample
-from datacentric.test.storage.base_sample_key import BaseSampleKey
 
 
 @attr.s(slots=True, auto_attribs=True)
@@ -50,13 +49,15 @@ class DerivedSample(BaseSample):
     data_element: ElementSample = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    data_element_list: List[ElementSample] = attr.ib(default=None, kw_only=True, repr=False, metadata={'optional': True})
+    data_element_list: List[ElementSample] = attr.ib(default=None, kw_only=True, repr=False,
+                                                     metadata={'optional': True})
     """Sample element."""
 
-    key_element: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    key_element: str = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'key': 'BaseSample'})
     """Sample element."""
 
-    key_element_list: List[str] = attr.ib(default=None, kw_only=True, repr=False, metadata={'optional': True})
+    key_element_list: List[str] = attr.ib(default=None, kw_only=True, repr=False,
+                                          metadata={'optional': True, 'key': 'BaseSample'})
     """Sample element."""
 
     def non_virtual_derived_handler(self):

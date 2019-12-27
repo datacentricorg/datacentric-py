@@ -14,15 +14,8 @@
 
 import attr
 import datetime as dt
-from typing import Union
 from datacentric.storage.record import Record
-from datacentric.test.storage.base_sample_key import BaseSampleKey
-from datacentric.test.storage.enum_sample import EnumSample
-from datacentric.date_time.local_date_time import LocalDateTime
-from datacentric.date_time.local_date import LocalDate
-from datacentric.date_time.local_time import LocalTime
-from datacentric.date_time.local_minute import LocalMinute
-from datacentric.date_time.instant import Instant
+from datacentric.test.storage.sample_enum import SampleEnum
 
 
 @attr.s(slots=True, auto_attribs=True)
@@ -32,10 +25,10 @@ class BaseSample(Record):
     double_element: float = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    local_date_element: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_date_element: int = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'type': 'LocalDate'})
     """Sample element."""
 
-    enum_value: EnumSample = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    enum_value: SampleEnum = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
     record_name: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
@@ -47,16 +40,16 @@ class BaseSample(Record):
     record_index: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Sample element."""
 
-    local_time_element: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_time_element: int = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'type': 'LocalTime'})
     """Sample element."""
 
-    local_minute_element: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_minute_element: int = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'type': 'LocalMinute'})
     """Sample element."""
 
-    local_date_time_element: int = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    local_date_time_element: int = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'type': 'LocalDateTime'})
     """Sample element."""
 
-    instant_element: dt.datetime = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    instant_element: dt.datetime = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'type': 'Instant'})
     """Sample element."""
 
     def to_key(self) -> str:
