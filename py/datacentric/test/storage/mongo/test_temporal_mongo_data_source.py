@@ -34,7 +34,6 @@ class TestTemporalMongoDataSource(unittest.TestCase):
         """Smoke test for TemporalMongoDataSource."""
 
         with TemporalMongoUnitTestContext() as context:
-
             self.save_basic_data(context)
 
             key_a0 = 'BaseSample=A;0'
@@ -49,7 +48,6 @@ class TestTemporalMongoDataSource(unittest.TestCase):
         """Test working with multiple datasets."""
 
         with TemporalMongoUnitTestContext() as context:
-
             # Begin from DataSet0
             data_set0 = context.data_source.create_data_set('DataSet0', context.data_set)
 
@@ -119,7 +117,6 @@ class TestTemporalMongoDataSource(unittest.TestCase):
         """Stress tests to check ObjectIds are created in increasing order."""
 
         with TemporalMongoUnitTestContext() as context:
-
             for i in range(10_000):
                 context.data_source.create_ordered_object_id()
 
@@ -179,10 +176,11 @@ class TestTemporalMongoDataSource(unittest.TestCase):
         rec.data_element_list = [element_list0, element_list1]
 
         # Key element
-        rec.key_element = 'BB;2'
+        rec.key_element = BaseSample.create_key(record_name='BB', record_index=2)
 
         # Key element list
-        rec.key_element_list = ['B0;3', 'B1;4']
+        rec.key_element_list = [BaseSample.create_key(record_name='B0', record_index=3),
+                                BaseSample.create_key(record_name='B1', record_index=4)]
 
         data_set = context.data_source.get_data_set(data_set_id, context.data_set)
         context.data_source.save_one(DerivedSample, rec, data_set)

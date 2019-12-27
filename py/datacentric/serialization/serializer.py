@@ -88,20 +88,21 @@ def _serialize_class(obj: TRecord, expected_: type) -> Dict[str, Any]:
 
         if is_list:
             expected_arg = get_args(expected_type)[0]
-            serialized_value = _serialize_list(value, expected_arg, is_optional)
+            serialized_value = _serialize_list(value, expected_arg, field.metadata)
 
         elif issubclass(expected_type, Data):
             serialized_value = _serialize_class(value, expected_type)
         elif issubclass(expected_type, IntEnum):
             serialized_value = _serialize_enum(value)
         else:
-            serialized_value = _serialize_primitive(value, expected_type)
+            serialized_value = _serialize_primitive(value, expected_type, field.metadata)
 
         dict_[StringUtil.to_pascal_case(field.name)] = serialized_value
     return dict_
 
 
-def _serialize_list(list_, expected_, is_optional: bool) -> List[Any]:
+def _serialize_list(list_, expected_, meta_: Dict[Any, Any]) -> List[Any]:
+    is_optional = meta_.get('optional', False)
     is_required = not is_optional
     if is_required and None in list_:
         Exception('Lists not marked as optional cannot contain None elements.')
@@ -111,7 +112,7 @@ def _serialize_list(list_, expected_, is_optional: bool) -> List[Any]:
     elif issubclass(expected_, IntEnum):
         return [_serialize_enum(x) for x in list_]
     else:
-        return [_serialize_primitive(x, expected_) for x in list_]
+        return [_serialize_primitive(x, expected_, meta_) for x in list_]
 
 
 def _serialize_enum(value_: IntEnum):
@@ -121,14 +122,59 @@ def _serialize_enum(value_: IntEnum):
         raise Exception(f'Expected subclass of IntEnum, got {type(value_)}')
 
 
-def _serialize_primitive(value, expected_):
+def _serialize_primitive(value, expected_, meta_: Dict[Any, Any]):
     # The only case to have None here -> List with optional in metadata
     if value is None:
         return None
 
+    has_type = 'type' in meta_
+    is_key = 'key' in meta_
+
+    # Check that expected collection name is equal to actual
+    if is_key:
+        collection_in_key = value.split('=', 1)[0]
+        collection_in_metadata = meta_.get('key')
+        if collection_in_key != collection_in_metadata:
+            raise Exception(f'Wrong key: expected: {collection_in_metadata}, got: {collection_in_key}.')
+        return value
+
     value_type = type(value)
     if value_type != expected_:
         raise Exception(f'Expected {expected_.__name__}, got {value_type.__name__}')
+
+    if has_type:
+        type_hint = meta_.get('type')
+        if type_hint == 'LocalDate':
+            if 19700101 <= value <= 99991231:
+                return value
+            else:
+                raise Exception(f'Wrong value for local date: {value}')
+
+        if type_hint == 'LocalTime':
+            if 0 <= value <= 235959999:
+                return value
+            else:
+                raise Exception(f'Wrong value for local time: {value}')
+
+        if type_hint == 'LocalMinute':
+            if 0 <= value <= 2359:
+                return value
+            else:
+                raise Exception(f'Wrong value for local minute: {value}')
+
+        if type_hint == 'LocalDateTime':
+            if 19700101000000000 <= value <= 99991231235959999:
+                return value
+            else:
+                raise Exception(f'Wrong value for local date_time: {value}')
+
+        # TODO: define check for instant
+        if type_hint == 'Instant':
+            return value
+
+        if type_hint == 'long':
+            return value
+        raise Exception(f'Cannot resolve metadata type: {type_hint}.')
 
     if value_type == dt.datetime:
         return value
