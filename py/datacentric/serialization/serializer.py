@@ -14,7 +14,7 @@
 
 import attr
 import datetime as dt
-from bson import ObjectId
+from bson import ObjectId, Int64
 from enum import IntEnum
 from typing import Dict, Any, get_type_hints, TypeVar, List
 from typing_inspect import get_origin, get_args
@@ -127,6 +127,10 @@ def _serialize_primitive(value, expected_, meta_: Dict[Any, Any]):
     if value is None:
         return None
 
+    value_type = type(value)
+    if value_type != expected_:
+        raise Exception(f'Expected {expected_.__name__}, got {value_type.__name__}')
+
     has_type = 'type' in meta_
     is_key = 'key' in meta_
 
@@ -137,10 +141,6 @@ def _serialize_primitive(value, expected_, meta_: Dict[Any, Any]):
         if collection_in_key != collection_in_metadata:
             raise Exception(f'Wrong key: expected: {collection_in_metadata}, got: {collection_in_key}.')
         return value
-
-    value_type = type(value)
-    if value_type != expected_:
-        raise Exception(f'Expected {expected_.__name__}, got {value_type.__name__}')
 
     if has_type:
         type_hint = meta_.get('type')
@@ -213,30 +213,31 @@ def deserialize(dict_: Dict[str, Any]) -> TRecord:
 def _deserialize_class(dict_: Dict[str, Any]) -> TRecord:
     type_name: str = dict_.pop('_t')[-1]
 
-    type_info = ClassInfo.get_type(type_name)
+    type_info: type = ClassInfo.get_type(type_name)
 
-    hints = get_type_hints(type_info)
+    fields = attr.fields_dict(type_info)
     new_obj = type_info()
 
     for dict_key, dict_value in dict_.items():
         slot = StringUtil.to_snake_case(dict_key)
 
-        member_type = hints[slot]
+        field = fields[slot]
+        member_type = field.type
 
         if get_origin(member_type) is not None and get_origin(member_type) is list:
-            deserialized_value = _deserialize_list(member_type, dict_value)
+            deserialized_value = _deserialize_list(member_type, dict_value, field.metadata)
         elif issubclass(member_type, Data):
             deserialized_value = _deserialize_class(dict_value)
         elif issubclass(member_type, IntEnum):
             deserialized_value = member_type[dict_value]
         else:
-            deserialized_value = _deserialize_primitive(member_type, dict_value)
+            deserialized_value = _deserialize_primitive(member_type, dict_value, field.metadata)
 
         setattr(new_obj, slot, deserialized_value)
     return new_obj
 
 
-def _deserialize_list(type_: type, list_) -> List[Any]:
+def _deserialize_list(type_: type, list_, meta_: Dict[Any, Any]) -> List[Any]:
     expected_item_type = get_args(type_)[0]
 
     if issubclass(expected_item_type, Data):
@@ -246,10 +247,29 @@ def _deserialize_list(type_: type, list_) -> List[Any]:
     elif expected_item_type is list:
         raise Exception(f'List of lists are prohibited.')
     else:
-        return [_deserialize_primitive(expected_item_type, x) for x in list_]
+        return [_deserialize_primitive(expected_item_type, x, meta_) for x in list_]
 
 
-def _deserialize_primitive(expected_type, value):
+def _deserialize_primitive(expected_type, value, meta_: Dict[Any, Any]):
+    is_key = 'key' in meta_
+    has_type = 'type' in meta_
+
+    value_type = type(value)
+    if value_type != expected_type:
+        if value_type == Int64 and expected_type == int:
+            pass
+        elif meta_.get('optional', False):
+            pass
+        else:
+            raise Exception(f'Expected {expected_type.__name__}, got {value_type.__name__}')
+
+    if is_key:
+        collection_in_key = value.split('=', 1)[0]
+        collection_in_metadata = meta_.get('key')
+        if collection_in_key != collection_in_metadata:
+            raise Exception(f'Wrong key: expected: {collection_in_metadata}, got: {collection_in_key}.')
+        return value
+
     if expected_type == str:
         return value
     elif expected_type == bool:
