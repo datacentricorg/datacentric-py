@@ -13,18 +13,10 @@
 # limitations under the License.
 
 import attr
-from enum import IntEnum
-from typing import List, ClassVar, Tuple, Union, Optional
-from abc import ABC
+from typing import Optional
 from bson import ObjectId
-from datacentric.date_time.local_date import LocalDate
-from datacentric.date_time.local_time import LocalTime
-from datacentric.date_time.local_minute import LocalMinute
-from datacentric.date_time.local_date_time import LocalDateTime
 from datacentric.storage.record import Record
-from datacentric.storage.key import Key
 from datacentric.storage.data_source import DataSource
-from datacentric.test.storage.root_sample_key import RootSampleKey
 
 
 @attr.s(slots=True, auto_attribs=True)

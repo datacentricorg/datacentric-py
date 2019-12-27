@@ -15,7 +15,6 @@
 import unittest
 from datacentric.storage.class_info import ClassInfo
 from datacentric.test.storage.base_sample import BaseSample
-from datacentric.test.storage.base_sample_key import BaseSampleKey
 from datacentric.test.storage.derived_sample import DerivedSample
 from datacentric.test.storage.element_sample import ElementSample
 from datacentric.test.storage.root_sample import RootSample
@@ -27,8 +26,6 @@ class TestClassInfo(unittest.TestCase):
     def test_smoke(self):
         """Smoke test."""
 
-        with self.assertRaises(Exception):
-            ClassInfo.get_ultimate_base(BaseSampleKey)
         with self.assertRaises(Exception):
             ClassInfo.get_ultimate_base(ClassInfo)
         self.assertTrue(ClassInfo.get_ultimate_base(BaseSample) == BaseSample)

@@ -20,7 +20,7 @@ from datacentric.date_time.local_date import LocalDate
 from datacentric.date_time.local_time import LocalTime
 from datacentric.date_time.local_minute import LocalMinute
 from datacentric.date_time.local_date_time import LocalDateTime
-from datacentric.test.storage.enum_sample import EnumSample
+from datacentric.test.storage.sample_enum import SampleEnum
 from datacentric.test.storage.element_sample import ElementSample
 from datacentric.test.storage.base_sample import BaseSample
 from datacentric.test.storage.derived_sample import DerivedSample
@@ -138,7 +138,7 @@ class TestTemporalMongoDataSource(unittest.TestCase):
         rec.local_time_element = LocalTime.from_fields(10, 15, 30)  # 10:15:30
         rec.local_minute_element = LocalMinute.from_fields(10, 15)  # 10:15
         rec.local_date_time_element = LocalDateTime.from_fields(2003, 5, 1, 10, 15)  # 2003-05-01T10:15:00
-        rec.enum_value = EnumSample.EnumValue2
+        rec.enum_value = SampleEnum.EnumValue2
 
         data_set = context.data_source.get_data_set(data_set_id, context.data_set)
         context.data_source.save_one(BaseSample, rec, data_set)

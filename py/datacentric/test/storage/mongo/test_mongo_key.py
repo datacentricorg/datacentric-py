@@ -17,7 +17,7 @@ import unittest
 import datetime as dt
 from bson import ObjectId
 import datacentric as dc
-from datacentric.test.storage.enum_sample import EnumSample
+from datacentric.test.storage.sample_enum import SampleEnum
 from datacentric.test.storage.base_sample import BaseSample
 from datacentric.test.storage.composite_key_sample import CompositeKeySample
 from datacentric.test.storage.singleton_sample import SingletonSample
@@ -84,7 +84,7 @@ class TestMongoKey(unittest.TestCase):
             local_minute_token=dc.LocalMinute.from_fields(10, 15),
             local_date_time_token=dc.LocalDateTime.from_fields(2017, 7, 14, 10, 15, 30, 500),
             instant_token=dc.Instant.from_fields(2017, 7, 14, 10, 15, 30, 500),
-            enum_token=EnumSample.EnumValue1)
+            enum_token=SampleEnum.EnumValue1)
         self.assertEqual(key, 'NullableElementsSample=ABC;true;123;1234567890;20170714;101530500;1015;20170714101530500;2017-07-14T10:15:30.500Z;EnumValue1')
 
 if __name__ == "__main__":
