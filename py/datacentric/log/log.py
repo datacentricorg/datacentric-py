@@ -14,11 +14,9 @@
 
 import attr
 from abc import ABC, abstractmethod
-from typing import Union
 from datacentric.log.log_entry import LogEntry
 from datacentric.storage.context import Context
 from datacentric.storage.record import Record
-from datacentric.log.log_key import LogKey
 from datacentric.log.log_verbosity import LogVerbosity
 
 

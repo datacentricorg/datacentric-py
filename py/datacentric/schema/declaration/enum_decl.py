@@ -13,18 +13,16 @@
 # limitations under the License.
 
 import attr
-from typing import List, Union
+from typing import List
 from datacentric.storage.record import Record
-from datacentric.schema.declaration.enum_decl_key import EnumDeclKey
 from datacentric.schema.declaration.enum_item import EnumItem
-from datacentric.schema.declaration.module_key import ModuleKey
 
 
 @attr.s(slots=True, auto_attribs=True)
 class EnumDecl(Record):
     """Language neutral description of an enumeration."""
 
-    module: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    module: str = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'key': 'Module'})
     """Module reference."""
 
     name: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})

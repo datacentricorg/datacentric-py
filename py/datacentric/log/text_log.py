@@ -14,7 +14,7 @@
 
 import attr
 from abc import ABC
-from typing import List
+from typing import List, ClassVar
 from datacentric.primitive.string_util import StringUtil
 from datacentric.log.log import Log
 from datacentric.file_system.text_writer import TextWriter
@@ -33,7 +33,7 @@ class TextLog(Log, ABC):
     before the log is used.
     """
 
-    __indent_string: str = '  ' * 4
+    __indent_string: ClassVar[str] = '  ' * 4
 
     def flush(self) -> None:
         """Flush data to permanent storage."""

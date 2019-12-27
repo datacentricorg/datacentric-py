@@ -13,13 +13,11 @@
 # limitations under the License.
 
 import attr
-from typing import Union
 from bson import ObjectId
+
+from datacentric import KeyUtil
 from datacentric.storage.context import Context
 from datacentric.storage.record import Record
-from datacentric.storage.key_util import KeyUtil
-from datacentric.log.log_entry_key import LogEntryKey
-from datacentric.log.log_key import LogKey
 from datacentric.log.log_verbosity import LogVerbosity
 
 
@@ -49,7 +47,7 @@ class LogEntry(Record):
     timestamp that matches update time.
     """
 
-    log: str = attr.ib(default=None, kw_only=True)
+    log: str = attr.ib(default=None, kw_only=True, metadata={'key': 'Log'})
     """
     Log for which the entry is recorded.
 
@@ -58,8 +56,7 @@ class LogEntry(Record):
     """
 
     verbosity: LogVerbosity = attr.ib(default=None, kw_only=True)
-    """
-    Minimal verbosity for which log entry will be displayed."""
+    """Minimal verbosity for which log entry will be displayed."""
 
     title: str = attr.ib(default=None, kw_only=True)
     """
@@ -76,6 +73,15 @@ class LogEntry(Record):
     Line breaks, whitespace and other formatting in the description
     will be preserved when the log entry is displayed.
     """
+
+    def to_key(self) -> str:
+        """Get LogEntry key."""
+        return 'LogEntry=' + str(self.id_)
+
+    @classmethod
+    def create_key(cls, *, id_: ObjectId) -> str:
+        """Create LogEntry key."""
+        return 'LogEntry=' + str(id_)
 
     # --- METHODS
 
@@ -105,17 +111,6 @@ class LogEntry(Record):
         """
         # TODO - provide correct format
         return self.title
-
-    def to_key(self) -> str:
-        """Get LogEntryKey string for the current record."""
-        return 'LogEntry=' + KeyUtil.remove_prefix(self.log, 'Log')
-
-    # --- CLASS
-
-    @classmethod
-    def create_key(cls, *, log: str) -> str:
-        """Create LogEntryKey string from fields."""
-        return 'LogEntry=' + KeyUtil.remove_prefix(log, 'TickerGroup')
 
     @classmethod
     def get_log_from_key(cls, key: str) -> str:

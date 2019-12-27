@@ -13,14 +13,12 @@
 # limitations under the License.
 
 import attr
-from typing import List, Union
+from typing import List
 from datacentric.storage.record import Record
-from datacentric.schema.declaration.type_decl_key import TypeDeclKey
 from datacentric.schema.declaration.handler_declare_block import HandlerDeclareBlock
 from datacentric.schema.declaration.handler_implement_block import HandlerImplementBlock
 from datacentric.schema.declaration.element_decl import ElementDecl
 from datacentric.schema.declaration.index_elements import IndexElements
-from datacentric.schema.declaration.module_key import ModuleKey
 from datacentric.schema.declaration.type_kind import TypeKind
 from datacentric.schema.declaration.yes_no import YesNo
 
@@ -29,7 +27,7 @@ from datacentric.schema.declaration.yes_no import YesNo
 class TypeDecl(Record):
     """Language neutral description of a data class."""
 
-    module: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    module: str = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'key': 'Module'})
     """Module reference."""
 
     name: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
@@ -64,7 +62,7 @@ class TypeDecl(Record):
     TODO - overlaps with Kind, consolidate?
     """
 
-    inherit: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    inherit: str = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'key': 'TypeDecl'})
     """
     Reference to the parent type.
 

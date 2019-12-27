@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Union, List
-from datacentric.storage.key import Key
+from typing import List
+
 
 class KeyUtil:
     """
@@ -21,7 +21,7 @@ class KeyUtil:
     """
 
     @classmethod
-    def remove_prefix(cls, key: Union[str, Key], key_type: str) -> str:
+    def remove_prefix(cls, key: str, key_type: str) -> str:
         """
         Parse key string in KeyType=A;B;C format, verify that the first part (KeyType)
         matches key_type argument, and return the second part (A;B;C).
@@ -37,7 +37,7 @@ class KeyUtil:
         return tokens[1]
 
     @classmethod
-    def get_token(cls, key: Union[str, Key], key_type: str, token_count: int, token_index: int) -> str:
+    def get_token(cls, key: str, key_type: str, token_count: int, token_index: int) -> str:
         """
         Parse key string in KeyType=A;B;C format, verify that the first part (KeyType)
         matches key_type argument and return semicolon delimited token at token_index

@@ -28,7 +28,6 @@ from datacentric.date_time.local_date_time import LocalDateTime
 from datacentric.date_time.instant import Instant
 from datacentric.storage.context import Context
 from datacentric.storage.data import Data
-from datacentric.storage.key import Key
 from datacentric.storage.record import Record
 from datacentric.storage.root_record import RootRecord
 from datacentric.storage.mongo.temporal_mongo_data_source import TemporalMongoDataSource

@@ -14,9 +14,8 @@
 
 import attr
 from bson import ObjectId
-from typing import List, Union
+from typing import List
 from datacentric.storage.record import Record
-from datacentric.storage.data_set_key import DataSetKey
 
 
 @attr.s(slots=True, auto_attribs=True)

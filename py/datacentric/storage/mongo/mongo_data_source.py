@@ -13,13 +13,11 @@
 # limitations under the License.
 
 import attr
+import stringcase
 from abc import ABC
 from bson import ObjectId
-from typing import Union
-import stringcase
 from pymongo import MongoClient
 from pymongo.database import Database
-from datacentric.storage.mongo.mongo_server_key import MongoServerKey
 from datacentric.storage.context import Context
 from datacentric.storage.data_source import DataSource
 from datacentric.storage.env_type import EnvType
@@ -33,7 +31,7 @@ class MongoDataSource(DataSource, ABC):
     This class provides functionality shared by all MongoDB data source types.
     """
 
-    mongo_server: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    mongo_server: str = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'key': 'MongoServer'})
     """
     Specifies Mongo server for this data source.
 

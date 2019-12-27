@@ -12,25 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import attr
-from abc import ABC, abstractmethod
+from enum import IntEnum
 
 
-class Key(str, ABC):
+class FileReadMode(IntEnum):
+    """Specifies how to open a file for reading."""
+
+    Empty = 0,
     """
-    Base class of a foreign key.
+    Indicates that enum value is not set.
 
-    The sole purpose of foreign key classes derived from this class
-    is to provide type safety by servinv as annotations (hints).
-
-    To prevent this abstract base class from being instantiated, it
-    includes an guard method that should not be implemented.
+    In programming languages where enum defaults to the first item when
+    not set, making Empty the first item prevents unintended assignment
+    of a meaningful value.
     """
 
-    @abstractmethod
-    def abstract_class_guard(self) -> None:
-        """
-        Guard method to prevent this abstract base class from
-        being instantiated.
-        """
-        pass
+    MustExist = 1,
+    """Open an existing file. Exception if does not exist."""
+
+    OpenOrCreate = 2,
+    """Open if exists, or create new file if does not exist."""

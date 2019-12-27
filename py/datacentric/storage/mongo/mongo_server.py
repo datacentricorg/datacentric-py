@@ -13,9 +13,7 @@
 # limitations under the License.
 
 import attr
-from typing import Union
 from datacentric.storage.record import Record
-from datacentric.storage.mongo.mongo_server_key import MongoServerKey
 
 
 @attr.s(slots=True, auto_attribs=True)

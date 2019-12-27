@@ -18,7 +18,6 @@ from typing import Union
 from datacentric.storage.context import Context
 from datacentric.storage.record import Record
 from datacentric.storage.unit_test_context import UnitTestContext
-from datacentric.testing.unit_test_key import UnitTestKey
 from datacentric.testing.unit_test_complexity import UnitTestComplexity
 
 

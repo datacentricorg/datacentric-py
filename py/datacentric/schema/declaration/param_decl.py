@@ -13,11 +13,8 @@
 # limitations under the License.
 
 import attr
-from typing import Union
 from datacentric.storage.data import Data
 from datacentric.schema.declaration.value_decl import ValueDecl
-from datacentric.schema.declaration.enum_decl_key import EnumDeclKey
-from datacentric.schema.declaration.type_decl_key import TypeDeclKey
 from datacentric.schema.declaration.yes_no import YesNo
 
 
@@ -44,13 +41,13 @@ class ParamDecl(Data):
     value: ValueDecl = attr.ib(default=None, kw_only=True, metadata={'optional': True})
     """Parameters specific to the value element."""
 
-    enum: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    enum: str = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'key': 'EnumDecl'})
     """
     Reference the declaration of enum contained
     by the current element.
     """
 
-    data: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    data: str = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'key': 'TypeDecl'})
     """
     Reference to declaration of the data type
     contained by the current element.
@@ -58,7 +55,7 @@ class ParamDecl(Data):
     The referenced type must have TypeKind=Element.
     """
 
-    key: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    key: str = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'key': 'TypeDecl'})
     """
     Reference to declaration of the data type for
     which the key is contained by the current element.

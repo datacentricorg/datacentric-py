@@ -13,11 +13,9 @@
 # limitations under the License.
 
 import attr
-from typing import Union
 import datetime as dt
 import pytz
 from datacentric.storage.record import Record
-from datacentric.date_time.zone_key import ZoneKey
 
 
 @attr.s(slots=True, auto_attribs=True)
@@ -63,8 +61,6 @@ class Zone(Record):
     has two slash-delimited tokens, the first referencing the
     country and the other the city, for example America/New_York.
     """
-
-    # --- METHODS
 
     def to_key(self) -> str:
         """Get Zone key."""

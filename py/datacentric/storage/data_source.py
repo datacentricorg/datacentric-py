@@ -14,14 +14,12 @@
 
 import attr
 from abc import ABC, abstractmethod
-from typing import Optional, TypeVar, Iterable, List, ClassVar, Tuple, Type, Union
+from typing import Optional, TypeVar, Iterable, List, ClassVar, Type, Union
 from bson import ObjectId
 from datacentric.storage.data_set_flags import DataSetFlags
-from datacentric.storage.key import Key
 from datacentric.storage.record import Record
 from datacentric.storage.data_set import DataSet
 from datacentric.storage.env_type import EnvType
-from datacentric.storage.data_source_key import DataSourceKey
 from datacentric.storage.context import Context
 
 TRecord = TypeVar('TRecord', bound=Record)
@@ -168,7 +166,7 @@ class DataSource(Record, ABC):
         pass
 
     @abstractmethod
-    def load_or_null_by_key(self, record_type: Type[TRecord], key_: Union[str, Key], load_from: ObjectId) -> Optional[TRecord]:
+    def load_or_null_by_key(self, record_type: Type[TRecord], key_: str, load_from: ObjectId) -> Optional[TRecord]:
         """Load record by string key from the specified dataset or
         its list of imports. The lookup occurs first in descending
         order of dataset ObjectIds, and then in the descending

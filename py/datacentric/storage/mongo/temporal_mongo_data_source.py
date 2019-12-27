@@ -71,6 +71,9 @@ class TemporalMongoDataSource(MongoDataSource):
     get_collection(...).
     """
 
+    def load(self, record_type: Type[TRecord], id_: ObjectId) -> TRecord:
+        raise NotImplemented
+
     def load_or_null(self, record_type: Type[TRecord], id_: ObjectId) -> Optional[TRecord]:
         """Load record by its ObjectId.
 
@@ -128,7 +131,7 @@ class TemporalMongoDataSource(MongoDataSource):
         however an exception will be thrown if the record exists but
         is not derived from TRecord.
         """
-        collection_name, key_value  = key_.split('=', 1)
+        collection_name, key_value = key_.split('=', 1)
 
         base_pipe = [{"$match": {"_key": key_value}}]
         pipe_with_constraints = self.apply_final_constraints(base_pipe, load_from)
