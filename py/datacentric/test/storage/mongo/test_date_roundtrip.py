@@ -14,9 +14,6 @@
 
 import unittest
 import datetime as dt
-from bson import ObjectId
-from typing import List
-from datacentric.storage.data_set import DataSet
 from datacentric.date_time.local_date import LocalDate
 from datacentric.date_time.local_time import LocalTime
 from datacentric.date_time.local_minute import LocalMinute
@@ -57,3 +54,7 @@ class TestDateRoundTrip(unittest.TestCase):
             self.assertEqual(rec.local_time_element, loaded.local_time_element)
             self.assertEqual(rec.local_date_time_element, loaded.local_date_time_element)
             self.assertEqual(rec.instant_element, loaded.instant_element)
+
+            self.assertEqual(rec.date_element, loaded.date_element)
+            self.assertEqual(rec.time_element, loaded.time_element)
+            self.assertEqual(rec.date_time_element, loaded.date_time_element)

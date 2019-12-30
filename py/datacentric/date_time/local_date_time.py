@@ -64,6 +64,27 @@ class LocalDateTime(int, ABC):
         return result
 
     @classmethod
+    def from_datetime(cls, date: dt.datetime) -> int:
+        """Convert dt.datetime to LocalDateTime represented as int in yyyymmddhhmmssfff format."""
+        if date.tzinfo is not None:
+            raise Exception(f'Use Instant for datetime with time zone info.')
+
+        result: int = 1000_00_00_00_00_00 * date.year + 1000_00_00_00_00 * date.month + 1000_00_00_00 * date.day + \
+                      1000_00_00 * date.hour + 1000_00 * date.minute + 1000 * date.second + date.microsecond // 1000
+        return result
+
+    @classmethod
+    def to_datetime(cls, value: int) -> dt.datetime:
+        """Convert LocalDateTime represented as int in yyyymmddhhmmssfff format to dt.datetime."""
+
+        # Convert to tuple
+        year, month, day, hour, minute, second, millisecond = cls.__to_fields_lenient(value)
+
+        # This will also validate the date
+        result = dt.datetime(year, month, day, hour, minute, second, microsecond=1000 * millisecond)
+        return result
+
+    @classmethod
     def validate(cls, value: int) -> None:
         """
         Raise exception if the argument is not None, and is not an

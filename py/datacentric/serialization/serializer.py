@@ -19,6 +19,9 @@ from enum import IntEnum
 from typing import Dict, Any, get_type_hints, TypeVar, List
 from typing_inspect import get_origin, get_args
 from datacentric.primitive.string_util import StringUtil
+from datacentric.date_time.local_date import LocalDate
+from datacentric.date_time.local_time import LocalTime
+from datacentric.date_time.local_date_time import LocalDateTime
 from datacentric.storage.class_info import ClassInfo
 from datacentric.storage.record import Record
 from datacentric.storage.data import Data
@@ -177,7 +180,11 @@ def _serialize_primitive(value, expected_, meta_: Dict[Any, Any]):
         raise Exception(f'Cannot resolve metadata type: {type_hint}.')
 
     if value_type == dt.datetime:
-        return value
+        return LocalDateTime.from_datetime(value)
+    elif value_type == dt.date:
+        return LocalDate.from_date(value)
+    elif value_type == dt.time:
+        return LocalTime.from_time(value)
     elif value_type == str:
         return value
     elif value_type == bool:
@@ -253,16 +260,33 @@ def _deserialize_list(type_: type, list_, meta_: Dict[Any, Any]) -> List[Any]:
 def _deserialize_primitive(expected_type, value, meta_: Dict[Any, Any]):
     is_key = 'key' in meta_
     has_type = 'type' in meta_
-
     value_type = type(value)
+
+    if has_type:
+        meta_type = meta_.get('type')
+        if value_type == expected_type:
+            return value
+        elif meta_type == 'LocalDateTime' and value_type == Int64:
+            return value
+        elif meta_type == 'long' and value_type == Int64:
+            return value
+        else:
+            raise Exception(f'Unknown case for metadata type: {meta_type}. Actual: {value_type.__name__}')
+
+    # Additional cases for date classes
     if value_type != expected_type:
-        if value_type == Int64 and expected_type == int:
-            pass
-        elif meta_.get('optional', False):
-            pass
+        if value_type == int and expected_type == dt.time:
+            return LocalTime.to_time(value)
+        elif value_type == int and expected_type == dt.date:
+            return LocalDate.to_date(value)
+        elif value_type == Int64 and expected_type == dt.datetime:
+            return LocalDateTime.to_datetime(value)
+        elif meta_.get('optional', False) and value is None:
+            return None
         else:
             raise Exception(f'Expected {expected_type.__name__}, got {value_type.__name__}')
 
+    # Case for key and key check
     if is_key:
         collection_in_key = value.split('=', 1)[0]
         collection_in_metadata = meta_.get('key')
@@ -270,6 +294,7 @@ def _deserialize_primitive(expected_type, value, meta_: Dict[Any, Any]):
             raise Exception(f'Wrong key: expected: {collection_in_metadata}, got: {collection_in_key}.')
         return value
 
+    # Primitives
     if expected_type == str:
         return value
     elif expected_type == bool:
@@ -279,8 +304,6 @@ def _deserialize_primitive(expected_type, value, meta_: Dict[Any, Any]):
     elif expected_type == float:
         return value
     elif expected_type == ObjectId:
-        return value
-    elif expected_type == dt.datetime:
         return value
     else:
         raise Exception(f'Cannot deduce type {expected_type}')
