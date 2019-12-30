@@ -48,3 +48,8 @@ class TestDateRoundTrip(unittest.TestCase):
             loaded = context.data_source.load_by_key(DatesSample, rec.to_key(), data_set0)
 
             self.assertEqual(rec.record_name, loaded.record_name)
+            self.assertEqual(rec.local_minute_element, loaded.local_minute_element)
+            self.assertEqual(rec.local_date_element, loaded.local_date_element)
+            self.assertEqual(rec.local_time_element, loaded.local_time_element)
+            self.assertEqual(rec.local_date_time_element, loaded.local_date_time_element)
+            self.assertEqual(rec.instant_element, loaded.instant_element)
