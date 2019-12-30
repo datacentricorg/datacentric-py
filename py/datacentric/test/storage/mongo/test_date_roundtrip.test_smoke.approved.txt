@@ -1,1 +1,1 @@
-Verify: Test completed successfully.
+Error: Exception Exception has occurred with message Cannot serialize type date.

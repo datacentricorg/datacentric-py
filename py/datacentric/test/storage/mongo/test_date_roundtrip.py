@@ -43,6 +43,10 @@ class TestDateRoundTrip(unittest.TestCase):
             rec.local_date_time_element = LocalDateTime.from_fields(2003, 5, 1, 10, 15)  # 2003-05-01T10:15:00
             rec.instant_element = Instant.from_fields(2003, 5, 1, 10, 15, 0)
 
+            rec.date_element = dt.date(2003, 5, 1)
+            rec.time_element = dt.time(10, 15, 30)
+            rec.date_time_element = dt.datetime(2003, 5, 1, 10, 15)
+
             context.data_source.save_one(DatesSample, rec, data_set0)
 
             loaded = context.data_source.load_by_key(DatesSample, rec.to_key(), data_set0)

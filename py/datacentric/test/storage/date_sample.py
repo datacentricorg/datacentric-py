@@ -21,24 +21,32 @@ from datacentric.storage.record import Record
 class DatesSample(Record):
     """Base class of sample data for data source testing."""
 
-    record_name: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    record_name: str = attr.ib(default=None, kw_only=True)
     """Sample element."""
 
-    local_date_element: int = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'type': 'LocalDate'})
+    local_date_element: int = attr.ib(default=None, kw_only=True, metadata={'type': 'LocalDate'})
     """Sample element."""
 
-    local_time_element: int = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'type': 'LocalTime'})
+    local_time_element: int = attr.ib(default=None, kw_only=True, metadata={'type': 'LocalTime'})
     """Sample element."""
 
-    local_minute_element: int = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'type': 'LocalMinute'})
+    local_minute_element: int = attr.ib(default=None, kw_only=True, metadata={'type': 'LocalMinute'})
     """Sample element."""
 
-    local_date_time_element: int = attr.ib(default=None, kw_only=True,
-                                           metadata={'optional': True, 'type': 'LocalDateTime'})
+    local_date_time_element: int = attr.ib(default=None, kw_only=True, metadata={'type': 'LocalDateTime'})
     """Sample element."""
 
-    instant_element: dt.datetime = attr.ib(default=None, kw_only=True, metadata={'optional': True, 'type': 'Instant'})
+    instant_element: dt.datetime = attr.ib(default=None, kw_only=True, metadata={'type': 'Instant'})
     """Sample element."""
+
+    date_element: dt.date = attr.ib(default=None, kw_only=True)
+    """LocalDate alternative element."""
+
+    time_element: dt.time = attr.ib(default=None, kw_only=True)
+    """LocalTime alternative element."""
+
+    date_time_element: dt.datetime = attr.ib(default=None, kw_only=True)
+    """LocalDateTime alternative element."""
 
     def to_key(self) -> str:
         """Get BaseSample key."""
