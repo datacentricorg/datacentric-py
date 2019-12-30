@@ -20,6 +20,7 @@ from datacentric.date_time.local_date import LocalDate
 from datacentric.date_time.local_time import LocalTime
 from datacentric.date_time.local_minute import LocalMinute
 from datacentric.date_time.local_date_time import LocalDateTime
+from datacentric.date_time.instant import Instant
 from datacentric.test.storage.sample_enum import SampleEnum
 from datacentric.test.storage.element_sample import ElementSample
 from datacentric.test.storage.base_sample import BaseSample
@@ -153,6 +154,7 @@ class TestTemporalMongoDataSource(unittest.TestCase):
         rec.local_time_element = LocalTime.from_fields(10, 15, 30)  # 10:15:30
         rec.local_minute_element = LocalMinute.from_fields(10, 15)  # 10:15
         rec.local_date_time_element = LocalDateTime.from_fields(2003, 5, 1, 10, 15)  # 2003-05-01T10:15:00
+        rec.instant_element = Instant.from_fields(2003, 5, 1, 10, 15, 0)
         rec.string_element2 = ''
         rec.double_element = 200.
         rec.list_of_string = ['A', 'B', 'C']
