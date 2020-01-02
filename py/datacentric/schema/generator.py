@@ -20,7 +20,7 @@ import datetime as dt
 
 from abc import ABC
 from enum import IntEnum
-from typing import List, Set, TypeVar, Type, Optional, Union, Any, Dict
+from typing import List, Set, TypeVar, Type, Optional, Any, Dict
 
 from bson import ObjectId
 from typing_inspect import get_origin, get_args
@@ -35,11 +35,7 @@ from datacentric.schema.declaration.value_param_type import ValueParamType
 from datacentric.schema.declaration.yes_no import YesNo
 from datacentric.schema.declaration.type_decl import TypeDecl
 from datacentric.schema.declaration.enum_decl import EnumDecl
-from datacentric.date_time.local_minute import LocalMinute
-from datacentric.date_time.local_date import LocalDate
-from datacentric.date_time.local_time import LocalTime
-from datacentric.date_time.local_date_time import LocalDateTime
-from datacentric.date_time.instant import Instant
+from datacentric.storage.class_info import ClassInfo
 from datacentric.storage.context import Context
 from datacentric.storage.data import Data
 from datacentric.storage.record import Record
@@ -110,6 +106,12 @@ def _create_type_declaration_key(module: str, name: str) -> str:
     return TypeDecl.create_key(module=Module.create_key(module_name=module_name), name=name)
 
 
+def _create_enum_declaration_key(module: str, name: str) -> str:
+    """Create proper enum delcaration key."""
+    module_name = _module_from_module_name(module)
+    return EnumDecl.create_key(module=Module.create_key(module_name=module_name), name=name)
+
+
 def _get_kind(type_: Type[TData]) -> Optional[TypeKind]:
     """Extract kind information from type."""
     if ABC in type_.__bases__:
@@ -140,34 +142,16 @@ def _to_type_member(type_: type, metadata_: Dict[Any, Any]) -> ElementDecl:
     if is_list:
         type_ = get_args(type_)[0]
 
-    is_union = get_origin(type_) is not None and get_origin(type_) is Union
+    key_ = metadata_.get('key', None)
+    if key_ is not None and type_ is str:
+        key_type = ClassInfo.get_type(key_)
+        result.key = _create_type_declaration_key(key_type.__module__, key_)
+        return result
 
-    # Date classes and keys are represented with Union
-    if is_union:
-        union_args = get_args(type_)
-        if len(union_args) != 2:
-            raise Exception(f'Expected two args in Union, got {len(union_args)}')
-        first_arg, second_arg = union_args
-        if first_arg is str and issubclass(second_arg, Key):
-            if not second_arg.__name__.endswith('Key'):
-                raise Exception(f'Expected ...Key, got {second_arg.__name__}')
-            result.key = _create_type_declaration_key(second_arg.__module__, second_arg.__name__[:-3])
-        if first_arg is int:
-            if second_arg is LocalDate:
-                result.value = ValueDecl(type=ValueParamType.NullableDate)
-            elif second_arg is LocalTime:
-                result.value = ValueDecl(type=ValueParamType.NullableTime)
-            elif second_arg is LocalDateTime:
-                result.value = ValueDecl(type=ValueParamType.NullableDateTime)
-            elif second_arg is LocalMinute:
-                result.value = ValueDecl(type=ValueParamType.NullableMinute)
-            else:
-                raise Exception(f'Unexpected Union args combination.')
-        if first_arg is dt.datetime and second_arg == Instant:
-            result.value = ValueDecl(type=ValueParamType.NullableInstant)
+    meta_type = metadata_.get('type', None)
 
     # Primitive types
-    elif type_ is str:
+    if type_ is str:
         result.value = ValueDecl(type=ValueParamType.String)
     elif type_ is bool:
         result.value = ValueDecl(type=ValueParamType.NullableBool)
@@ -176,17 +160,41 @@ def _to_type_member(type_: type, metadata_: Dict[Any, Any]) -> ElementDecl:
     elif type_ is ObjectId:
         result.value = ValueDecl(type=ValueParamType.NullableTemporalId)
 
-    # Restore int/long separation using info from metadata
-    elif type_ is int:
-        if metadata_.get('type', None) == 'long':
-            result.value = ValueDecl(type=ValueParamType.NullableLong)
+    # Date additional cases
+    elif type_ is dt.date:
+        result.value = result.value = ValueDecl(type=ValueParamType.NullableDate)
+    elif type_ is dt.time:
+        result.value = result.value = ValueDecl(type=ValueParamType.NullableTime)
+    # dt.datetime depends on metadata
+    elif type_ is dt.datetime:
+        if meta_type == 'Instant':
+            result.value = ValueDecl(type=ValueParamType.NullableInstant)
+        elif meta_type is None:
+            result.value = ValueDecl(type=ValueParamType.NullableDateTime)
         else:
+            raise Exception(f'Unexpected dt.datetime and metadata type combination: dt.datetime + {type_.__name__}')
+
+    # Restore int/long/Local... separation using info from metadata
+    elif type_ is int:
+        if meta_type == 'long':
+            result.value = ValueDecl(type=ValueParamType.NullableLong)
+        elif meta_type == 'LocalDate':
+            result.value = ValueDecl(type=ValueParamType.NullableDate)
+        elif meta_type == 'LocalTime':
+            result.value = ValueDecl(type=ValueParamType.NullableTime)
+        elif meta_type == 'LocalMinute':
+            result.value = ValueDecl(type=ValueParamType.NullableMinute)
+        elif meta_type == 'LocalDateTime':
+            result.value = ValueDecl(type=ValueParamType.NullableDateTime)
+        elif meta_type is None:
             result.value = ValueDecl(type=ValueParamType.NullableInt)
+        else:
+            raise Exception(f'Unexpected int and metadata type combination: int + {type_.__name__}')
 
     elif issubclass(type_, Data):
         result.data = _create_type_declaration_key(type_.__module__, type_.__name__)
     elif issubclass(type_, IntEnum):
-        result.enum = _create_type_declaration_key(str(type_.__module__), type_.__name__)
+        result.enum = _create_enum_declaration_key(str(type_.__module__), type_.__name__)
     else:
         raise Exception(f'Unexpected type {type_.__name__}')
     return result
