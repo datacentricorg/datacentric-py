@@ -12,10 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from datacentric.attributes.class_attribute import ClassAttribute
+import inspect
+from datacentric.storage.data import Data
 
 
-class ConfigurableAttribute(ClassAttribute):
+def configurable(cls):
     """
     For every class marked with [Configurable] attribute, Context.Configure()
     will invoke static Configure(context) method with self as argument for
@@ -38,3 +39,9 @@ class ConfigurableAttribute(ClassAttribute):
     inheritance chain, specify [Configurable] attribute for each
     class that provides Configure(context) method.
     """
+    if not inspect.isclass(cls):
+        raise Exception('@configurable should be applied on class')
+    if not issubclass(cls, Data):
+        raise Exception('@configurable should be applied on Data derived class')
+    cls.is_configurable = True
+    return cls

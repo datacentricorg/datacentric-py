@@ -15,10 +15,13 @@
 import attr
 import datetime as dt
 import pytz
+
+from datacentric.attributes.configurable_attribute import configurable
 from datacentric.storage.record import Record
 
 
 @attr.s(slots=True, auto_attribs=True)
+@configurable
 class Zone(Record):
     """
     This class provides timezone conversion between UTC
