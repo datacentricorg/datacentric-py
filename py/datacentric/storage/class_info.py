@@ -11,9 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import gc
+import importlib
+import inspect
+import pkgutil
+from typing import Dict, List, Type, Set, TypeVar
 
-from typing import Dict, List
-import typing_inspect
+T = TypeVar('T')
 
 
 class ClassInfo:
@@ -24,19 +28,60 @@ class ClassInfo:
     __data_types_map: Dict[str, type] = dict()
 
     @staticmethod
+    def get_derived_types(module_name: str, base_type: Type[T]) -> Set[Type[T]]:
+        """Extract all derived classes from specified module."""
+        try:
+            module_ = __import__(module_name)
+        except ImportError as error:
+            raise Exception(f'Cannot import module: {error.name}. Check sys.path')
+
+        derived_types: Set[Type[T]] = set()
+
+        packages = list(pkgutil.walk_packages(path=module_.__path__, prefix=module_.__name__ + '.'))
+        modules = [x for x in packages if not x.ispkg]
+        for m in modules:
+            try:
+                m_imp = importlib.import_module(m.name)
+            except SyntaxError as error:
+                print(f'Cannot import module: {m.name}. Error: {error.msg}. Line: {error.lineno}, {error.offset}')
+                continue
+            except NameError as error:
+                print(f'Cannot import module: {m.name}. Error: {error.args}')
+                continue
+            classes = inspect.getmembers(m_imp, inspect.isclass)
+            derived_types.update([x[1] for x in classes if issubclass(x[1], base_type)])
+
+        if base_type in derived_types:
+            derived_types.remove(base_type)
+        return derived_types
+
+    @staticmethod
     def get_type(name: str) -> type:
         """Returns data derived type given its name."""
 
         if not ClassInfo.__is_initialized:
             from datacentric.storage.data import Data
+            # Resolves issue with classes duplicates in __subclasses__()
+            gc.collect()
             children = ClassInfo.__get_runtime_imported_data(Data, [])
             for child in children:
-                if child not in ClassInfo.__data_types_map:
+                if child.__name__ not in ClassInfo.__data_types_map:
                     ClassInfo.__data_types_map[child.__name__] = child
             ClassInfo.__is_initialized = True
 
         if name not in ClassInfo.__data_types_map:
-            raise Exception(f'Class {name} is not found in ClassInfo data types map')
+            # Try to update map one more time. This scenario is possible depending on
+            # first call to get_type and which classes where imported at that moment.
+            from datacentric.storage.data import Data
+            # Resolves issue with classes duplicates in __subclasses__()
+            gc.collect()
+            children = ClassInfo.__get_runtime_imported_data(Data, [])
+            for child in children:
+                if child.__name__ not in ClassInfo.__data_types_map:
+                    ClassInfo.__data_types_map[child.__name__] = child
+
+            if name not in ClassInfo.__data_types_map:
+                raise Exception(f'Class {name} is not found in ClassInfo data types map')
 
         return ClassInfo.__data_types_map[name]
 

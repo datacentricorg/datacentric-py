@@ -35,45 +35,17 @@ from datacentric.schema.declaration.value_param_type import ValueParamType
 from datacentric.schema.declaration.yes_no import YesNo
 from datacentric.schema.declaration.type_decl import TypeDecl
 from datacentric.schema.declaration.enum_decl import EnumDecl
-from datacentric.storage.class_info import ClassInfo
 from datacentric.storage.context import Context
 from datacentric.storage.data import Data
 from datacentric.storage.record import Record
 from datacentric.storage.root_record import RootRecord
 from datacentric.storage.mongo.temporal_mongo_data_source import TemporalMongoDataSource
 from datacentric.storage.env_type import EnvType
+from datacentric.storage.class_info import ClassInfo
 
 T = TypeVar('T')
 TData = TypeVar('TData', bound=Data)
 TEnum = TypeVar('TEnum', bound=IntEnum)
-
-
-def get_derived_types(module_name: str, base_type: Type[T]) -> Set[Type[T]]:
-    """Extract all derived classes from specified module."""
-    try:
-        module_ = __import__(module_name)
-    except ImportError as error:
-        raise Exception(f'Cannot import module: {error.name}. Check sys.path')
-
-    derived_types: Set[Type[T]] = set()
-
-    packages = list(pkgutil.walk_packages(path=module_.__path__, prefix=module_.__name__ + '.'))
-    modules = [x for x in packages if not x.ispkg]
-    for m in modules:
-        try:
-            m_imp = importlib.import_module(m.name)
-        except SyntaxError as error:
-            print(f'Cannot import module: {m.name}. Error: {error.msg}. Line: {error.lineno}, {error.offset}')
-            continue
-        except NameError as error:
-            print(f'Cannot import module: {m.name}. Error: {error.args}')
-            continue
-        classes = inspect.getmembers(m_imp, inspect.isclass)
-        derived_types.update([x[1] for x in classes if issubclass(x[1], base_type)])
-
-    if base_type in derived_types:
-        derived_types.remove(base_type)
-    return derived_types
 
 
 def _format_comment(comment: Optional[str]) -> Optional[str]:
@@ -294,8 +266,8 @@ if __name__ == '__main__':
     context.data_set = context.data_source.create_common()
 
     # Convert extracted types to declarations
-    type_declarations = [to_type_declaration(x) for x in get_derived_types('datacentric', Data)]
-    enum_declarations = [to_enum_declaration(x) for x in get_derived_types('datacentric', IntEnum)]
+    type_declarations = [to_type_declaration(x) for x in ClassInfo.get_derived_types('datacentric', Data)]
+    enum_declarations = [to_enum_declaration(x) for x in ClassInfo.get_derived_types('datacentric', IntEnum)]
 
     # Save declarations to db
     context.data_source.save_many(TypeDecl, type_declarations, context.data_set)
