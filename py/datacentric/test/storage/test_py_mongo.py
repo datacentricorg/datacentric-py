@@ -41,7 +41,7 @@ class TestPyMongo(unittest.TestCase):
                   'LocalDateTimeToken': 20030501101530500,
                   'InstantToken': dt.datetime.strptime('2003-05-01T10:15:30.500Z', '%Y-%m-%dT%H:%M:%S.%fZ'),
                   'EnumToken': 'EnumValue2'}
-        collection.save(record)
+        collection.replace_one({'_id': record['_id']}, record, upsert=True)
 
         # Load record
         record = collection.find_one({'_key': 'A;true;123;12345678912345;2003-05-01;10:15:30.5;10:15;'
