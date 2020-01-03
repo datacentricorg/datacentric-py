@@ -14,6 +14,7 @@
 
 import attr
 from typing import List
+from datacentric.attributes.handler_attribute import handler
 from datacentric.test.storage.base_sample import BaseSample
 from datacentric.test.storage.element_sample import ElementSample
 
@@ -60,10 +61,12 @@ class DerivedSample(BaseSample):
                                           metadata={'optional': True, 'key': 'BaseSample'})
     """Sample element."""
 
+    @handler
     def non_virtual_derived_handler(self):
         """Non-virtual handler defined in base type."""
         pass
 
+    @handler
     def virtual_base_handler(self):
         """Override of the virtual handler defined in base type."""
         pass
