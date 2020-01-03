@@ -308,6 +308,12 @@ class DataSource(Record, ABC):
         """
         return self.get_data_set(DataSource.common_id, DataSource._empty_id)
 
+    def get_common_or_none(self):
+        """Return ObjectId of the latest Common dataset or None if does not exists
+        Common dataset is always stored in root dataset.
+        """
+        return self.get_data_set_or_none(DataSource.common_id, DataSource._empty_id)
+
     def get_data_set(self, data_set_name: str, load_from: ObjectId) -> ObjectId:
         """Get ObjectId of the dataset with the specified name.
         Error message if not found.
