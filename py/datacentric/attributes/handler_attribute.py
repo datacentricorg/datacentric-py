@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import inspect
+
 
 def handler(method):
     """Decorator for identifying funcions that are handlers.
@@ -30,5 +32,9 @@ def handler(method):
     prohibited, best practice is to pass such parameters by
     specifying their key rather than their data.
     """
+    is_method = inspect.ismethod(method)
+    is_func = inspect.isfunction(method)
+    if not is_func and not is_method:
+        raise Exception('@handler decorator should be applied on method or function.')
     method.handler = True
     return method
