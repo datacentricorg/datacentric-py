@@ -16,13 +16,28 @@ sub_parsers = parser.add_subparsers(help='commands', dest='command')
 
 # Schema command
 schema_parser = sub_parsers.add_parser('schema', help='Write schema to data source.')
-schema_parser.add_argument('--packages', '-p', nargs='+', required=True, help='Generate schema from provided packages')
+schema_parser.add_argument('--packages', '-p', nargs='+', required=True,
+                           help='Generate schema from provided packages')
 # Change short option to avoid -h conflict. Users always expect -h to work
 schema_parser.add_argument('--host', '-o', type=str, required=False,
                            help='Db Host. Fallbacks to standard if not provided')
 schema_parser.add_argument('--env', '-e', type=str, required=True, help='Environment type')
 schema_parser.add_argument('--group', '-g', type=str, required=True, help='Environment group')
 schema_parser.add_argument('--name', '-n', type=str, required=True, help='Environment name')
+
+# Run command
+run_parser = sub_parsers.add_parser('run', help='Execute handler')
+run_parser.add_argument('--source', '-s', required=True,
+                        help='Source environment - folder for file storage and connection string for DB.')
+run_parser.add_argument('--env', '-e', type=str, required=True, help='Environment type')
+run_parser.add_argument('--group', '-g', type=str, required=True, help='Environment group')
+run_parser.add_argument('--name', '-n', type=str, required=True, help='Environment name')
+run_parser.add_argument('--dataset', '-d', required=True, help='Setting specifies data set name.')
+run_parser.add_argument('--key', '-k', required=True, help='Key of entity.')
+run_parser.add_argument('--type', '-t', required=True, help='Type handler belongs.')
+# Change short option to avoid -h conflict. Users always expect -h to work
+run_parser.add_argument('--handler', '-l', required=True, help='Handler name to execute.')
+run_parser.add_argument('--arguments', '-a', help='Space separated handler arguments in name=value format.')
 
 
 def schema(args):
@@ -53,7 +68,16 @@ def schema(args):
     context.data_source.save_many(EnumDecl, enum_declarations, context.data_set)
 
 
+def run(args):
+    pass
+
+
 if __name__ == '__main__':
     res = parser.parse_args()
-    if res.command == 'schema':
+    command = res.command
+    if command == 'schema':
         schema(res)
+    elif command == 'run':
+        run(res)
+    else:
+        print(f'Unknown command: {command}. Usage: {parser.print_help()}')
