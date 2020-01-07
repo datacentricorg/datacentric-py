@@ -15,6 +15,7 @@
 import argparse
 from enum import IntEnum
 
+from datacentric.commands.run import RunCommand
 from datacentric.storage.class_info import ClassInfo
 from datacentric.storage.env_type import EnvType
 from datacentric.storage.context import Context
@@ -81,17 +82,14 @@ def schema(args):
     context.data_source.save_many(EnumDecl, enum_declarations, context.data_set)
 
 
-def run(args):
-    pass
-
-
 if __name__ == '__main__':
     res = parser.parse_args()
     command = res.command
     if command == 'schema':
         schema(res)
     elif command == 'run':
-        run(res)
+        run = RunCommand(res)
+        run.execute()
     else:
         print(f'Unknown command: {command}.')
         parser.print_help()
