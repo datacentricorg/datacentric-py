@@ -120,7 +120,7 @@ class MongoDataSource(DataSource, ABC):
                             f'prohibited character from the following list: /\\.\"$*<>:|?')
 
         # Create PyMongo client and database objects
-        self.__client = MongoClient(self.mongo_server)
+        self.__client = MongoClient(self.mongo_server.split('=', 1)[1])
         self.__db = self.__client.get_database(self.__db_name)
 
     @property
@@ -161,7 +161,7 @@ class MongoDataSource(DataSource, ABC):
                             f'where ReadOnly flag is set.')
 
         if self.__client is not None and self.__db is not None:
-            
+
             if self.env_type in [EnvType.Dev, EnvType.User, EnvType.Test]:
                 # Only env types Dev, User, and Test of can be deleted from the API
                 self.__client.drop_database(self.__db)
