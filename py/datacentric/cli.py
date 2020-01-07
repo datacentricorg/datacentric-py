@@ -1,3 +1,17 @@
+# Copyright (C) 2013-present The DataCentric Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import argparse
 from enum import IntEnum
 
@@ -16,8 +30,7 @@ sub_parsers = parser.add_subparsers(help='commands', dest='command')
 
 # Schema command
 schema_parser = sub_parsers.add_parser('schema', help='Write schema to data source.')
-schema_parser.add_argument('--packages', '-p', nargs='+', required=True,
-                           help='Generate schema from provided packages')
+schema_parser.add_argument('--packages', '-p', nargs='+', required=True, help='Generate schema from provided packages')
 # Change short option to avoid -h conflict. Users always expect -h to work
 schema_parser.add_argument('--host', '-o', type=str, required=False,
                            help='Db Host. Fallbacks to standard if not provided')
@@ -80,4 +93,5 @@ if __name__ == '__main__':
     elif command == 'run':
         run(res)
     else:
-        print(f'Unknown command: {command}. Usage: {parser.print_help()}')
+        print(f'Unknown command: {command}.')
+        parser.print_help()
