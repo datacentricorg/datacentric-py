@@ -28,7 +28,10 @@ TRecord = TypeVar('TRecord', bound=Record)
 
 
 class RunCommand:
+    """Command to run handlers"""
+
     def __init__(self, cli_args):
+        """Create run command from parsed CLI args."""
         self.source: str = cli_args.source
         self.env: EnvType = EnvType[cli_args.env]
         self.group: str = cli_args.group
@@ -39,8 +42,24 @@ class RunCommand:
         self.handler: str = cli_args.handler
         self.arguments = cli_args.arguments
 
-    def execute(self):
+    @classmethod
+    def add_arguments(cls, parser):
+        """Add arguments to parser."""
+        parser.add_argument('--source', '-s', required=True,
+                                help='Source environment - folder for file storage and connection string for DB.')
+        parser.add_argument('--env', '-e', type=str, required=True, help='Environment type')
+        parser.add_argument('--group', '-g', type=str, required=True, help='Environment group')
+        parser.add_argument('--name', '-n', type=str, required=True, help='Environment name')
+        parser.add_argument('--dataset', '-d', required=True, help='Setting specifies data set name.')
+        parser.add_argument('--key', '-k', required=True, help='Key of entity.')
+        parser.add_argument('--type', '-t', required=True, help='Type handler belongs.')
+        # Change short option to avoid -h conflict. Users always expect -h to work
+        parser.add_argument('--handler', '-l', required=True, help='Handler name to execute.')
+        parser.add_argument('--arguments', '-a', help='Space separated handler arguments in name=value format.')
+        parser.add_argument()
 
+    def execute(self):
+        """Runs specified handler."""
         context = Context()
 
         data_source = TemporalMongoDataSource()
