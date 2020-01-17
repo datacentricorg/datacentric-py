@@ -56,7 +56,6 @@ class RunCommand:
         # Change short option to avoid -h conflict. Users always expect -h to work
         parser.add_argument('--handler', '-l', required=True, help='Handler name to execute.')
         parser.add_argument('--arguments', '-a', help='Space separated handler arguments in name=value format.')
-        parser.add_argument()
 
     def execute(self):
         """Runs specified handler."""
