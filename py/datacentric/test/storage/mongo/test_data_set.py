@@ -18,10 +18,10 @@ from datacentric.storage.record import Record
 
 
 class TestDataSet(unittest.TestCase):
-    @unittest.skip
+
     def test_key_instantiation(self):
-        key = DataSet.create_key('key_id')
-        self.assertTrue(key.data_set_name == 'key_id')
+        key = DataSet.create_key(data_set_name='key_id')
+        self.assertTrue(key == 'DataSet=key_id')
 
     def test_abstract_fail(self):
         with self.assertRaises(TypeError):
