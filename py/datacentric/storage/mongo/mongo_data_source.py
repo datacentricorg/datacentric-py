@@ -119,8 +119,11 @@ class MongoDataSource(DataSource, ABC):
             raise Exception(f'MongoDB database name {self.__db_name} contains a space or another '
                             f'prohibited character from the following list: /\\.\"$*<>:|?')
 
-        # Create PyMongo client and database objects
-        self.__client = MongoClient(self.mongo_server.split('=', 1)[1])
+        # Create PyMongo client and database objects. If server is missing use default
+        if self.mongo_server is None:
+            self.__client = MongoClient()
+        else:
+            self.__client = MongoClient(self.mongo_server.split('=', 1)[1])
         self.__db = self.__client.get_database(self.__db_name)
 
     @property
