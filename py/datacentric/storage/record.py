@@ -25,15 +25,15 @@ class Record(Data, ABC):
     """Base class of records stored in data source."""
 
     __context: Context = attr.ib(default=None, init=False)
-    """
-    Execution context provides access to key resources including:
+    """Context provides platform-independent APIs for:
 
+    * Databases and distributed cache
     * Logging and error reporting
-    * Cloud calculation service
-    * Data sources
-    * Filesystem
+    * Local or remote handler execution
     * Progress reporting
+    * Virtualized filesystem
     """
+
     id_: ObjectId = attr.ib(default=None, kw_only=True)
     """
     TemporalId of the record is specific to its version.
