@@ -16,29 +16,24 @@ import inspect
 from typing import Type, TypeVar
 
 from datacentric.storage.data import Data
+from datacentric.storage.versioning_method import VersioningMethod
 
 TData = TypeVar('TData', bound=Data)
 
 
-def pinned(_cls: Type[TData] = None):
+def versioning(cls: Type[TData] = None, *, versioning_method: VersioningMethod):
     """Records marked by Pinned attribute are always stored
     in root dataset, irrespective of the dataset specified in
     the Save method.
     """
 
-    def wrap(cls):
-        if not inspect.isclass(cls):
-            raise Exception('@pinned should be applied on class')
-        if not issubclass(cls, Data):
-            raise Exception('@pinned should be applied on Data derived class')
+    def wrap(_cls):
+        if not inspect.isclass(_cls):
+            raise Exception('@versioning should be applied on class')
+        if not issubclass(_cls, Data):
+            raise Exception('@versioning should be applied on Data derived class')
 
-        cls.is_pinned = True
-        return cls
+        _cls.versioning_method = versioning_method
+        return _cls
 
-    # See if we're being called as @pinned or @pinned().
-    if _cls is None:
-        # We're called with parens.
-        return wrap
-
-    # We're called as @pinned without parens.
-    return wrap(_cls)
+    return wrap

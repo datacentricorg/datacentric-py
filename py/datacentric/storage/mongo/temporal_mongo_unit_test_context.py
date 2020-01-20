@@ -15,6 +15,7 @@ from datacentric.storage.temporal_id import empty_id
 from datacentric.storage.unit_test_context import UnitTestContext
 from datacentric.storage.mongo.temporal_mongo_data_source import TemporalMongoDataSource
 from datacentric.storage.env_type import EnvType
+from datacentric.storage.versioning_method import VersioningMethod
 
 
 class TemporalMongoUnitTestContext(UnitTestContext):
@@ -50,7 +51,8 @@ class TemporalMongoUnitTestContext(UnitTestContext):
         self.data_source = TemporalMongoDataSource(
             env_type=EnvType.Test,
             env_group=self.test_module_name,
-            env_name=self.test_method_name
+            env_name=self.test_method_name,
+            versioning_method=VersioningMethod.Temporal
         )
 
         # Delete (drop) the database to clear the existing data

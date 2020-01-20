@@ -22,6 +22,7 @@ from datacentric.storage.record import Record
 from datacentric.storage.data_set import DataSet
 from datacentric.storage.env_type import EnvType
 from datacentric.storage.context import Context
+from datacentric.storage.versioning_method import VersioningMethod
 
 TRecord = TypeVar('TRecord', bound=Record)
 
@@ -46,14 +47,14 @@ class DataSource(Record, ABC):
     data_source_name: str = attr.ib(default=None, kw_only=True)
     """Unique data source name."""
 
-    env_type: EnvType = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    env_type: EnvType = attr.ib(default=None, kw_only=True)
     """
     Environment type enumeration.
 
     Some API functions are restricted based on the environment type.
     """
 
-    env_group: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    env_group: str = attr.ib(default=None, kw_only=True)
     """
     The meaning of environment group depends on the environment type.
 
@@ -66,7 +67,7 @@ class DataSource(Record, ABC):
     the unit test class (test fixture).
     """
 
-    env_name: str = attr.ib(default=None, kw_only=True, metadata={'optional': True})
+    env_name: str = attr.ib(default=None, kw_only=True)
     """
     The meaning of environment name depends on the environment type.
 
@@ -76,12 +77,12 @@ class DataSource(Record, ABC):
     * For TEST environment type, it is the test method name.
     """
 
-    non_temporal: bool = attr.ib(default=None, kw_only=True, metadata={'optional': True})
-    """
-    Flag indicating that the data source is non-temporal.
-
-    If true, the data source stores only the latest version of
-    the record per dataset.
+    versioning_method: VersioningMethod = attr.ib(default=None, kw_only=True)
+    """Specifies the default method of record or dataset
+    versioning.
+    
+    This value can be overridden for specific record types
+    via an attribute.
     """
 
     read_only: bool = attr.ib(default=None, kw_only=True, metadata={'optional': True})

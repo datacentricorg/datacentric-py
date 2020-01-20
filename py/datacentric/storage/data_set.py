@@ -17,11 +17,14 @@ from bson import ObjectId
 from typing import List
 
 from datacentric.attributes.pinned_attribute import pinned
+from datacentric.attributes.versioning_attribute import versioning
 from datacentric.storage.record import Record
+from datacentric.storage.versioning_method import VersioningMethod
 
 
 @attr.s(slots=True, auto_attribs=True)
 @pinned
+@versioning(versioning_method=VersioningMethod.Temporal)
 class DataSet(Record):
     """
     Dataset is a concept similar to a folder, applied to data in any

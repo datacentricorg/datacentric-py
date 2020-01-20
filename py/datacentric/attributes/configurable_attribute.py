@@ -13,10 +13,14 @@
 # limitations under the License.
 
 import inspect
+from typing import Type, TypeVar
+
 from datacentric.storage.data import Data
 
+TData = TypeVar('TData', bound=Data)
 
-def configurable(cls):
+
+def configurable(cls: Type[TData]):
     """
     For every class marked with [Configurable] attribute, Context.Configure()
     will invoke static Configure(context) method with self as argument for

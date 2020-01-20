@@ -27,6 +27,7 @@ from datacentric.serialization.serializer import serialize, deserialize
 from bson.codec_options import DEFAULT_CODEC_OPTIONS
 
 from datacentric.storage.temporal_id import empty_id
+from datacentric.storage.versioning_method import VersioningMethod
 
 TRecord = TypeVar('TRecord', bound=Record)
 
@@ -200,10 +201,15 @@ class TemporalMongoDataSource(MongoDataSource):
             record.id_ = record_id
             record.data_set = save_to
             record.init(self.context)
-        if self.is_non_temporal(record_type):
+
+        versioning_method = self.get_versioning_method(record_type)
+        if versioning_method == VersioningMethod.Temporal:
+            collection.insert_many([serialize(x) for x in records])
+        elif (versioning_method == VersioningMethod.NonTemporal) or (
+                versioning_method == VersioningMethod.NonOverriding):
             collection.insert_many([serialize(x) for x in records])  # TODO: replace by upsert
         else:
-            collection.insert_many([serialize(x) for x in records])
+            raise Exception(f'Unknown versioning method {versioning_method}.')
 
     def delete(self, record_type: Type[TRecord], key: str, delete_in: ObjectId) -> None:
         """Write a DeletedRecord in delete_in dataset for the specified key
@@ -289,17 +295,16 @@ class TemporalMongoDataSource(MongoDataSource):
             self.__import_dict[load_from] = result
             return result
 
-    def is_non_temporal(self, record_type: Type[TRecord]) -> bool:
-        """Returns true if either dataset has non_temporal flag set, or record type
-        has non_temporal attribute.
+    def get_versioning_method(self, record_type: Type[TRecord]) -> VersioningMethod:
+        """Gets the method of record or dataset versioning.
+
+        Versioning method is a required field for the data source. Its
+        value can be overridden for specific record types via an attribute.
         """
-        if self.non_temporal is not None and self.non_temporal:
-            return True
+        if hasattr(record_type, 'versioning_method'):
+            return record_type.versioning_method
 
-        if hasattr(record_type, 'non_temporal') and record_type.is_non_temporal:
-            return True
-
-        return False
+        return self.versioning_method
 
     def is_pinned(self, record_type: Type[TRecord]):
         """Returns true if the record has Pinned attribute."""
