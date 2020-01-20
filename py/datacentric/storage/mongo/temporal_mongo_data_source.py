@@ -186,6 +186,7 @@ class TemporalMongoDataSource(MongoDataSource):
         This method guarantees that ObjectIds of the saved records will be in
         strictly increasing order.
         """
+        self._check_not_readonly()
 
         collection = self._get_or_create_collection(record_type)
         if records is None:
@@ -213,6 +214,8 @@ class TemporalMongoDataSource(MongoDataSource):
         To avoid an additional roundtrip to the data store, the delete
         marker is written even when the record does not exist.
         """
+        self._check_not_readonly()
+
         record = DeletedRecord()
         record.key = key
 
@@ -289,9 +292,6 @@ class TemporalMongoDataSource(MongoDataSource):
     def is_non_temporal(self, record_type: type) -> bool:
         """Returns true if either dataset has non_temporal flag set, or record type
         has non_temporal attribute.
-
-        Note that if data source has non_temporal flag set, then dataset will
-        also have non_temporal flag set.
         """
         if self.non_temporal is not None and self.non_temporal:
             return True
@@ -362,3 +362,15 @@ class TemporalMongoDataSource(MongoDataSource):
                     cached_import_list = self.get_data_set_lookup_list(data_set_id)
                     for import_id in cached_import_list:
                         result.add(import_id)
+
+    def _check_not_readonly(self):
+        """Error message if either ReadOnly flag or CutoffTime is set
+        for the data source."""
+        if self.read_only:
+            raise Exception(f'Attempting write operation for data source {self.data_source_name} '
+                            f'where ReadOnly flag is set.')
+
+        if self.cutoff_time is not None:
+            raise Exception(f'Attempting write operation for data source {self.data_source_name} where '
+                            f'CutoffTime is set. Historical view of the data cannot be written to.')
+
