@@ -314,12 +314,15 @@ class DataSource(Record, ABC):
         the created dataset.
         """
 
+        # Make None if either None or empty
         if imports is None:
             imports = []
+        if len(imports) == 0:
+            imports = None
 
         result = DataSet()
         result.data_set_name = data_set_name
-        result.imports = [x for x in imports]
+        result.imports = imports
 
         self.save_data_set(result)
 
