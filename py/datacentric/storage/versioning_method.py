@@ -63,9 +63,13 @@ class VersioningMethod(IntEnum):
     New records and datasets take precedence over their earlier versions, but
     history of a record within the same dataset is not preserved and only
     a single record is permitted for a given dataset import list.
-    
+
+    With this restriction, a single pass query without ordering by the record
+    or dataset TemporalId be used, resulting in better performance and simpler
+    query logic compared to NonTemporal versioning method.
+
     For a given record and dataset key:
-    
+
     * Within each dataset import list, there is only one version of the record.
     This is enforced by validation on read, as validation on write would
     cause a performance hit.
