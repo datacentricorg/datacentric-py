@@ -296,8 +296,7 @@ class TemporalMongoDataSource(MongoDataSource):
         if self.non_temporal is not None and self.non_temporal:
             return True
 
-        # TODO: add non_temporal attribute
-        if hasattr(record_type, 'non_temporal') and record_type.non_temporal:
+        if hasattr(record_type, 'non_temporal') and record_type.is_non_temporal:
             return True
 
         return False
