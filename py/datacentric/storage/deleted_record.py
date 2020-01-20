@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from typing import Any
 
 import attr
 from datacentric.storage.record import Record
@@ -40,3 +41,7 @@ class DeletedRecord(Record):
     @key.setter
     def key(self, value) -> None:
         self._key = value
+
+    def to_key(self) -> str:
+        """Deleted record key."""
+        return self._key

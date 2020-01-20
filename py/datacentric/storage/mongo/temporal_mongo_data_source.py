@@ -16,7 +16,6 @@ import attr
 from typing import Dict, Optional, TypeVar, Set, Iterable, Type
 from bson import ObjectId
 from pymongo.collection import Collection
-from datacentric.storage.data_set_detail import DataSetDetail
 from datacentric.storage.mongo.temporal_mongo_query import TemporalMongoQuery
 from datacentric.storage.record import Record
 from datacentric.storage.deleted_record import DeletedRecord
@@ -26,6 +25,8 @@ from datacentric.storage.mongo.mongo_data_source import MongoDataSource
 from datacentric.storage.class_info import ClassInfo
 from datacentric.serialization.serializer import serialize, deserialize
 from bson.codec_options import DEFAULT_CODEC_OPTIONS
+
+from datacentric.storage.temporal_id import empty_id
 
 TRecord = TypeVar('TRecord', bound=Record)
 
@@ -60,8 +61,6 @@ class TemporalMongoDataSource(MongoDataSource):
 
     __collection_dict: Dict[type, Collection] = attr.ib(factory=dict, init=False)
     __data_set_dict: Dict[str, ObjectId] = attr.ib(factory=dict, init=False)
-    __data_set_parent_dict: Dict[ObjectId, ObjectId] = attr.ib(factory=dict, init=False)
-    __data_set_detail_dict: Dict[ObjectId, DataSetDetail] = attr.ib(factory=dict, init=False)
     __import_dict: Dict[ObjectId, Set[ObjectId]] = attr.ib(factory=dict, init=False)
 
     __codec_options = DEFAULT_CODEC_OPTIONS.with_options(tz_aware=True)
@@ -77,9 +76,8 @@ class TemporalMongoDataSource(MongoDataSource):
     def load_or_null(self, record_type: Type[TRecord], id_: ObjectId) -> Optional[TRecord]:
         """Load record by its ObjectId.
 
-        Return None if there is no record for the specified ObjectId;
-        however an exception will be thrown if the record exists but
-        is not derived from type_.
+        Return None if if argument ObjectId is greater than
+        or equal to CutoffTime.
         """
         if self.cutoff_time is not None:
             if id_ >= self.cutoff_time:
@@ -97,11 +95,6 @@ class TemporalMongoDataSource(MongoDataSource):
 
             if result is not None and not isinstance(result, DeletedRecord):
 
-                cutoff_time = self.get_cutoff_time(result.data_set)
-                if cutoff_time is not None:
-                    if id_ >= cutoff_time:
-                        return None
-
                 is_requested_instance = isinstance(result, record_type)
                 if not is_requested_instance:
                     raise Exception(f'Stored type {type(result).__name__} for ObjectId={id_} and '
@@ -109,6 +102,7 @@ class TemporalMongoDataSource(MongoDataSource):
                                     f'{record_type.__name__}.')
                 result.init(self.context)
                 return result
+        return None
 
     def load_or_null_by_key(self, type_: Type[TRecord], key_: str, load_from: ObjectId) -> Optional[TRecord]:
         """Load record by string key from the specified dataset or
@@ -192,7 +186,7 @@ class TemporalMongoDataSource(MongoDataSource):
         This method guarantees that ObjectIds of the saved records will be in
         strictly increasing order.
         """
-        self._check_not_readonly(save_to)
+
         collection = self._get_or_create_collection(record_type)
         if records is None:
             return None
@@ -205,7 +199,7 @@ class TemporalMongoDataSource(MongoDataSource):
             record.id_ = record_id
             record.data_set = save_to
             record.init(self.context)
-        if self.is_non_temporal(record_type, save_to):
+        if self.is_non_temporal(record_type):
             collection.insert_many([serialize(x) for x in records])  # TODO: replace by upsert
         else:
             collection.insert_many([serialize(x) for x in records])
@@ -219,7 +213,6 @@ class TemporalMongoDataSource(MongoDataSource):
         To avoid an additional roundtrip to the data store, the delete
         marker is written even when the record does not exist.
         """
-        self._check_not_readonly(delete_in)
         record = DeletedRecord()
         record.key = key
 
@@ -239,26 +232,24 @@ class TemporalMongoDataSource(MongoDataSource):
         data_set_lookup_list = self.get_data_set_lookup_list(load_from)
         pipeline.append({'$match': {"_dataset": {"$in": data_set_lookup_list}}})
 
-        cutoff_time = self.get_cutoff_time(load_from)
-        if cutoff_time is not None:
-            pipeline.append({'$match': {'_id': {'$lte': cutoff_time}}})
+        if self.cutoff_time is not None:
+            pipeline.append({'$match': {'_id': {'$lte': self.cutoff_time}}})
 
         return pipeline
 
-    def get_data_set_or_none(self, data_set_name: str, load_from: ObjectId) -> Optional[ObjectId]:
+    def get_data_set_or_none(self, data_set_name: str) -> Optional[ObjectId]:
         """Get ObjectId of the dataset with the specified name.
         Returns null if not found.
         """
         if data_set_name in self.__data_set_dict:
             return self.__data_set_dict[data_set_name]
 
-        data_set_record = self.load_or_null_by_key(DataSet, DataSet.create_key(data_set_name=data_set_name), load_from)
+        data_set_record = self.load_or_null_by_key(DataSet, DataSet.create_key(data_set_name=data_set_name), empty_id)
 
         if data_set_record is None:
             return None
 
         self.__data_set_dict[data_set_name] = data_set_record.id_
-        self.__data_set_parent_dict[data_set_record.id_] = data_set_record.data_set
 
         if data_set_record.id_ not in self.__import_dict:
             import_set = self._build_data_set_lookup_list(data_set_record)
@@ -266,11 +257,10 @@ class TemporalMongoDataSource(MongoDataSource):
 
         return data_set_record.id_
 
-    def save_data_set(self, data_set: DataSet, save_to: ObjectId) -> None:
+    def save_data_set(self, data_set: DataSet) -> None:
         """Save new version of the dataset and update in-memory cache to the saved dataset."""
-        self.save_one(DataSet, data_set, save_to)
+        self.save_one(DataSet, data_set, empty_id)
         self.__data_set_dict[data_set.to_key()] = data_set.id_
-        self.__data_set_parent_dict[data_set.id_] = data_set.data_set
 
         lookup_list = self._build_data_set_lookup_list(data_set)
         self.__import_dict[data_set.id_] = lookup_list
@@ -280,8 +270,8 @@ class TemporalMongoDataSource(MongoDataSource):
         including imports of imports to unlimited depth with cyclic
         references and duplicates removed.
         """
-        if load_from == DataSource._empty_id:
-            return [DataSource._empty_id]
+        if load_from == empty_id:
+            return [empty_id]
 
         if load_from in self.__import_dict:
             return self.__import_dict[load_from]
@@ -290,31 +280,13 @@ class TemporalMongoDataSource(MongoDataSource):
             data_set_data: DataSet = self.load_or_null(DataSet, load_from)
             if data_set_data is None:
                 raise Exception(f'Dataset with ObjectId={load_from} is not found.')
-            if data_set_data.data_set != DataSource._empty_id:
+            if data_set_data.data_set != empty_id:
                 raise Exception(f'Dataset with ObjectId={load_from} is not stored in root dataset.')
             result = self._build_data_set_lookup_list(data_set_data)
             self.__import_dict[load_from] = result
             return result
 
-    def get_data_set_detail_or_none(self, detail_for: ObjectId) -> Optional[DataSetDetail]:
-        """Get detail of the specified dataset.
-
-        Returns None if the details record does not exist.
-
-        The detail is loaded for the dataset specified in the first argument.
-        """
-        if detail_for == DataSource._empty_id:
-            return None
-        if detail_for in self.__data_set_detail_dict:
-            return self.__data_set_detail_dict[detail_for]
-
-        parent_id = self.__data_set_parent_dict[detail_for]
-        dataset_detail_key = DataSetDetail.create_key(data_set_id=detail_for)
-        result = self.load_or_null_by_key(DataSetDetail, dataset_detail_key, parent_id)
-        self.__data_set_detail_dict[detail_for] = result
-        return result
-
-    def is_non_temporal(self, record_type: type, data_set_id: ObjectId) -> bool:
+    def is_non_temporal(self, record_type: type) -> bool:
         """Returns true if either dataset has non_temporal flag set, or record type
         has non_temporal attribute.
 
@@ -323,49 +295,12 @@ class TemporalMongoDataSource(MongoDataSource):
         """
         if self.non_temporal is not None and self.non_temporal:
             return True
+
+        # TODO: add non_temporal attribute
         if hasattr(record_type, 'non_temporal') and record_type.non_temporal:
             return True
-        if data_set_id == DataSource._empty_id:
-            return False
-        data_set_detail: DataSet = self.load_or_null(DataSet, data_set_id)
-        if data_set_detail is not None and data_set_detail.non_temporal:
-            return True
-        else:
-            return False
 
-    def get_cutoff_time(self, data_set_id: ObjectId) -> Optional[ObjectId]:
-        """cutoff_time should only be used via this method which also takes into
-        account the cutoff_time set in dataset detail record, and never directly.
-
-        cutoff_time may be set in data source globally, or for a specific dataset
-        in its details record. If cutoff_time is set for both, this method will
-        return the earlier of the two values will be used.
-
-        Records with ObjectId that is greater than or equal to cutoff_time
-        will be ignored by load methods and queries, and the latest available
-        record where ObjectId is less than cutoff_time will be returned instead.
-
-        cutoff_time applies to both the records stored in the dataset itself,
-        and the reports loaded through the imports list.
-        """
-        data_set_detail = self.get_data_set_detail_or_none(data_set_id)
-        if data_set_detail is not None:
-            data_set_cutoff_time = data_set_detail.cutoff_time
-        else:
-            data_set_cutoff_time = None
-
-        # Min of (self.cutoff_time, data_set_cutoff_time)
-        if self.cutoff_time is not None and data_set_cutoff_time is not None:
-            if self.cutoff_time < data_set_cutoff_time:
-                return self.cutoff_time
-            else:
-                return data_set_cutoff_time
-
-        if self.cutoff_time is None:
-            # Covers the case if both are None
-            return data_set_cutoff_time
-
-        return self.cutoff_time
+        return False
 
     def get_imports_cutoff_time(self, data_set_id: ObjectId) -> Optional[ObjectId]:
         """Gets ImportsCutoffTime from the dataset detail record.
@@ -384,9 +319,9 @@ class TemporalMongoDataSource(MongoDataSource):
         (part of ObjectId), isolating the dataset from changes to the
         data in imported datasets that occur after that time.
         """
-        data_set_detail = self.get_data_set_detail_or_none(data_set_id)
-        if data_set_detail is not None:
-            return data_set_detail.imports_cutoff_time
+
+        # TODO: implement when stored in dataset
+        return None
 
     def _get_or_create_collection(self, type_: type) -> Collection:
         if type_ in self.__collection_dict:
@@ -412,9 +347,7 @@ class TemporalMongoDataSource(MongoDataSource):
         if data_set_record.data_set_name == '':
             raise Exception('Required string value is not set.')
 
-        cutoff_time = self.get_cutoff_time(data_set_record.data_set)
-
-        if cutoff_time is not None and data_set_record.id_ >= cutoff_time:
+        if self.cutoff_time is not None and data_set_record.id_ >= self.cutoff_time:
             return
 
         result.add(data_set_record.id_)
@@ -429,20 +362,3 @@ class TemporalMongoDataSource(MongoDataSource):
                     cached_import_list = self.get_data_set_lookup_list(data_set_id)
                     for import_id in cached_import_list:
                         result.add(import_id)
-
-    def _check_not_readonly(self, data_set_id: ObjectId):
-        if self.read_only:
-            raise Exception(f'Attempting write operation for data source {self.data_source_name} '
-                            f'where ReadOnly flag is set.')
-        data_set_detail = self.get_data_set_detail_or_none(data_set_id)
-
-        if data_set_detail is not None and data_set_detail.read_only:
-            raise Exception(f'Attempting write operation for dataset {data_set_id} where ReadOnly flag is set.')
-
-        if self.cutoff_time is not None:
-            raise Exception(f'Attempting write operation for data source {self.data_source_name} where '
-                            f'CutoffTime is set. Historical view of the data cannot be written to.')
-
-        if data_set_detail is not None and data_set_detail.cutoff_time is not None:
-            raise Exception(f'Attempting write operation for the dataset {data_set_id} where '
-                            f'CutoffTime is set. Historical view of the data cannot be written to.')

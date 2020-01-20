@@ -14,9 +14,8 @@
 
 import attr
 from abc import ABC, abstractmethod
-from typing import Optional, TypeVar, Iterable, List, ClassVar, Type, Union
+from typing import Optional, TypeVar, Iterable, List, ClassVar, Type
 from bson import ObjectId
-from datacentric.storage.data_set_flags import DataSetFlags
 from datacentric.storage.record import Record
 from datacentric.storage.data_set import DataSet
 from datacentric.storage.env_type import EnvType
@@ -40,10 +39,6 @@ class DataSource(Record, ABC):
 
     This record is stored in root dataset.
     """
-
-    # Class variables
-    _empty_id: ClassVar[ObjectId] = ObjectId('000000000000000000000000')  # TODO - move to temporal_id module
-    common_id: ClassVar[str] = 'Common'  # TODO - move to data_set module
 
     data_source_name: str = attr.ib(default=None, kw_only=True)
     """Unique data source name."""
@@ -250,14 +245,14 @@ class DataSource(Record, ABC):
         pass
 
     @abstractmethod
-    def get_data_set_or_none(self, data_set_name: str, load_from: ObjectId) -> Optional[ObjectId]:
+    def get_data_set_or_none(self, data_set_name: str) -> Optional[ObjectId]:
         """Get ObjectId of the dataset with the specified name.
         Returns null if not found.
         """
         pass
 
     @abstractmethod
-    def save_data_set(self, data_set: DataSet, save_to: ObjectId) -> None:
+    def save_data_set(self, data_set: DataSet) -> None:
         """Save new version of the dataset and update in-memory cache to the saved dataset."""
         pass
 
@@ -302,71 +297,30 @@ class DataSource(Record, ABC):
         """
         self.save_many(record_type, [record], save_to)
 
-    def get_common(self) -> ObjectId:
-        """Return ObjectId of the latest Common dataset.
-        Common dataset is always stored in root dataset.
-        """
-        return self.get_data_set(DataSource.common_id, DataSource._empty_id)
-
-    def get_common_or_none(self):
-        """Return ObjectId of the latest Common dataset or None if does not exists
-        Common dataset is always stored in root dataset.
-        """
-        return self.get_data_set_or_none(DataSource.common_id, DataSource._empty_id)
-
-    def get_data_set(self, data_set_name: str, load_from: ObjectId) -> ObjectId:
+    def get_data_set(self, data_set_name: str) -> ObjectId:
         """Get ObjectId of the dataset with the specified name.
         Error message if not found.
         """
-        result = self.get_data_set_or_none(data_set_name, load_from)
+        result = self.get_data_set_or_none(data_set_name)
         if result is None:
             raise Exception(f'Dataset {data_set_name} is not found in data store {self.data_source_name}.')
         return result
 
-    def create_common(self, flags: DataSetFlags = None) -> ObjectId:
-        """Create Common dataset with the specified flags.
-
-        The flags may be used, among other things, to specify
-        that the created dataset will be NonTemporal even if the
-        data source is itself temporal. This setting is typically
-        used to prevent the accumulation of data where history is
-        not needed.
-
-        By convention, the Common dataset contains reference and
-        configuration data and is included as import in all other
-        datasets.
-
-        The Common dataset is always stored in root dataset.
-
-        This method updates in-memory dataset cache to include
-        the created dataset.
-        """
-        if flags is None:
-            flags = DataSetFlags.Default
-        return self.create_data_set(DataSource.common_id, DataSource._empty_id, flags=flags)
-
-    def create_data_set(self, data_set_name: str, parent_data_set: ObjectId, imports: List[ObjectId] = None,
-                        flags: DataSetFlags = None) -> ObjectId:
+    def create_data_set(self, data_set_name: str, imports: List[ObjectId] = None) -> ObjectId:
         """Create dataset with the specified data_set_name, parent_data_set, imports,
         and flags.
 
         This method updates in-memory dataset cache to include
         the created dataset.
         """
-        if flags is None:
-            flags = DataSetFlags.Default
+
         if imports is None:
-            imports = [parent_data_set]
+            imports = []
 
         result = DataSet()
         result.data_set_name = data_set_name
-        if imports is not None:
-            result.imports = [x for x in imports]
+        result.imports = [x for x in imports]
 
-        if (self.non_temporal is not None and self.non_temporal) or \
-                flags & DataSetFlags.NonTemporal == DataSetFlags.NonTemporal:
-            result.non_temporal = True
-
-        self.save_data_set(result, parent_data_set)
+        self.save_data_set(result)
 
         return result.id_
