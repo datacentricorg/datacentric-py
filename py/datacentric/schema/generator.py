@@ -38,7 +38,6 @@ from datacentric.schema.declaration.enum_decl import EnumDecl
 from datacentric.storage.context import Context
 from datacentric.storage.data import Data
 from datacentric.storage.record import Record
-from datacentric.storage.root_record import RootRecord
 from datacentric.storage.mongo.temporal_mongo_data_source import TemporalMongoDataSource
 from datacentric.storage.env_type import EnvType
 from datacentric.storage.class_info import ClassInfo
@@ -99,7 +98,7 @@ def _get_inherit(type_: Type[TData]) -> Optional[str]:
     to base type in declaration format.
     """
     base = [x for x in type_.__bases__ if x is not ABC][0]
-    base_types = [Data, Record, RootRecord]
+    base_types = [Data, Record]
     if base not in base_types:
         return _create_type_declaration_key(base.__module__, base.__name__)
     return None

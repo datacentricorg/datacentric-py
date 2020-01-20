@@ -289,7 +289,7 @@ class TemporalMongoDataSource(MongoDataSource):
             self.__import_dict[load_from] = result
             return result
 
-    def is_non_temporal(self, record_type: type) -> bool:
+    def is_non_temporal(self, record_type: Type[TRecord]) -> bool:
         """Returns true if either dataset has non_temporal flag set, or record type
         has non_temporal attribute.
         """
@@ -297,6 +297,13 @@ class TemporalMongoDataSource(MongoDataSource):
             return True
 
         if hasattr(record_type, 'non_temporal') and record_type.is_non_temporal:
+            return True
+
+        return False
+
+    def is_pinned(self, record_type: Type[TRecord]):
+        """Returns true if the record has Pinned attribute."""
+        if hasattr(record_type, 'is_pinned') and record_type.is_pinned:
             return True
 
         return False
@@ -372,4 +379,3 @@ class TemporalMongoDataSource(MongoDataSource):
         if self.cutoff_time is not None:
             raise Exception(f'Attempting write operation for data source {self.data_source_name} where '
                             f'CutoffTime is set. Historical view of the data cannot be written to.')
-

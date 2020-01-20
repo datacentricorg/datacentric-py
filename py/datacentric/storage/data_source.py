@@ -14,8 +14,10 @@
 
 import attr
 from abc import ABC, abstractmethod
-from typing import Optional, TypeVar, Iterable, List, ClassVar, Type
+from typing import Optional, TypeVar, Iterable, List, Type
 from bson import ObjectId
+
+from datacentric.attributes.pinned_attribute import pinned
 from datacentric.storage.record import Record
 from datacentric.storage.data_set import DataSet
 from datacentric.storage.env_type import EnvType
@@ -25,6 +27,7 @@ TRecord = TypeVar('TRecord', bound=Record)
 
 
 @attr.s(slots=True, auto_attribs=True)
+@pinned
 class DataSource(Record, ABC):
     """
     Data source is a logical concept similar to database

@@ -15,10 +15,13 @@
 import attr
 from bson import ObjectId
 from typing import List
+
+from datacentric.attributes.pinned_attribute import pinned
 from datacentric.storage.record import Record
 
 
 @attr.s(slots=True, auto_attribs=True)
+@pinned
 class DataSet(Record):
     """
     Dataset is a concept similar to a folder, applied to data in any

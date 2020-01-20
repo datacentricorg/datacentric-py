@@ -99,9 +99,8 @@ class ClassInfo:
 
         from datacentric.storage.data import Data
         from datacentric.storage.record import Record
-        from datacentric.storage.root_record import RootRecord
 
-        root_types = [Data, Record, RootRecord]
+        root_types = [Data, Record]
 
         type_mro = type_.mro()
         if type_mro[0] in root_types:
@@ -127,17 +126,13 @@ class ClassInfo:
 
         from datacentric.storage.data import Data
         from datacentric.storage.record import Record
-        from datacentric.storage.root_record import RootRecord
 
         type_mro = type_.mro()
         if type_mro[0] is Record:
             raise Exception(f'Cannot get inheritance chain for the Record class, '
                             f'only for classes derived from it.')
 
-        if RootRecord in type_mro:
-            idx = type_mro.index(RootRecord)
-            return [x.__name__ for x in type_mro[idx::-1]]
-        elif Record in type_mro:
+        if Record in type_mro:
             idx = type_mro.index(Record)
             return [x.__name__ for x in type_mro[idx::-1]]
         elif Data in type_mro:
