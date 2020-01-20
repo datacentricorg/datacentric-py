@@ -14,17 +14,9 @@
 
 import attr
 from abc import ABC
-from typing import Tuple
-from datacentric.attributes.class_attribute import ClassAttribute
 
 
 @attr.s(slots=True)
 class Data(ABC):
     """ Abstract base class for data structures"""
-
-    class_attributes: Tuple[ClassAttribute, ...] = None
-    """
-    Class attributes are assigned to the class via static element
-    class_attributes which by default is empty. The user can then
-    iterate over or search in this list to find the desired attribute.
-    """
+    pass
