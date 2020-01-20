@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from datacentric.storage.temporal_id import empty_id
 from datacentric.storage.unit_test_context import UnitTestContext
 from datacentric.storage.mongo.temporal_mongo_data_source import TemporalMongoDataSource
 from datacentric.storage.env_type import EnvType
@@ -57,4 +57,4 @@ class TemporalMongoUnitTestContext(UnitTestContext):
         self.data_source.delete_db()
 
         # Create Common dataset and assign it to data_set property of this context
-        self.data_set = self.data_source.create_common()
+        self.data_set = empty_id

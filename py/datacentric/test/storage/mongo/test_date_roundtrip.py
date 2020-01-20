@@ -30,7 +30,7 @@ class TestDateRoundTrip(unittest.TestCase):
         """Smoke test to check equality after data source save/load."""
 
         with TemporalMongoUnitTestContext() as context:
-            data_set0 = context.data_source.create_data_set('DataSet0', context.data_set)
+            data_set0 = context.data_source.create_data_set('DataSet0')
 
             rec = DatesSample()
             rec.record_name = 'Sample'

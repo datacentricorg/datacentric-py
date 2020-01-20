@@ -50,7 +50,7 @@ class TestTemporalMongoDataSource(unittest.TestCase):
 
         with TemporalMongoUnitTestContext() as context:
             # Begin from DataSet0
-            data_set0 = context.data_source.create_data_set('DataSet0', context.data_set)
+            data_set0 = context.data_source.create_data_set('DataSet0')
 
             # Create initial version of the records
             self.save_minimal_record(context, 'DataSet0', 'A', 0, 0)
@@ -71,7 +71,7 @@ class TestTemporalMongoDataSource(unittest.TestCase):
             self.save_minimal_record(context, 'DataSet0', 'B', 3, 2)
 
             # Same in DataSet1
-            data_set1 = context.data_source.create_data_set("DataSet1", context.data_set, [data_set0])
+            data_set1 = context.data_source.create_data_set("DataSet1", [data_set0])
 
             # Create initial version of the records
             self.save_minimal_record(context, "DataSet1", "A", 4, 0)
@@ -86,13 +86,12 @@ class TestTemporalMongoDataSource(unittest.TestCase):
             self.save_minimal_record(context, "DataSet1", "B", 7, 1)
 
             # Next in DataSet2
-            data_set2 = context.data_source.create_data_set("DataSet2", context.data_set, [data_set0])
+            data_set2 = context.data_source.create_data_set("DataSet2", [data_set0])
             self.save_minimal_record(context, "DataSet2", "A", 8, 0)
             self.save_minimal_record(context, "DataSet2", "B", 9, 0)
 
             # Next in DataSet3
-            data_set3 = context.data_source.create_data_set("DataSet3", context.data_set,
-                                                            [data_set0, data_set1, data_set2])
+            data_set3 = context.data_source.create_data_set("DataSet3", [data_set0, data_set1, data_set2])
             self.save_minimal_record(context, "DataSet3", "A", 10, 0)
             self.save_minimal_record(context, "DataSet3", "B", 11, 0)
 
@@ -138,7 +137,7 @@ class TestTemporalMongoDataSource(unittest.TestCase):
         rec.local_date_time_element = LocalDateTime.from_fields(2003, 5, 1, 10, 15)  # 2003-05-01T10:15:00
         rec.enum_value = SampleEnum.EnumValue2
 
-        data_set = context.data_source.get_data_set(data_set_id, context.data_set)
+        data_set = context.data_source.get_data_set(data_set_id)
         context.data_source.save_one(BaseSample, rec, data_set)
 
         return rec.id_
@@ -184,23 +183,23 @@ class TestTemporalMongoDataSource(unittest.TestCase):
         rec.key_element_list = [BaseSample.create_key(record_name='B0', record_index=3),
                                 BaseSample.create_key(record_name='B1', record_index=4)]
 
-        data_set = context.data_source.get_data_set(data_set_id, context.data_set)
+        data_set = context.data_source.get_data_set(data_set_id)
         context.data_source.save_one(DerivedSample, rec, data_set)
         return rec.id_
 
     def save_basic_data(self, context: Context) -> None:
         """Two datasets and two objects, one base and one derived."""
 
-        data_set0 = context.data_source.create_data_set('DataSet0', context.data_set)
+        data_set0 = context.data_source.create_data_set('DataSet0')
         self.save_base_record(context, 'DataSet0', 'A', 0)
 
-        context.data_source.create_data_set('DataSet1', context.data_set, [data_set0])
+        context.data_source.create_data_set('DataSet1', [data_set0])
         self.save_derived_record(context, 'DataSet1', 'B', 0)
 
     def verify_load(self, context: Context, data_set_id, key) -> str:
         """Load the object and verify the outcome."""
 
-        data_set = context.data_source.get_data_set(data_set_id, context.data_set)
+        data_set = context.data_source.get_data_set(data_set_id)
         record = context.data_source.load_or_null_by_key(BaseSample, key, data_set)
 
         if record is None:
@@ -219,7 +218,7 @@ class TestTemporalMongoDataSource(unittest.TestCase):
         rec.record_index = record_index
         rec.version = version
 
-        data_set = context.data_source.get_data_set(data_set_id, context.data_set)
+        data_set = context.data_source.get_data_set(data_set_id)
         context.data_source.save_one(BaseSample, rec, data_set)
 
         return rec.id_
