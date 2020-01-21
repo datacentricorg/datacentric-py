@@ -20,7 +20,7 @@ from datacentric.storage.data import Data
 TData = TypeVar('TData', bound=Data)
 
 
-def pinned(_cls: Type[TData] = None):
+def pinned(maybe_cls=None):
     """Records marked by Pinned attribute are always stored
     in root dataset, irrespective of the dataset specified in
     the Save method.
@@ -36,9 +36,9 @@ def pinned(_cls: Type[TData] = None):
         return cls
 
     # See if we're being called as @pinned or @pinned().
-    if _cls is None:
+    if maybe_cls is None:
         # We're called with parens.
         return wrap
 
     # We're called as @pinned without parens.
-    return wrap(_cls)
+    return wrap(maybe_cls)

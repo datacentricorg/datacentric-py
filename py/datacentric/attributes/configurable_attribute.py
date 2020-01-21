@@ -13,14 +13,14 @@
 # limitations under the License.
 
 import inspect
-from typing import Type, TypeVar
+from typing import TypeVar
 
 from datacentric.storage.data import Data
 
 TData = TypeVar('TData', bound=Data)
 
 
-def configurable(cls: Type[TData]):
+def configurable(maybe_cls=None):
     """
     For every class marked with [Configurable] attribute, Context.Configure()
     will invoke static Configure(context) method with self as argument for
@@ -43,9 +43,18 @@ def configurable(cls: Type[TData]):
     inheritance chain, specify [Configurable] attribute for each
     class that provides Configure(context) method.
     """
-    if not inspect.isclass(cls):
-        raise Exception('@configurable should be applied on class')
-    if not issubclass(cls, Data):
-        raise Exception('@configurable should be applied on Data derived class')
-    cls.is_configurable = True
-    return cls
+
+    def wrap(cls):
+        if not inspect.isclass(cls):
+            raise Exception('@configurable should be applied on class')
+        if not issubclass(cls, Data):
+            raise Exception('@configurable should be applied on Data derived class')
+        setattr(cls, 'is_configurable', True)
+        return cls
+
+    # maybe_cls's type depends on the usage of the decorator.  It's a class
+    # if it's used as `@attrs` but ``None`` if used as `@attrs()`.
+    if maybe_cls is None:
+        return wrap
+    else:
+        return wrap(maybe_cls)

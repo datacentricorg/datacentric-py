@@ -41,6 +41,7 @@ from datacentric.storage.record import Record
 from datacentric.storage.mongo.temporal_mongo_data_source import TemporalMongoDataSource
 from datacentric.storage.env_type import EnvType
 from datacentric.storage.class_info import ClassInfo
+from datacentric.storage.versioning_method import VersioningMethod
 
 T = TypeVar('T')
 TData = TypeVar('TData', bound=Data)
@@ -251,18 +252,20 @@ def to_enum_declaration(enum_: Type[TEnum]) -> EnumDecl:
 
 
 if __name__ == '__main__':
+    data_source = TemporalMongoDataSource()
+    data_source.env_type = EnvType.Test
+    data_source.env_group = 'Schema'
+    data_source.env_name = 'Default'
+    data_source.versioning_method = VersioningMethod.Temporal
+
     context = Context()
-    context.data_source = TemporalMongoDataSource(
-        env_type=EnvType.Test,
-        env_group='Schema',
-        env_name='Default'
-    )
+    context.data_source = data_source
 
     # Delete (drop) the database to clear the existing data
     context.data_source.delete_db()
 
     # Create Common dataset and assign it to data_set property of this context
-    context.data_set = context.data_source.create_common()
+    context.data_set = context.data_source.create_data_set('Common')
 
     # Convert extracted types to declarations
     type_declarations = [to_type_declaration(x) for x in ClassInfo.get_derived_types('datacentric', Data)]
