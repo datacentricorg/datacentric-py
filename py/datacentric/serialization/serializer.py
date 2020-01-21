@@ -89,6 +89,7 @@ def _serialize_class(obj: TRecord, expected_: type) -> Dict[str, Any]:
                 raise Exception(f'Missing required field: {field.name} in type: {cls_type.__name__}')
             continue
 
+        serialized_value: Any
         if is_list:
             expected_arg = get_args(expected_type)[0]
             serialized_value = _serialize_list(value, expected_arg, field.metadata)
@@ -231,6 +232,7 @@ def _deserialize_class(dict_: Dict[str, Any]) -> TRecord:
         field = fields[slot]
         member_type = field.type
 
+        deserialized_value: Any
         if get_origin(member_type) is not None and get_origin(member_type) is list:
             deserialized_value = _deserialize_list(member_type, dict_value, field.metadata)
         elif issubclass(member_type, Data):

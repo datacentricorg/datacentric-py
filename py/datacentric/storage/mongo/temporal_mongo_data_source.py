@@ -92,14 +92,14 @@ class TemporalMongoDataSource(MongoDataSource):
         cursor = collection.aggregate(pipeline)
         if cursor.alive:
             cursor_next = cursor.next()
-            result = deserialize(cursor_next)
+            result: TRecord = deserialize(cursor_next)
 
             if result is not None and not isinstance(result, DeletedRecord):
 
                 is_requested_instance = isinstance(result, record_type)
                 if not is_requested_instance:
                     raise Exception(f'Stored type {type(result).__name__} for ObjectId={id_} and '
-                                    f'Key={result.key} is not an instance of the requested type '
+                                    f'Key={result.to_key()} is not an instance of the requested type '
                                     f'{record_type.__name__}.')
                 result.init(self.context)
                 return result
@@ -144,7 +144,7 @@ class TemporalMongoDataSource(MongoDataSource):
         cursor = collection.aggregate(ordered_pipe)
         if cursor.alive:
             cursor_next = cursor.next()
-            result = deserialize(cursor_next)
+            result: TRecord = deserialize(cursor_next)
 
             if result is not None and not isinstance(result, DeletedRecord):
 
@@ -155,6 +155,7 @@ class TemporalMongoDataSource(MongoDataSource):
                                     f'the requested type {type_.__name__}.')
                 result.init(self.context)
                 return result
+        return None
 
     def get_query(self, record_type: Type[TRecord], load_from: ObjectId) -> TemporalMongoQuery:
         """Get query for the specified type.
@@ -239,7 +240,7 @@ class TemporalMongoDataSource(MongoDataSource):
         * The constraint on ID being strictly less than cutoff_time (if not none).
         """
         data_set_lookup_list = self.get_data_set_lookup_list(load_from)
-        pipeline.append({'$match': {"_dataset": {"$in": data_set_lookup_list}}})
+        pipeline.append({'$match': {"_dataset": {"$in": list(data_set_lookup_list)}}})
 
         if self.cutoff_time is not None:
             pipeline.append({'$match': {'_id': {'$lte': self.cutoff_time}}})
@@ -271,8 +272,8 @@ class TemporalMongoDataSource(MongoDataSource):
         self.save_one(DataSet, data_set, empty_id)
         self.__data_set_dict[data_set.to_key()] = data_set.id_
 
-        lookup_list = self._build_data_set_lookup_list(data_set)
-        self.__import_dict[data_set.id_] = lookup_list
+        lookup_set = self._build_data_set_lookup_list(data_set)
+        self.__import_dict[data_set.id_] = lookup_set
 
     def get_data_set_lookup_list(self, load_from: ObjectId) -> Iterable[ObjectId]:
         """Returns enumeration of import datasets for specified dataset data,
@@ -302,13 +303,13 @@ class TemporalMongoDataSource(MongoDataSource):
         value can be overridden for specific record types via an attribute.
         """
         if hasattr(record_type, 'versioning_method'):
-            return record_type.versioning_method
+            return getattr(record_type, 'versioning_method')
 
         return self.versioning_method
 
-    def is_pinned(self, record_type: Type[TRecord]):
+    def is_pinned(self, record_type: Type[TRecord]) -> bool:
         """Returns true if the record has Pinned attribute."""
-        if hasattr(record_type, 'is_pinned') and record_type.is_pinned:
+        if hasattr(record_type, 'is_pinned') and getattr(record_type, 'is_pinned'):
             return True
 
         return False
@@ -343,11 +344,12 @@ class TemporalMongoDataSource(MongoDataSource):
         self.__collection_dict[type_] = collection
         return collection
 
-    def _build_data_set_lookup_list(self, data_set_record: DataSet):
-        result = set()
+    def _build_data_set_lookup_list(self, data_set_record: DataSet) -> Set[ObjectId]:
+        result: Set[ObjectId] = set()
+
         self._fill_data_set_lookup_set(data_set_record, result)
 
-        return list(result)
+        return result
 
     def _fill_data_set_lookup_set(self, data_set_record: DataSet, result: Set[ObjectId]) -> None:
         if data_set_record is None:
