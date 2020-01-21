@@ -15,7 +15,7 @@
 from __future__ import annotations
 import numpy as np
 from enum import IntEnum
-from typing import Iterable, Dict, Any, List, TypeVar
+from typing import Iterable, Dict, Any, List, TypeVar, Set
 from bson import ObjectId
 from pymongo.collection import Collection
 from pymongo.command_cursor import CommandCursor
@@ -38,14 +38,18 @@ class TemporalMongoQuery:
     This implementation adds additional constraints and ordering to retrieve the correct version
     of the record across multiple datasets.
     """
-    def __init__(self, record_type: type, data_source: 'TemporalMongoDataSource', collection: Collection,
+    from datacentric.storage.mongo.temporal_mongo_data_source import TemporalMongoDataSource
+
+    def __init__(self, record_type: type, data_source: TemporalMongoDataSource, collection: Collection,
                  load_from: ObjectId):
+
         from datacentric.storage.mongo.temporal_mongo_data_source import TemporalMongoDataSource
+
         self._data_source: TemporalMongoDataSource = data_source
         self._type = record_type
         self._collection = collection
         self._load_from = load_from
-        self._pipeline: List[Dict[str, Dict[Any]]] = [{'$match': {'_t': self._type.__name__}}]
+        self._pipeline: List[Dict[str, Any]] = [{'$match': {'_t': self._type.__name__}}]
 
     def __has_sort(self) -> bool:
         stage_names = [stage_name
@@ -77,6 +81,7 @@ class TemporalMongoQuery:
     def __fix_predicate_query(dict_: Dict[str, Any]):
         """Updated and convert user defined query to bson friendly format."""
         for k, value in dict_.items():
+            updated_value: Any
             if type(value) is dict:
                 updated_value = TemporalMongoQuery.__process_dict(value)
             elif type(value) is list:
@@ -89,6 +94,7 @@ class TemporalMongoQuery:
     def __process_dict(dict_: Dict[str, Any]) -> Dict[str, Any]:
         """Process dictionary values."""
         for k, value in dict_.items():
+            updated_value: Any
             if type(value) is dict:
                 updated_value = TemporalMongoQuery.__process_dict(value)
             elif type(value) is list:
@@ -104,6 +110,7 @@ class TemporalMongoQuery:
         """Process list elements."""
         updated_list = []
         for value in list_:
+            updated_value: Any
             if type(value) is dict:
                 updated_value = TemporalMongoQuery.__process_dict(value)
             elif type(value) is list:
@@ -176,9 +183,9 @@ class TemporalMongoQuery:
 
             while continue_query:
                 batch_index = 0
-                batch_keys_hash_set = set()
-                batch_ids_hash_set = set()
-                batch_ids_list = []
+                batch_keys_hash_set: Set[str] = set()
+                batch_ids_hash_set: Set[ObjectId] = set()
+                batch_ids_list: List[ObjectId] = []
 
                 while True:
                     continue_query = cursor.alive
@@ -198,7 +205,7 @@ class TemporalMongoQuery:
                 if not continue_query and batch_index == 0:
                     break
 
-                id_queryable = [{'$match': {'_key': {'$in': list(batch_keys_hash_set)}}}]
+                id_queryable: List[Dict[str, Any]] = [{'$match': {'_key': {'$in': list(batch_keys_hash_set)}}}]
                 id_queryable = self._data_source.apply_final_constraints(id_queryable, self._load_from)
                 id_queryable.append({'$sort': {'_key': 1, '_dataset': -1, '_id': -1}})
 
@@ -228,7 +235,7 @@ class TemporalMongoQuery:
                 record_queryable = [{'$match': {'_id': {'$in': record_ids}}}]
                 record_dict = dict()
                 for record in self._collection.aggregate(record_queryable):
-                    rec = deserialize(record)
+                    rec: TRecord = deserialize(record)
                     record_dict[rec.id_] = rec
 
                 for batch_id in batch_ids_list:
