@@ -16,7 +16,7 @@ import attr
 import datetime as dt
 from bson import ObjectId, Int64
 from enum import IntEnum
-from typing import Dict, Any, get_type_hints, TypeVar, List
+from typing import Dict, Any, TypeVar, List
 from typing_inspect import get_origin, get_args
 from datacentric.primitive.string_util import StringUtil
 from datacentric.date_time.local_date import LocalDate

@@ -12,12 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 import inspect
 from bson.objectid import ObjectId
 
-# To prevent linter error on type hint in quotes
-if False:
+if TYPE_CHECKING:
     from datacentric.log.log import Log
     from datacentric.storage.data_source import DataSource
 
@@ -78,9 +77,6 @@ class Context:
     def log(self) -> 'Log':
         """Return log property, error message if not set."""
 
-        # Define log here to avoid a cyclic reference
-        from datacentric.log.log import Log
-
         if not self.__log:
             raise Exception('Log property is not set in Context.')
         return self.__log
@@ -94,9 +90,6 @@ class Context:
     @property
     def data_source(self) -> 'DataSource':
         """Return data_source property, error message if not set."""
-
-        # Define data source here to avoid a cyclic reference
-        from datacentric.storage.data_source import DataSource
 
         if not self.__data_source:
             raise Exception('Data source property is not set in Context.')
@@ -132,7 +125,6 @@ class Context:
         """
         # TODO - implement
         pass
-
 
     def configure(self, module) -> None:
         """

@@ -15,11 +15,10 @@
 from __future__ import annotations
 import numpy as np
 from enum import IntEnum
-from typing import Iterable, Dict, Any, List, TypeVar, Set
+from typing import Iterable, Dict, Any, List, TypeVar, Set, TYPE_CHECKING
 from bson import ObjectId
 from pymongo.collection import Collection
 from pymongo.command_cursor import CommandCursor
-
 
 from datacentric.primitive.string_util import StringUtil
 from datacentric.date_time.local_time import LocalTime
@@ -28,6 +27,9 @@ from datacentric.date_time.local_date import LocalDate
 from datacentric.date_time.local_date_time import LocalDateTime
 from datacentric.storage.record import Record
 from datacentric.serialization.serializer import deserialize
+
+if TYPE_CHECKING:
+    from datacentric.storage.mongo.temporal_mongo_data_source import TemporalMongoDataSource
 
 TRecord = TypeVar('TRecord', bound=Record)
 
@@ -38,12 +40,9 @@ class TemporalMongoQuery:
     This implementation adds additional constraints and ordering to retrieve the correct version
     of the record across multiple datasets.
     """
-    from datacentric.storage.mongo.temporal_mongo_data_source import TemporalMongoDataSource
 
     def __init__(self, record_type: type, data_source: TemporalMongoDataSource, collection: Collection,
                  load_from: ObjectId):
-
-        from datacentric.storage.mongo.temporal_mongo_data_source import TemporalMongoDataSource
 
         self._data_source: TemporalMongoDataSource = data_source
         self._type = record_type

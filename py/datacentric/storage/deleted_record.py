@@ -11,7 +11,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from typing import Any
 
 import attr
 from datacentric.storage.record import Record
@@ -24,6 +23,9 @@ class DeletedRecord(Record):
     effect as if no record was found. It is used to indicate
     a deleted record when audit log must be preserved.
     """
+
+    _key: str = attr.ib(default=None, kw_only=True)
+    """Attribute to hold key."""
 
     @property
     def key(self) -> str:
@@ -39,7 +41,7 @@ class DeletedRecord(Record):
         return self._key
 
     @key.setter
-    def key(self, value) -> None:
+    def key(self, value: str) -> None:
         self._key = value
 
     def to_key(self) -> str:
