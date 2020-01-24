@@ -15,10 +15,12 @@
 
 import unittest
 
+from bson import ObjectId
 from pymongo.database import Database
-from pymongo import DESCENDING
+from pymongo import DESCENDING, ASCENDING
 
 from datacentric import TemporalMongoUnitTestContext, Context
+from datacentric.log.console_log import ConsoleLog
 
 
 class TestMongoPerformance(unittest.TestCase):
@@ -31,6 +33,7 @@ class TestMongoPerformance(unittest.TestCase):
         return context.data_source.db
 
     def insert_records_a(self, context: Context):
+        """Insert N non-versioned instances."""
         db = self.get_db(context)
         records = []
         for i in range(TestMongoPerformance.RECORD_COUNT):
@@ -48,6 +51,35 @@ class TestMongoPerformance(unittest.TestCase):
         collection.insert_many(records)
         context.log.verify(f'Inserted {TestMongoPerformance.RECORD_COUNT} records.')
 
+    def insert_records_b(self, context: Context):
+        """Insert M copies of each of N versioned instances B."""
+        db = self.get_db(context)
+        coll = db.get_collection('B')
+        coll.create_index([('KeyElement', ASCENDING), ('_id', DESCENDING), ('DataSet', DESCENDING)])
+
+        records = []
+        for data_set_idx in range(TestMongoPerformance.DATASET_COUNT):
+            dataset = ObjectId()
+            for version_idx in range(TestMongoPerformance.VERSION_COUNT):
+                for record_idx in range(TestMongoPerformance.RECORD_COUNT):
+                    rec = {'_id': ObjectId(),
+                           'DataSet': dataset,
+                           'KeyElement': 'KeyPrefix=' + str(record_idx),
+                           'StringElement1': str(record_idx % 2),
+                           'StringElement2': str(record_idx % 2),
+                           'DoubleElement': float(record_idx),
+                           'IntElement': record_idx,
+                           'VersionElement': version_idx}
+                    if TestMongoPerformance.ARRAY_SIZE > 0:
+                        rec['ArrayElement'] = [float(x) for x in range(TestMongoPerformance.ARRAY_SIZE)]
+                    records.append(rec)
+        coll.insert_many(records)
+        context.log.verify(f'Inserted {TestMongoPerformance.RECORD_COUNT} records.')
+
     def test_insert_a(self):
         with TemporalMongoUnitTestContext() as context:
             self.insert_records_a(context)
+
+    def test_insert_b(self):
+        with TemporalMongoUnitTestContext() as context:
+            self.insert_records_b(context)
